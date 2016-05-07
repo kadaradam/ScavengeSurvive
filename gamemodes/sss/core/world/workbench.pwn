@@ -206,6 +206,16 @@ _wb_PlayerUseWorkbench(playerid, workbenchid, itemid)
 	
 			ApplyAnimation(playerid, "INT_SHOP", "SHOP_CASHIER", 4.0, 1, 0, 0, 0, 0, 1);
 	
+			new
+				Float:x,
+				Float:y,
+				Float:z;
+	
+			GetPlayerPos(playerid, x, y, z);
+			SetPlayerFacingAngle(playerid, GetAngleToPoint(x, y, wb_Data[workbenchid][wb_posX],  wb_Data[workbenchid][wb_posY]));
+	
+			ApplyAnimation(playerid, "INT_SHOP", "SHOP_CASHIER", 4.0, 1, 0, 0, 0, 0, 1);
+	
 			StartHoldAction(playerid, GetConstructionSetBuildTime(consset));
 			wb_CurrentWorkbench[playerid] = workbenchid;
 			wb_CurrentConstructSet[playerid] = consset;
