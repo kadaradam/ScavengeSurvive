@@ -185,6 +185,36 @@ _wb_PlayerUseWorkbench(playerid, workbenchid, itemid)
 		if(GetItemType(itemid) == GetConstructionSetTool(consset))
 		{
 			d:2:HANDLER("[_wb_PlayerUseWorkbench] craftset determined and tool matched, start building...");
+
+			new
+				Float:x,
+				Float:y,
+				Float:z;
+
+			GetPlayerPos(playerid, x, y, z);
+			SetPlayerFacingAngle(playerid, GetAngleToPoint(x, y, wb_Data[workbenchid][wb_posX],  wb_Data[workbenchid][wb_posY]));
+
+			ApplyAnimation(playerid, "INT_SHOP", "SHOP_CASHIER", 4.0, 1, 0, 0, 0, 0, 1);
+	
+			new
+				Float:x,
+				Float:y,
+				Float:z;
+	
+			GetPlayerPos(playerid, x, y, z);
+			SetPlayerFacingAngle(playerid, GetAngleToPoint(x, y, wb_Data[workbenchid][wb_posX],  wb_Data[workbenchid][wb_posY]));
+	
+			ApplyAnimation(playerid, "INT_SHOP", "SHOP_CASHIER", 4.0, 1, 0, 0, 0, 0, 1);
+	
+			new
+				Float:x,
+				Float:y,
+				Float:z;
+	
+			GetPlayerPos(playerid, x, y, z);
+			SetPlayerFacingAngle(playerid, GetAngleToPoint(x, y, wb_Data[workbenchid][wb_posX],  wb_Data[workbenchid][wb_posY]));
+	
+			ApplyAnimation(playerid, "INT_SHOP", "SHOP_CASHIER", 4.0, 1, 0, 0, 0, 0, 1);
 	
 			new
 				Float:x,
