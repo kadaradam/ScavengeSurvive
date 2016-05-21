@@ -38,7 +38,7 @@
 		- Contains every log record for each field.
 */
 
-#define DETFIELD_DATABASE			"SSS/detfield.db"
+#define DETFIELD_DATABASE			DIRECTORY_MAIN"detfield.db"
 
 #define DETFIELD_TABLE_MAIN			"field_list"
 #define FIELD_DETFIELD_NAME			"name"		// 00
@@ -737,7 +737,7 @@ hook OnPlayerEnterDynArea(playerid, areaid)
 			if(GetPlayerState(playerid) != PLAYER_STATE_SPECTATING)
 			{
 				if(GetPlayerAdminLevel(playerid) >= 3)
-					MsgF(playerid, YELLOW, " >  Entered detection field '%s'", det_Name[i]);
+					ChatMsg(playerid, YELLOW, " >  Entered detection field '%s'", det_Name[i]);
 			}
 		}
 	}

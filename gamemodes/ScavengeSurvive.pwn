@@ -183,7 +183,7 @@ native WP_Hash(buffer[], len, const str[]);
 
 // Directories
 #define DIRECTORY_SCRIPTFILES		"./scriptfiles/"
-#define DIRECTORY_MAIN				"SSS/"
+#define DIRECTORY_MAIN				"data/"
 
 
 // Files
@@ -528,6 +528,7 @@ new stock
 #include "sss/core/world/scrap-machine.pwn"
 #include "sss/core/world/refine-machine.pwn"
 #include "sss/core/world/tree.pwn"
+#include "sss/core/world/tree-loader.pwn"
 
 // ADMINISTRATION TOOLS
 #include "sss/core/admin/report.pwn"
@@ -655,6 +656,12 @@ OnGameModeInit_Setup()
 
 	Streamer_ToggleErrorCallback(true);
 	MapAndreas_Init(MAP_ANDREAS_MODE_FULL);
+
+	if(dir_exists(DIRECTORY_SCRIPTFILES"SSS/"))
+	{
+		print("ERROR: ./scriptfiles directory detected using old directory structure, please see release notes for stable release #04");
+		for(;;){}
+	}
 
 	if(!dir_exists(DIRECTORY_SCRIPTFILES))
 	{
