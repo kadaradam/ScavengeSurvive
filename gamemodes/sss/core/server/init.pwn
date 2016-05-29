@@ -132,6 +132,13 @@ new stock
 	liquid_Thermite,
 	liquid_StrongThermite;
 
+// TREE CATEGORIES
+new stock
+	tree_Desert,
+	tree_DarkForest,
+	tree_LightForest,
+	tree_GrassPlanes;
+
 // ITEM TYPES
 new stock
 // 00
@@ -626,8 +633,8 @@ public OnScriptInit()
 	item_Flag			= DefineItemType("Flag",				"Flag",				2993,	3,	0.0, 0.0, 0.0,			0.0,	0.045789, 0.026306, -0.078802, 8.777217, 0.272155, 0.000000);
 // 80
 	item_DoctorBag		= DefineItemType("Doctor's Bag",		"DoctorBag",		11738,	3,	0.0, 0.0, 0.0,			0.0046,	0.265000, 0.029000, 0.041000,  0.000000, -99.100021, 0.000000);
-	item_Backpack		= DefineItemType("Backpack",			"Backpack",			3026,	4,	270.0, 0.0, 90.0,		0.0,	0.470918, 0.150153, 0.055384, 181.319580, 7.513789, 163.436065);
-	item_Satchel		= DefineItemType("Small Bag",			"Satchel",			363,	2,	270.0, 0.0, 0.0,		0.0,	0.052853, 0.034967, -0.177413, 0.000000, 261.397491, 349.759826);
+	item_Backpack		= DefineItemType("Backpack",			"Backpack",			3026,	4,	270.0, 0.0, 90.0,		0.0,	0.470918, 0.150153, 0.055384, 181.319580, 7.513789, 163.436065, .longpickup = true);
+	item_Satchel		= DefineItemType("Small Bag",			"Satchel",			363,	2,	270.0, 0.0, 0.0,		0.0,	0.052853, 0.034967, -0.177413, 0.000000, 261.397491, 349.759826, .longpickup = true);
 	item_Wheel			= DefineItemType("Wheel",				"Wheel",			1079,	5,	0.0, 0.0, 90.0,			0.436,	-0.098016, 0.356168, -0.309851, 258.455596, 346.618103, 354.313049, true);
 	item_MotionSense	= DefineItemType("Motion Sensor",		"MotionSense",		327,	1,	0.0, 0.0, 0.0,			0.0,	0.008151, 0.012682, -0.050635, 0.000000, 0.000000, 0.000000);
 	item_Accelerometer	= DefineItemType("Accelerometer",		"Accelerometer",	327,	1,	0.0, 0.0, 0.0,			0.0,	0.008151, 0.012682, -0.050635, 0.000000, 0.000000, 0.000000);
@@ -641,17 +648,17 @@ public OnScriptInit()
 	item_GasCan			= DefineItemType("Petrol Can",			"GasCan",			1650,	3,	0.0, 0.0, 0.0,			0.27,	0.143402, 0.027548, 0.063652, 0.000000, 253.648208, 0.000000);
 	item_Clothes		= DefineItemType("Clothes",				"Clothes",			2891,	2,	0.0, 0.0, 0.0,			0.0,	0.269091, 0.166367, 0.000000, 90.000000, 0.000000, 0.000000);
 	item_HelmArmy		= DefineItemType("Army Helmet",			"HelmArmy",			19106,	2,	345.0, 270.0, 0.0,		0.045,	0.184999, -0.007999, 0.046999, 94.199989, 22.700027, 4.799994);
-	item_MediumBox		= DefineItemType("Medium Box",			"MediumBox",		3014,	5,	0.0, 0.0, 0.0,			0.1844,	-0.027872, 0.145617, -0.246524, 243.789840, 347.397491, 349.931610, true);
-	item_SmallBox		= DefineItemType("Small Box",			"SmallBox",			2969,	4,	0.0, 0.0, 0.0,			0.0,	0.114177, 0.089762, -0.173014, 247.160079, 354.746368, 79.219100, true);
-	item_LargeBox		= DefineItemType("Large Box",			"LargeBox",			1271,	6,	0.0, 0.0, 0.0,			0.3112,	0.050000, 0.334999, -0.327000,  -23.900018, -10.200002, 11.799987, true);
+	item_MediumBox		= DefineItemType("Medium Box",			"MediumBox",		3014,	5,	0.0, 0.0, 0.0,			0.1844,	-0.027872, 0.145617, -0.246524, 243.789840, 347.397491, 349.931610, true, .longpickup = true);
+	item_SmallBox		= DefineItemType("Small Box",			"SmallBox",			2969,	4,	0.0, 0.0, 0.0,			0.0,	0.114177, 0.089762, -0.173014, 247.160079, 354.746368, 79.219100, true, .longpickup = true);
+	item_LargeBox		= DefineItemType("Large Box",			"LargeBox",			1271,	6,	0.0, 0.0, 0.0,			0.3112,	0.050000, 0.334999, -0.327000,  -23.900018, -10.200002, 11.799987, true, .longpickup = true);
 	item_HockeyMask		= DefineItemType("Hockey Mask",			"HockeyMask",		19036,	1,	0.0, 0.0, 0.0,			0.082,	0.221075, 0.067746, 0.037494, 87.375968, 305.182189, 5.691741);
 	item_Meat			= DefineItemType("Meat",				"Meat",				2804,	3,	0.0, 0.0, 0.0,			0.0,	-0.051398, 0.017334, 0.189188, 270.495391, 353.340423, 167.069869);
 // 100
 	item_DeadLeg		= DefineItemType("Leg",					"DeadLeg",			2905,	4,	0.0, 0.0, 0.0,			0.0,	0.147815, 0.052444, -0.164205, 253.163970, 358.857666, 167.069869, true);
-	item_Torso			= DefineItemType("Torso",				"Torso",			2907,	6,	0.0, 0.0, 270.0,		0.0,	0.087207, 0.093263, -0.280867, 253.355865, 355.971557, 175.203552, true);
+	item_Torso			= DefineItemType("Torso",				"Torso",			2907,	6,	0.0, 0.0, 270.0,		0.0,	0.087207, 0.093263, -0.280867, 253.355865, 355.971557, 175.203552, true, .longpickup = true);
 	item_LongPlank		= DefineItemType("Plank",				"LongPlank",		2937,	9,	0.0, 0.0, 0.0,			0.0,	0.141491, 0.002142, -0.190920, 248.561920, 350.667724, 175.203552, true);
 	item_GreenGloop		= DefineItemType("Unknown",				"GreenGloop",		2976,	3,	0.0, 0.0, 0.0,			0.0,	0.063387, 0.013771, -0.595982, 341.793945, 352.972686, 226.892105, true);
-	item_Capsule		= DefineItemType("Capsule",				"Capsule",			3082,	3,	0.0, 0.0, 0.0,			0.0,	0.096439, 0.034642, -0.313377, 341.793945, 348.492706, 240.265777, true);
+	item_Capsule		= DefineItemType("Capsule",				"Capsule",			3082,	3,	0.0, 0.0, 0.0,			0.0,	0.096439, 0.034642, -0.313377, 341.793945, 348.492706, 240.265777, true, .longpickup = true);
 	item_RadioPole		= DefineItemType("Receiver",			"RadioPole",		3221,	3,	0.0, 0.0, 0.0,			0.0,	0.081356, 0.034642, -0.167247, 0.000000, 0.000000, 240.265777);
 	item_SignShot		= DefineItemType("Sign",				"SignShot",			3265,	3,	0.0, 0.0, 0.0,			0.0,	0.081356, 0.034642, -0.167247, 0.000000, 0.000000, 240.265777);
 	item_Mailbox		= DefineItemType("Mailbox",				"Mailbox",			3407,	3,	0.0, 0.0, 0.0,			0.0,	0.081356, 0.034642, -0.167247, 0.000000, 0.000000, 240.265777);
@@ -682,7 +689,7 @@ public OnScriptInit()
 // 130
 	item_Flare			= DefineItemType("Flare",				"Flare",			345,	2);
 	item_TntPhoneBomb	= DefineItemType("Phone Remote TNT",	"TntPhoneBomb",		1576,	2,	0.0, 0.0, 0.0,			0.0,	0.269091, 0.166367, 0.000000, 90.000000, 0.000000, 0.000000);
-	item_ParaBag		= DefineItemType("Parachute Bag",		"ParaBag",			371,	6,	90.0, 0.0, 0.0,			0.0,	0.350542, 0.017385, 0.060469, 0.000000, 260.845062, 0.000000);
+	item_ParaBag		= DefineItemType("Parachute Bag",		"ParaBag",			371,	6,	90.0, 0.0, 0.0,			0.0,	0.350542, 0.017385, 0.060469, 0.000000, 260.845062, 0.000000, .longpickup = true);
 	item_Keypad			= DefineItemType("Keypad",				"Keypad",			19273,	2,	270.0, 0.0, 0.0,		0.0,	0.198234, 0.101531, 0.095477, 0.000000, 343.020019, 0.000000);
 	item_TentPack		= DefineItemType("Tent Pack",			"TentPack",			1279,	6,	0.0, 0.0, 0.0,			0.0,	0.106261, 0.004634, -0.144552, 246.614654, 345.892211, 258.267395, true);
 	item_Campfire		= DefineItemType("Campfire",			"Campfire",			19475,	5,	0.0, 0.0, 0.0,			0.0,	0.106261, 0.004634, -0.144552, 246.614654, 345.892211, 258.267395, true);
@@ -709,7 +716,7 @@ public OnScriptInit()
 	item_FluxCap		= DefineItemType("Flux Capacitor",		"FluxCap",			343,	1,	0.0, 0.0, 0.0,			0.0);
 	item_DataInterface	= DefineItemType("Data Interface",		"DataInterface",	19273,	1,	270.0, 0.0, 0.0,		0.0,	0.198234, 0.101531, 0.095477, 0.000000, 343.020019, 0.000000);
 	item_HackDevice		= DefineItemType("Hack Interface",		"HackDevice",		364,	1,	0.0, 0.0, 0.0,			0.0,	0.134000, 0.080000, -0.037000,  84.299949, 3.399998, 9.400002);
-	item_PlantPot		= DefineItemType("Plant Pot",			"PlantPot",			2203,	4,	0.0, 0.0, 0.0,			0.138,	-0.027872, 0.145617, -0.246524, 243.789840, 347.397491, 349.931610, true);
+	item_PlantPot		= DefineItemType("Plant Pot",			"PlantPot",			2203,	4,	0.0, 0.0, 0.0,			0.138,	-0.027872, 0.145617, -0.246524, 243.789840, 347.397491, 349.931610, true, .longpickup = true);
 	item_HerpDerp		= DefineItemType("Derpification Unit",	"HerpDerp",			19513,	1,	0.0, 0.0, 0.0,			0.0,	0.103904, -0.003697, -0.015173, 94.655189, 184.031860, 0.000000);
 	item_Parrot			= DefineItemType("Sebastian",			"Parrot",			19078,	2,	0.0, 0.0, 0.0,			0.0,	0.131000, 0.021000, 0.005999,  -86.000091, 6.700000, -106.300018);
 // 160
@@ -729,7 +736,7 @@ public OnScriptInit()
 	item_FlareGun		= DefineItemType("Flare Gun",			"FlareGun",			2034,	2,	0.0, 0.0, 0.0,			0.0,	0.176000, 0.020000, 0.039999,  89.199989, -0.900000, 1.099991);
 	item_PetrolBomb		= DefineItemType("Petrol Bomb",			"PetrolBomb",		1650,	3,	0.0, 0.0, 0.0,			0.27,	0.143402, 0.027548, 0.063652, 0.000000, 253.648208, 0.000000);
 	item_CodePart		= DefineItemType("Code",				"CodePart",			1898,	1,	90.0, 0.0, 0.0,			0.02,	0.086999, 0.017999, 0.075999,  0.000000, 0.000000, 100.700019);
-	item_LargeBackpack	= DefineItemType("Large Backpack",		"LargeBackpack",	3026,	5,	270.0, 0.0, 90.0,		0.0,	0.470918, 0.150153, 0.055384, 181.319580, 7.513789, 163.436065, false, 0xFFF4A460);
+	item_LargeBackpack	= DefineItemType("Large Backpack",		"LargeBackpack",	3026,	5,	270.0, 0.0, 90.0,		0.0,	0.470918, 0.150153, 0.055384, 181.319580, 7.513789, 163.436065, false, 0xFFF4A460, .longpickup = true);
 	item_LocksmithKit	= DefineItemType("Locksmith Kit",		"LocksmithKit",		1210,	3,	0.0, 0.0, 90.0,			0.0,	0.285915, 0.078406, -0.009429, 0.000000, 270.000000, 0.000000, false, 0xFFF4A460);
 	item_XmasHat		= DefineItemType("Christmas Hat",		"XmasHat",			19066,	1,	0.0, 0.0, 0.0,			0.0,	0.135000, -0.018001, -0.002000,  90.000000, 174.500061, 9.600001);
 	item_VehicleWeapon	= DefineItemType("VEHICLE_WEAPON",		"VehicleWeapon",	356,	99,	90.0);
@@ -750,36 +757,36 @@ public OnScriptInit()
 	item_Ammo308		= DefineItemType(".308 Rounds",			"Ammo308",			2039,	1,	0.0, 0.0, 0.0,			0.082,	0.221075, 0.067746, 0.037494, 87.375968, 305.182189, 5.691741);
 	item_Model70Rifle	= DefineItemType("Model 70",			"Model70Rifle",		358,	5,	90.0);
 	item_LenKnocksRifle	= DefineItemType("The Len-Knocks",		"LenKnocksRifle",	358,	5,	90.0);
-	item_Daypack		= DefineItemType("Daypack",				"Daypack",			363,	3,	270.0, 0.0, 0.0,		0.0,	0.052853, 0.034967, -0.177413, 0.000000, 261.397491, 349.759826);
-	item_MediumBag		= DefineItemType("Medium Bag",			"MediumBag",		3026,	4,	270.0, 0.0, 90.0,		0.0,	0.470918, 0.150153, 0.055384, 181.319580, 7.513789, 163.436065, false, 0xFFFFFF00);
-	item_Rucksack		= DefineItemType("Travel Rucksack",		"Rucksack",			19559,	5,	91.0, -4.0, 0.0,		0.16,	0.350542, 0.017385, 0.060469, 0.000000, 260.845062, 0.000000);
+	item_Daypack		= DefineItemType("Daypack",				"Daypack",			363,	3,	270.0, 0.0, 0.0,		0.0,	0.052853, 0.034967, -0.177413, 0.000000, 261.397491, 349.759826, .longpickup = true);
+	item_MediumBag		= DefineItemType("Medium Bag",			"MediumBag",		3026,	4,	270.0, 0.0, 90.0,		0.0,	0.470918, 0.150153, 0.055384, 181.319580, 7.513789, 163.436065, false, 0xFFFFFF00, .longpickup = true);
+	item_Rucksack		= DefineItemType("Travel Rucksack",		"Rucksack",			19559,	5,	91.0, -4.0, 0.0,		0.16,	0.350542, 0.017385, 0.060469, 0.000000, 260.845062, 0.000000, .longpickup = true);
 	item_SeedBag		= DefineItemType("Seeds",				"SeedBag",			2663,	2,	0.0, 0.0, 0.0,			0.205,	0.320356, 0.042146, 0.049817, 0.000000, 260.512817, 349.967254, false, 0xFFF4A460);
 	item_Note			= DefineItemType("Note",				"Note",				2953,	1,	0.0, 0.0, 0.0,			0.0,	0.083999, 0.022000, -0.013000,  -82.300018, -14.900006, -83.200042, false, 0xCAFFFFFF);
 	item_Tomato			= DefineItemType("Tomato",				"Tomato",			19577,	1,	170.0, 0.0, 0.0,		0.03,	0.054000, 0.055999, 0.013999, 0.000000, 0.000003, 0.000003);
 // 200
-	item_HeartShapedBox	= DefineItemType("Heart Shaped Box",	"HeartShapedBox",	1240,	1,	90.0, 0.0, 0.0,			-0.02,	0.171999, 0.077999, -0.016999,  0.000000, 0.000000, 10.200000);
+	item_HeartShapedBox	= DefineItemType("Heart Shaped Box",	"HeartShapedBox",	1240,	1,	90.0, 0.0, 0.0,			-0.02,	0.171999, 0.077999, -0.016999,  0.000000, 0.000000, 10.200000, .longpickup = true);
 	item_AntiSepBandage	= DefineItemType("Antiseptic Bandage",	"AntiSepBandage",	11748,	2,	0.0, 0.0, 0.0,			0.01,	0.072000, 0.041999, 0.000000,  90.299995, 1.500011, 103.599960);
-	item_WoodLog		= DefineItemType("Wood Log",			"WoodLog",			19632,	1,	0.0, 0.0, 0.0,			0.0,	0.034999, 0.018998, -0.150000,  -74.199989, -110.000022, -54.900020);
-	item_Sledgehammer	= DefineItemType("sledgehammer",		"Sledgehammer",		19631,	1,	0.0, 0.0, 0.0,			0.0,	0.075000, -0.004000, 0.269000,  -84.600021, -70.899993, 0.000000);
-	item_RawFish		= DefineItemType("fish",				"RawFish",			19630,	1,	0.0, 0.0, 0.0,			0.0,	0.047000, 0.021999, 0.083000,  -84.299980, -75.299972, 103.100028);
-	item_Spanner		= DefineItemType("wrench",				"Spanner",			19627,	1,	0.0, 0.0, 0.0,			0.0,	0.073000, 0.022000, 0.035000,  -84.299980, -75.299972, 103.100028);
-	item_Suitcase		= DefineItemType("suitcase",			"Suitcase",			19624,	1,	0.0, 0.0, 0.0,			0.0,	0.086000, 0.022000, 0.022000,  -84.299980, -75.299972, 103.100028);
-	item_OilCan			= DefineItemType("oilcan",				"OilCan",			19621,	1,	0.0, 0.0, 0.0,			0.0,	0.075999, 0.022000, 0.011000,  7.800007, -11.899963, 81.800025);
-	item_RadioBox		= DefineItemType("small amp",			"RadioBox",			19612,	1,	0.0, 0.0, 0.0,			0.0,	-0.090000, 0.132999, -0.202000,  63.499916, 108.599983, 95.499877);
-	item_BigSword		= DefineItemType("Big Ass Sword",		"BigSword",			19590,	1,	0.0, 0.0, 0.0,			0.0,	0.069000, 0.030999, 0.012000,  53.499919, -99.100090, 146.499862);
+	item_WoodLog		= DefineItemType("Wood Log",			"WoodLog",			19632,	1,	0.0, 0.0, 0.0,			0.000,	0.034999, 0.018998, -0.150000,  -74.199989, -110.000022, -54.900020);
+	item_Sledgehammer	= DefineItemType("Sledgehammer",		"Sledgehammer",		19631,	1,	0.0, 90.0, 0.0,			0.000,	0.075000, -0.004000, 0.269000,  -84.600021, -70.899993, 0.000000);
+	item_RawFish		= DefineItemType("Fish",				"RawFish",			19630,	1,	0.0, 0.0, 0.0,			0.000,	0.047000, 0.021999, 0.083000,  -84.299980, -75.299972, 103.100028);
+	item_Spanner		= DefineItemType("Wrench",				"Spanner",			19627,	1,	0.0, 0.0, 0.0,			0.000,	0.073000, 0.022000, 0.035000,  -84.299980, -75.299972, 103.100028);
+	item_Suitcase		= DefineItemType("Suitcase",			"Suitcase",			19624,	1,	0.0, 0.0, 0.0,			0.371,	0.086000, 0.022000, 0.022000,  -84.299980, -75.299972, 103.100028, .longpickup = true);
+	item_OilCan			= DefineItemType("Oilcan",				"OilCan",			19621,	1,	0.0, 0.0, 0.0,			0.060,	0.075999, 0.022000, 0.011000,  7.800007, -11.899963, 81.800025);
+	item_RadioBox		= DefineItemType("Small Amp",			"RadioBox",			19612,	1,	0.0, 0.0, 0.0,			-0.020,	-0.090000, 0.132999, -0.202000,  63.499916, 108.599983, 95.499877);
+	item_BigSword		= DefineItemType("Big Ass Sword",		"BigSword",			19590,	1,	0.0, 90.0, 0.0,			-0.019,	0.069000, 0.030999, 0.012000,  53.499919, -99.100090, 146.499862);
 // 210
-	item_Microphone		= DefineItemType("Microphone",			"Microphone",		19610,	1,	0.0, 0.0, 0.0,			0.0,	0.078000, 0.030999, 0.012000,  53.499919, -99.100090, -46.300144);
-	item_Spatula		= DefineItemType("Spatula",				"Spatula",			19586,	1,	0.0, 0.0, 0.0,			0.0,	0.078000, 0.030999, 0.012000,  53.499919, -99.100090, 150.899887);
-	item_Pan			= DefineItemType("Pan",					"Pan",				19584,	1,	0.0, 0.0, 0.0,			0.0,	0.078000, 0.030999, 0.012000,  39.499954, -77.500083, 128.299819);
-	item_Knife2			= DefineItemType("Kitchen Knife",		"Knife2",			19583,	1,	0.0, 0.0, 0.0,			0.0,	0.085999, 0.024999, 0.000000,  -94.000007, 179.299957, 0.599997);
-	item_Meat2			= DefineItemType("Meat",				"Meat2",			19582,	1,	0.0, 0.0, 0.0,			0.0,	0.044000, 0.017999, 0.099000,  90.099960, 7.200009, 1.799715);
-	item_FryingPan		= DefineItemType("Frying Pan",			"FryingPan",		19581,	1,	0.0, 0.0, 0.0,			0.0,	0.078000, 0.017999, 0.025000,  -29.900056, -88.800018, 59.299705);
-	item_PizzaOnly		= DefineItemType("Pizza",				"PizzaOnly",		19580,	1,	0.0, 0.0, 0.0,			0.0,	0.078000, 0.017999, 0.025000,  -29.900056, -88.800018, 59.299705);
-	item_BreadLoaf		= DefineItemType("Loaf of Bread",		"BreadLoaf",		19579,	1,	0.0, 0.0, 0.0,			0.0,	0.232000, 0.053998, 0.047000,  83.599945, -56.300045, 100.099731);
-	item_Banana			= DefineItemType("Banana",				"Banana",			19578,	1,	0.0, 0.0, 0.0,			0.0,	0.059000, 0.017998, 0.026000,  86.399932, -161.300003, 83.699714);
-	item_Orange			= DefineItemType("Orange",				"Orange",			19574,	1,	0.0, 0.0, 0.0,			0.0,	0.078000, 0.040998, 0.009000,  86.399932, -161.300003, 83.699714);
+	item_Microphone		= DefineItemType("Microphone",			"Microphone",		19610,	1,	0.0, 0.0, 0.0,			0.000,	0.078000, 0.030999, 0.012000,  53.499919, -99.100090, -46.300144);
+	item_Spatula		= DefineItemType("Spatula",				"Spatula",			19586,	1,	0.0, 0.0, 0.0,			0.000,	0.078000, 0.030999, 0.012000,  53.499919, -99.100090, 150.899887);
+	item_Pan			= DefineItemType("Pan",					"Pan",				19584,	1,	0.0, 0.0, 0.0,			0.100,	0.078000, 0.030999, 0.012000,  39.499954, -77.500083, 128.299819);
+	item_Knife2			= DefineItemType("Kitchen Knife",		"Knife2",			19583,	1,	0.0, 0.0, 0.0,			0.000,	0.085999, 0.024999, 0.000000,  -94.000007, 179.299957, 0.599997);
+	item_Meat2			= DefineItemType("Meat",				"Meat2",			19582,	1,	0.0, 0.0, 0.0,			0.000,	0.044000, 0.017999, 0.099000,  90.099960, 7.200009, 1.799715);
+	item_FryingPan		= DefineItemType("Frying Pan",			"FryingPan",		19581,	1,	0.0, 0.0, 0.0,			-0.028,	0.078000, 0.017999, 0.025000,  -29.900056, -88.800018, 59.299705);
+	item_PizzaOnly		= DefineItemType("Pizza",				"PizzaOnly",		19580,	1,	0.0, 0.0, 0.0,			0.000,	0.078000, 0.017999, 0.025000,  -29.900056, -88.800018, 59.299705);
+	item_BreadLoaf		= DefineItemType("Loaf of Bread",		"BreadLoaf",		19579,	1,	0.0, 0.0, 0.0,			0.000,	0.232000, 0.053998, 0.047000,  83.599945, -56.300045, 100.099731);
+	item_Banana			= DefineItemType("Banana",				"Banana",			19578,	1,	0.0, 0.0, 0.0,			0.000,	0.059000, 0.017998, 0.026000,  86.399932, -161.300003, 83.699714);
+	item_Orange			= DefineItemType("Orange",				"Orange",			19574,	1,	0.0, 0.0, 0.0,			0.000,	0.078000, 0.040998, 0.009000,  86.399932, -161.300003, 83.699714);
 // 220
-	item_WheelLock		= DefineItemType("Lock and Chain",		"WheelLock",		2680,	1,	0.0, 0.0, 0.0,			0.0,	0.215000, -0.037999, 0.059000,  -48.999996, -110.599960, -54.000000);
+	item_WheelLock		= DefineItemType("Lock and Chain",		"WheelLock",		2680,	1,	0.0, 0.0, 0.0,			0.000,	0.215000, -0.037999, 0.059000,  -48.999996, -110.599960, -54.000000);
 	item_RedApple		= DefineItemType("Red Apple",			"RedApple",			19575,	1,	170.0, 0.0, 0.0,		0.03,	0.100000, 0.039000, 0.018000,  4.400032, -2.300116, 138.699905);
 	item_Lemon			= DefineItemType("Lemon",				"Lemon",			19574,	1,	170.0, 0.0, 0.0,		0.03,	0.000003, 0.000003, 0.000003, 0.000000, 0.000003, 0.000003);
 	item_PisschBox		= DefineItemType("Pissh Box",			"PisschBox",		19572,	1,	0.0, 0.0, 0.0,			0.0363,	-0.001000, -0.043999, -0.167999,  -110.499992, -12.499979, 83.099990);
@@ -817,13 +824,13 @@ public OnScriptInit()
 	item_Boot			= DefineItemType("Boot",				"Boot",				11735,	1,	0.0, 0.0, 0.0,			0.02,	0.193000, 0.030000, -0.266999,  -4.899966, -6.200114, 84.699867);
 	item_Doormat		= DefineItemType("Doormat",				"Doormat",			11737,	1,	0.0, 0.0, 0.0,			0.02,	0.441000, 0.027000, 0.017999,  96.300025, -2.500113, 97.699829);
 	item_CakeSlice		= DefineItemType("Cake Slice",			"CakeSlice",		11742,	1,	0.0, 0.0, 0.0,			0.026,	0.107000, 0.052000, 0.017999,  96.300025, -87.400100, 7.399830);
-	item_Holdall		= DefineItemType("Holdall",				"Holdall",			11745,	1,	0.0, 0.0, 0.0,			-0.117,	-0.015999, 0.150000, -0.187000,  74.200035, -161.400177, -6.000168, true);
+	item_Holdall		= DefineItemType("Holdall",				"Holdall",			11745,	1,	0.0, 0.0, 0.0,			0.113,	-0.015999, 0.150000, -0.187000,  74.200035, -161.400177, -6.000168, true, .longpickup = true);
 	item_GrnApple		= DefineItemType("Green Apple",			"GrnApple",			19576,	1,	0.0, 0.0, 0.0,			0.03,	0.107000, 0.039000, 0.014999,  -168.799911, -161.400177, -0.400169);
 	item_Wine1			= DefineItemType("Wine",				"Wine1",			19820,	1,	0.0, 0.0, 0.0,			0.0,	0.169000, 0.053000, -0.506999,  -178.499954, -170.700210, -10.200168);
 	item_Wine2			= DefineItemType("Wine",				"Wine2",			19821,	1,	0.0, 0.0, 0.0,			0.0,	0.169000, 0.053000, -0.506999,  -178.499954, -170.700210, -10.200168);
 	item_Wine3			= DefineItemType("Wine",				"Wine3",			19822,	1,	0.0, 0.0, 0.0,			0.0,	0.169000, 0.053000, -0.423999,  -178.499954, -170.700210, -10.200168);
 // 260
-	item_whisky			= DefineItemType("whisky",				"whisky",			19823,	1,	0.0, 0.0, 0.0,			0.0,	0.132000, 0.041000, -0.286999,  -178.499954, -170.700210, -10.200168);
+	item_whisky			= DefineItemType("Whisky",				"whisky",			19823,	1,	0.0, 0.0, 0.0,			0.0,	0.132000, 0.041000, -0.286999,  -178.499954, -170.700210, -10.200168);
 	item_Champagne		= DefineItemType("Champagne",			"Champagne",		19824,	1,	0.0, 0.0, 0.0,			0.0,	0.132000, 0.041000, -0.346999,  -178.499954, -170.700210, -10.200168);
 	item_Ham			= DefineItemType("Ham",					"Ham",				19847,	1,	0.0, 0.0, 0.0,			0.0,	0.085000, 0.024000, 0.044000,  -77.199935, -167.100173, 15.799836);
 	item_Steak			= DefineItemType("Steak",				"Steak",			19882,	1,	0.0, 0.0, 0.0,			-0.02,	0.148000, 0.024000, 0.044000,  -77.199935, -167.100173, 15.799836);
@@ -1287,7 +1294,6 @@ public OnScriptInit()
 	SetItemTypeHolsterable(item_StunGun,		8, 0.061868, 0.008748, 0.136682, 254.874801, 0.318417, 0.176398, 300,	"PED",		"PHONE_IN");
 	SetItemTypeHolsterable(item_Shield,			1, 0.027000, -0.039999, 0.170000, 270.0000, -171.0000, 90.0000, 800,	"GOGGLES",	"GOGGLES_PUT_ON");
 	SetItemTypeHolsterable(item_Mailbox,		1, 0.457000, -0.094999, -0.465000,  2.099999, -42.600, -94.500, 800,	"GOGGLES",	"GOGGLES_PUT_ON");
-	SetItemTypeHolsterable(item_DogsBreath,		8, 0.061868, 0.008748, 0.136682, 254.874801, 0.318417, 0.176398, 500,	"PED",		"PHONE_IN");
 	SetItemTypeHolsterable(item_Model70Rifle,	1, 0.214089, -0.126031, 0.114131, 0.000000, 159.522552, 0.000000, 800,	"GOGGLES",	"GOGGLES_PUT_ON");
 	SetItemTypeHolsterable(item_LenKnocksRifle,	1, 0.214089, -0.126031, 0.114131, 0.000000, 159.522552, 0.000000, 800,	"GOGGLES",	"GOGGLES_PUT_ON");
 
@@ -1530,6 +1536,8 @@ public OnScriptInit()
 	DefineSafeboxType(item_SmallBox,		8);
 	DefineSafeboxType(item_LargeBox,		12);
 	DefineSafeboxType(item_Capsule,			2);
+	DefineSafeboxType(item_Suitcase,		6);
+	DefineSafeboxType(item_Holdall,			6);
 
 
 	// BAG ITEM TYPE DEFINITIONS
@@ -1568,9 +1576,12 @@ public OnScriptInit()
 	DefineItemCraftSet(item_Bandage, item_Knife, true, item_Clothes, false);
 	DefineItemCraftSet(item_WheelLock, item_WheelLock, false, item_LocksmithKit, false);
 	DefineItemCraftSet(item_Bottle, item_Bottle, true, item_Bottle, true);
-	DefineItemCraftSet(item_Campfire, item_MediumBox, false, item_MediumBox, false);
-	DefineItemCraftSet(item_Campfire, item_SmallBox, false, item_MediumBox, false);
-	DefineItemCraftSet(item_Campfire, item_SmallBox, false, item_SmallBox, false);
+
+	// items created by using a tool item on them in the world
+	SetCraftSetConstructible(3000, item_Log, DefineItemCraftSet(item_Campfire, item_Log, false, item_Log, false));
+	SetCraftSetConstructible(3000, item_Crowbar, DefineItemCraftSet(item_Campfire, item_SmallBox, false, item_SmallBox, false));
+	SetCraftSetConstructible(3000, item_Crowbar, DefineItemCraftSet(item_Campfire, item_MediumBox, false, item_MediumBox, false));
+	SetCraftSetConstructible(3000, item_Crowbar, DefineItemCraftSet(item_Campfire, item_SmallBox, false, item_MediumBox, false));
 
 	// items created with a workbench
 	SetConstructionSetWorkbench(SetCraftSetConstructible(15000, item_Screwdriver, DefineItemCraftSet(item_IedBomb, item_FireworkBox, false, item_PowerSupply, false)));
@@ -1597,7 +1608,7 @@ public OnScriptInit()
 	SetConstructionSetWorkbench(SetCraftSetConstructible(15000, item_Screwdriver, DefineItemCraftSet(item_LocksmithKit, item_Key, false, item_Motor, false)));
 	SetConstructionSetWorkbench(SetCraftSetConstructible(15000, item_Screwdriver, DefineItemCraftSet(item_StarterMotor, item_Motor, false, item_Fluctuator, false)));
 	SetConstructionSetWorkbench(SetCraftSetConstructible(15000, item_Screwdriver, DefineItemCraftSet(item_AdvancedKeypad, item_IoUnit, false, item_PowerSupply, false)));
-	SetConstructionSetWorkbench(SetCraftSetConstructible(15000, item_Screwdriver, DefineItemCraftSet(item_Locator, item_MobilePhone, false, item_RadioPole, false)));
+	SetConstructionSetWorkbench(SetCraftSetConstructible(15000, item_Screwdriver, DefineItemCraftSet(item_Locator, item_MobilePhone, false, item_RadioPole, false, item_DataInterface, false, item_PowerSupply, false)));
 
 	// Uncomment to write out crafting recipes in wikia format!
 	//WriteAllCombosToFile();
@@ -1689,9 +1700,99 @@ public OnScriptInit()
 	liquid_StrongThermite	= DefineLiquidType("Thermite Mix II",		liquid_IronPowder | liquid_IronOxide | liquid_Magnesium | liquid_CopperOxide);
 
 
-	/*
-		VEHICLE GROUP AND TYPE DEFINITIONS
+	// TREE SPECIES DEFINITIONS
+	tree_Desert				= DefineTreeCategory("desert");
+	tree_DarkForest			= DefineTreeCategory("darkforest");
+	tree_LightForest		= DefineTreeCategory("lightforest");
+	tree_GrassPlanes		= DefineTreeCategory("grassplanes");
+	// Commented out species are models that stretch when rotated
+	DefineTreeSpecies(664, 5.0, 2500.0, 20.0, 25, tree_DarkForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(670, 5.0, 2400.0, 20.0, 26, tree_DarkForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log, 2.0);
+	DefineTreeSpecies(685, 2.0, 1600.0, 24.0, 14, tree_DarkForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(686, 2.0, 1600.0, 24.0, 14, tree_DarkForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(687, 2.0, 1800.0, 24.0, 15, tree_DarkForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(693, 5.0, 2800.0, 18.0, 30, tree_DarkForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log, 2.0);
+	DefineTreeSpecies(696, 5.0, 2600.0, 18.0, 30, tree_DarkForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log, 2.0);
+	DefineTreeSpecies(697, 5.0, 2600.0, 20.0, 30, tree_DarkForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log, 2.0);
+	DefineTreeSpecies(704, 5.0, 2600.0, 20.0, 30, tree_DarkForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(719, 5.0, 2600.0, 20.0, 30, tree_DarkForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log, -1.4);
+	DefineTreeSpecies(720, 5.0, 2600.0, 18.0, 30, tree_DarkForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(721, 6.0, 3000.0, 18.0, 38, tree_DarkForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log, -3.2);
+	DefineTreeSpecies(722, 5.0, 2600.0, 22.0, 28, tree_DarkForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log, -2.2);
+	DefineTreeSpecies(723, 5.0, 2500.0, 22.0, 28, tree_DarkForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log, 6.0);
+	DefineTreeSpecies(724, 5.0, 2600.0, 18.0, 30, tree_DarkForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(725, 5.0, 2600.0, 18.0, 30, tree_DarkForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(881, 1.0, 600.0, 25.0, 7, tree_DarkForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
 
+	DefineTreeSpecies(615, 2.0, 1200.0, 25.0, 15, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(617, 2.0, 900.0, 25.0, 10, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(654, 2.0, 1000.0, 25.0, 12, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(655, 2.0, 800.0, 25.0, 8, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(656, 2.5, 1100.0, 25.0, 16, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(657, 2.0, 750.0, 25.0, 8, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(658, 2.0, 1200.0, 25.0, 14, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(661, 2.0, 850.0, 25.0, 12, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(726, 2.0, 1700.0, 25.0, 16, tree_LightForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(727, 2.0, 900.0, 25.0, 14, tree_LightForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(729, 2.0, 900.0, 25.0, 14, tree_LightForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(730, 2.0, 1100.0, 25.0, 15, tree_LightForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(731, 3.0, 1200.0, 20.0, 24, tree_LightForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(732, 1.5, 800.0, 25.0, 9, tree_LightForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(733, 2.0, 1000.0, 25.0, 15, tree_LightForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(734, 2.0, 1000.0, 25.0, 15, tree_LightForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(735, 2.0, 1200.0, 20.0, 24, tree_LightForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(763, 1.5, 800.0, 25.0, 8, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(764, 2.0, 1000.0, 25.0, 12, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(765, 1.5, 700.0, 30.0, 6, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(766, 1.5, 800.0, 30.0, 8, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(770, 1.5, 800.0, 28.0, 8, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(771, 2.0, 1000.0, 25.0, 14, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(779, 1.5, 700.0, 30.0, 6, tree_LightForest, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(882, 2.0, 700.0, 25.0, 8, tree_LightForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(883, 2.0, 600.0, 25.0, 8, tree_LightForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(884, 2.0, 600.0, 25.0, 6, tree_LightForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(885, 2.0, 650.0, 25.0, 6, tree_LightForest, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+
+	DefineTreeSpecies(629, 1.0, 400.0, 25.0, 3, tree_Desert, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(674, 1.0, 500.0, 25.0, 3, tree_Desert, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(676, 1.0, 400.0, 25.0, 2, tree_Desert, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(680, 1.0, 500.0, 25.0, 3, tree_Desert, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(681, 1.0, 400.0, 25.0, 2, tree_Desert, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(773, 1.0, 650.0, 30.0, 8, tree_Desert, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(891, 1.0, 400.0, 30.0, 5, tree_Desert, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(904, 1.0, 300.0, 25.0, 3, tree_Desert, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	// cacti
+	DefineTreeSpecies(650, 1.0, 600.0, 28.0, 1, tree_Desert, FALL_TYPE_ROTATE, item_Knife, item_CakeSlice);
+	DefineTreeSpecies(651, 1.0, 600.0, 28.0, 1, tree_Desert, FALL_TYPE_ROTATE, item_Knife, item_CakeSlice);
+
+	DefineTreeSpecies(669, 2.5, 1200.0, 25.0, 14, tree_GrassPlanes, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(671, 1.5, 600.0, 25.0, 8, tree_GrassPlanes, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(672, 2.5, 1200.0, 25.0, 10, tree_GrassPlanes, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(691, 3.5, 1200.0, 25.0, 12, tree_GrassPlanes, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(703, 3.5, 1200.0, 25.0, 12, tree_GrassPlanes, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(705, 3.5, 1950.0, 25.0, 20, tree_GrassPlanes, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(706, 3.5, 1500.0, 15.0, 22, tree_GrassPlanes, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(707, 3.5, 1500.0, 15.0, 22, tree_GrassPlanes, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(708, 2.5, 1350.0, 20.0, 18, tree_GrassPlanes, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(767, 2.0, 1200.0, 25.0, 15, tree_GrassPlanes, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(768, 2.0, 1200.0, 25.0, 15, tree_GrassPlanes, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(769, 2.0, 1200.0, 25.0, 15, tree_GrassPlanes, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(772, 1.5, 1000.0, 25.0, 12, tree_GrassPlanes, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(774, 1.5, 1000.0, 25.0, 12, tree_GrassPlanes, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(775, 1.5, 800.0, 25.0, 8, tree_GrassPlanes, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(776, 1.5, 800.0, 25.0, 9, tree_GrassPlanes, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(777, 1.5, 1100.0, 25.0, 14, tree_GrassPlanes, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(778, 1.5, 800.0, 25.0, 8, tree_GrassPlanes, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(780, 1.5, 800.0, 25.0, 8, tree_GrassPlanes, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(781, 1.0, 650.0, 25.0, 4, tree_GrassPlanes, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(782, 1.5, 800.0, 25.0, 6, tree_GrassPlanes, FALL_TYPE_ROTATE, item_Chainsaw, item_Log);
+	DefineTreeSpecies(886, 1.0, 800.0, 25.0, 5, tree_GrassPlanes, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(887, 1.5, 800.0, 25.0, 6, tree_GrassPlanes, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+	DefineTreeSpecies(888, 1.0, 600.0, 25.0, 4, tree_GrassPlanes, FALL_TYPE_ZDROP, item_Chainsaw, item_Log);
+
+	/*
+		VEHICLE GROUP AND TYPE DEFINITIONS	
+		
 		Groups:
 			Civilian:	Regular vehicles, most common and found around cities and towns.
 			Industrial:	Work vehicles found in industrial areas, factories and docks.
