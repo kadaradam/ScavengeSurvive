@@ -109,7 +109,11 @@ new stock
 	liquid_Water,
 	liquid_Milk,
 	liquid_Orange,
+	liquid_Apple,
 	liquid_Whiskey,
+	liquid_WineRed,
+	liquid_WineWhite,
+	liquid_Champagne,
 	liquid_Ethanol,
 	liquid_Turpentine,
 	liquid_HydroAcid,
@@ -991,7 +995,7 @@ public OnScriptInit()
 	SetItemTypeMaxArrayData(item_Burger,		3);
 	SetItemTypeMaxArrayData(item_BurgerBox,		3);
 	SetItemTypeMaxArrayData(item_Taco,			3);
-	SetItemTypeMaxArrayData(item_GasCan,		1);
+	SetItemTypeMaxArrayData(item_GasCan,		2);
 	SetItemTypeMaxArrayData(item_Clothes,		1);
 	SetItemTypeMaxArrayData(item_HelmArmy,		1);
 	SetItemTypeMaxArrayData(item_MediumBox,		3);
@@ -1155,7 +1159,7 @@ public OnScriptInit()
 	SetItemTypeMaxArrayData(item_Doormat,		1);
 	SetItemTypeMaxArrayData(item_CakeSlice,		3);
 	SetItemTypeMaxArrayData(item_Holdall,		3);
-	SetItemTypeMaxArrayData(item_GrnApple,		1);
+	SetItemTypeMaxArrayData(item_GrnApple,		3);
 	SetItemTypeMaxArrayData(item_Wine1,			3);
 	SetItemTypeMaxArrayData(item_Wine2,			3);
 	SetItemTypeMaxArrayData(item_Wine3,			3);
@@ -1475,47 +1479,34 @@ public OnScriptInit()
 
 
 	// FOOD ITEM TYPE DEFINITIONS
-	DefineFoodItem(item_HotDog,			4, 18.00, 1, 1, 0, 1);
-	DefineFoodItem(item_Pizza,			6, 18.30, 1, 0, 0, 1);
-	DefineFoodItem(item_Burger,			4, 16.25, 1, 1, 0, 1);
-	DefineFoodItem(item_BurgerBox,		4, 16.25, 1, 0, 0, 1);
-	DefineFoodItem(item_Taco,			4, 13.75, 1, 0, 0, 1);
-	DefineFoodItem(item_BurgerBag,		4, 17.50, 1, 0, 0, 1);
-	DefineFoodItem(item_Meat,			8, 18.12, 1, 1, 0, 1);
-	DefineFoodItem(item_Bottle,			10, 0.6, 0, 0, 1, 0);
-	DefineFoodItem(item_CanDrink,		10, 0.6, 0, 0, 1, 0);
-	DefineFoodItem(item_Tomato,			3, 3.0, 1, 0, 0, 1);
-	DefineFoodItem(item_RawFish,		4, 4.5, 1, 1, 0, 1);
-	DefineFoodItem(item_Meat2,			6, 16.7, 1, 1, 0, 1);
-	DefineFoodItem(item_PizzaOnly,		6, 18.5, 1, 0, 0, 1);
-	DefineFoodItem(item_BreadLoaf,		10, 6.32, 1, 0, 0, 1);
-	DefineFoodItem(item_Banana,			3, 5.5, 0, 0, 0, 1);
-	DefineFoodItem(item_Orange,			4, 4.5, 0, 0, 0, 1);
-	DefineFoodItem(item_RedApple,		4, 4.5, 0, 0, 0, 1);
-	DefineFoodItem(item_Lemon,			4, 4.0, 0, 0, 0, 1);
-	DefineFoodItem(item_PizzaBox,		6, 16.5, 1, 0, 0, 1);
-	DefineFoodItem(item_MilkBottle,		8, 3.5, 0, 0, 1, 0);
-	DefineFoodItem(item_MilkCarton,		8, 3.5, 0, 0, 1, 0);
-	DefineFoodItem(item_IceCream,		12, 4.1, 1, 0, 0, 1);
-	DefineFoodItem(item_FishyFingers,	10, 6.3, 1, 0, 0, 1);
-	DefineFoodItem(item_IceCreamBars,	12, 3.9, 0, 0, 0, 1);
-	DefineFoodItem(item_AppleJuice,		8, 0.9, 0, 0, 1, 0);
-	DefineFoodItem(item_OrangeJuice,	8, 0.9, 0, 0, 1, 0);
-	DefineFoodItem(item_Cereal1,		6, 2.2, 0, 0, 1, 0);
-	DefineFoodItem(item_Cereal2,		6, 2.2, 0, 0, 1, 0);
-	DefineFoodItem(item_WrappedMeat,	4, 6.7, 1, 1, 0, 1);
-	DefineFoodItem(item_Ketchup,		12, 0.2, 0, 0, 1, 0);
-	DefineFoodItem(item_Mustard,		12, 0.2, 0, 0, 1, 0);
-	DefineFoodItem(item_CakeSlice,		1, 2.5, 1, 0, 0, 1);
-	DefineFoodItem(item_GrnApple,		4, 4.5, 0, 0, 0, 1);
-	DefineFoodItem(item_Wine1,			10, 0.5, 0, 0, 1, 0);
-	DefineFoodItem(item_Wine2,			10, 0.5, 0, 0, 1, 0);
-	DefineFoodItem(item_Wine3,			10, 0.5, 0, 0, 1, 0);
-	DefineFoodItem(item_whisky,			8, 1.0, 0, 0, 1, 0);
-	DefineFoodItem(item_Champagne,		10, 0.6, 0, 0, 1, 0);
-	DefineFoodItem(item_Ham,			6, 6.12, 1, 1, 0, 1);
-	DefineFoodItem(item_Steak,			4, 6.49, 1, 1, 0, 1);
-	DefineFoodItem(item_Bread,			1, 2.34, 1, 0, 0, 1);
+	DefineFoodItem(item_HotDog,			4, 18.00,	1, 1, 1);
+	DefineFoodItem(item_Pizza,			6, 18.30,	1, 0, 0);
+	DefineFoodItem(item_Burger,			4, 16.25,	1, 1, 1);
+	DefineFoodItem(item_BurgerBox,		4, 16.25,	1, 0, 0);
+	DefineFoodItem(item_Taco,			4, 13.75,	1, 0, 1);
+	DefineFoodItem(item_BurgerBag,		4, 17.50,	1, 0, 0);
+	DefineFoodItem(item_Meat,			8, 18.12,	1, 1, 1);
+	DefineFoodItem(item_Tomato,			3, 3.0,		1, 0, 1);
+	DefineFoodItem(item_RawFish,		4, 4.5,		1, 1, 1);
+	DefineFoodItem(item_Meat2,			6, 16.7,	1, 1, 1);
+	DefineFoodItem(item_PizzaOnly,		6, 18.5,	1, 0, 1);
+	DefineFoodItem(item_BreadLoaf,		10, 6.32,	1, 0, 1);
+	DefineFoodItem(item_Banana,			3, 5.5,		0, 0, 1);
+	DefineFoodItem(item_Orange,			4, 4.5,		0, 0, 1);
+	DefineFoodItem(item_RedApple,		4, 4.5,		0, 0, 1);
+	DefineFoodItem(item_Lemon,			4, 4.0,		0, 0, 1);
+	DefineFoodItem(item_PizzaBox,		6, 16.5,	1, 0, 0);
+	DefineFoodItem(item_IceCream,		12, 4.1,	1, 0, 0);
+	DefineFoodItem(item_FishyFingers,	10, 6.3,	1, 0, 0);
+	DefineFoodItem(item_IceCreamBars,	12, 3.9,	0, 0, 0);
+	DefineFoodItem(item_Cereal1,		6, 2.2,		0, 0, 0);
+	DefineFoodItem(item_Cereal2,		6, 2.2,		0, 0, 0);
+	DefineFoodItem(item_WrappedMeat,	4, 6.7,		1, 1, 1);
+	DefineFoodItem(item_CakeSlice,		1, 2.5,		1, 0, 1);
+	DefineFoodItem(item_GrnApple,		4, 4.5,		0, 0, 1);
+	DefineFoodItem(item_Ham,			6, 6.12,	1, 1, 1);
+	DefineFoodItem(item_Steak,			4, 6.49,	1, 1, 1);
+	DefineFoodItem(item_Bread,			5, 2.34,	1, 0, 1);
 
 
 	// DEFENSIVE ITEM TYPE DEFINITIONS
@@ -1673,31 +1664,54 @@ public OnScriptInit()
 
 
 	// LIQUID TYPE DEFINITIONS
-	liquid_Water			= DefineLiquidType("Water",					ROOT_LIQUID_BITMASK);
-	liquid_Milk				= DefineLiquidType("Milk",					ROOT_LIQUID_BITMASK);
-	liquid_Orange			= DefineLiquidType("Orange Juice",			ROOT_LIQUID_BITMASK);
-	liquid_Whiskey			= DefineLiquidType("Whiskey",				ROOT_LIQUID_BITMASK);
-	liquid_Ethanol			= DefineLiquidType("Ethanol",				ROOT_LIQUID_BITMASK);
-	liquid_Turpentine		= DefineLiquidType("Turpentine",			ROOT_LIQUID_BITMASK);
-	liquid_HydroAcid		= DefineLiquidType("Hydrochloric Acid",		ROOT_LIQUID_BITMASK);
-	liquid_CarbonatedWater	= DefineLiquidType("Carbonated Water",		ROOT_LIQUID_BITMASK);
-	liquid_Lemon			= DefineLiquidType("Lemon Juice",			ROOT_LIQUID_BITMASK);
-	liquid_Sugar			= DefineLiquidType("Sugar",					ROOT_LIQUID_BITMASK);
-	liquid_Petrol			= DefineLiquidType("Petrol",				ROOT_LIQUID_BITMASK);
-	liquid_Diesel			= DefineLiquidType("Diesel",				ROOT_LIQUID_BITMASK);
-	liquid_Oil				= DefineLiquidType("Oil",					ROOT_LIQUID_BITMASK);
-	liquid_BakingSoda		= DefineLiquidType("Baking Soda",			ROOT_LIQUID_BITMASK);
-	liquid_ProteinPowder	= DefineLiquidType("Protein Powder",		ROOT_LIQUID_BITMASK);
-	liquid_IronPowder		= DefineLiquidType("Iron Powder",			ROOT_LIQUID_BITMASK);
-	liquid_IronOxide		= DefineLiquidType("Iron Oxide",			ROOT_LIQUID_BITMASK);
-	liquid_CopperOxide		= DefineLiquidType("Copper Oxide",			ROOT_LIQUID_BITMASK);
-	liquid_Magnesium		= DefineLiquidType("Magnesium",				ROOT_LIQUID_BITMASK);
-	liquid_StrongWhiskey	= DefineLiquidType("Acid Whiskey",			liquid_Whiskey | liquid_Ethanol);
-	liquid_Fun				= DefineLiquidType("Fun",					liquid_Ethanol | liquid_Turpentine | liquid_HydroAcid);
-	liquid_Lemonade			= DefineLiquidType("Lemonade",				liquid_CarbonatedWater | liquid_Lemon | liquid_Sugar);
-	liquid_Orangeade		= DefineLiquidType("Orangeade",				liquid_CarbonatedWater | liquid_Orange | liquid_Sugar);
-	liquid_Thermite			= DefineLiquidType("Thermite Mix I",		liquid_IronPowder | liquid_IronOxide | liquid_Magnesium);
-	liquid_StrongThermite	= DefineLiquidType("Thermite Mix II",		liquid_IronPowder | liquid_IronOxide | liquid_Magnesium | liquid_CopperOxide);
+	liquid_Water			= DefineLiquidType("Water",					0.5);
+	liquid_Milk				= DefineLiquidType("Milk",					2.1);
+	liquid_Orange			= DefineLiquidType("Orange Juice",			1.0);
+	liquid_Apple			= DefineLiquidType("Apple Juice",			1.0);
+	liquid_Whiskey			= DefineLiquidType("Whiskey",				0.1);
+	liquid_WineRed			= DefineLiquidType("Red Wine",				0.4);
+	liquid_WineWhite		= DefineLiquidType("White Wine",			0.4);
+	liquid_Champagne		= DefineLiquidType("Champagne",				0.2);
+	liquid_Ethanol			= DefineLiquidType("Ethanol",				-44.1);
+	liquid_Turpentine		= DefineLiquidType("Turpentine",			-101.0);
+	liquid_HydroAcid		= DefineLiquidType("Hydrochloric Acid",		-101.0);
+	liquid_CarbonatedWater	= DefineLiquidType("Carbonated Water",		0.1);
+	liquid_Lemon			= DefineLiquidType("Lemon Juice",			2.1);
+	liquid_Sugar			= DefineLiquidType("Sugar",					0.8);
+	liquid_Petrol			= DefineLiquidType("Petrol",				-8.0);
+	liquid_Diesel			= DefineLiquidType("Diesel",				-8.0);
+	liquid_Oil				= DefineLiquidType("Oil",					-8.0);
+	liquid_BakingSoda		= DefineLiquidType("Baking Soda",			0.1);
+	liquid_ProteinPowder	= DefineLiquidType("Protein Powder",		4.5);
+	liquid_IronPowder		= DefineLiquidType("Iron Powder",			0.0);
+	liquid_IronOxide		= DefineLiquidType("Iron Oxide",			-5.0);
+	liquid_CopperOxide		= DefineLiquidType("Copper Oxide",			-5.0);
+	liquid_Magnesium		= DefineLiquidType("Magnesium",				0.0);
+	liquid_StrongWhiskey	= DefineLiquidType("Acid Whiskey",			-5.0,	liquid_Whiskey, liquid_Ethanol);
+	liquid_Fun				= DefineLiquidType("Fun",					-7.0,	liquid_Ethanol, liquid_Turpentine, liquid_HydroAcid);
+	liquid_Lemonade			= DefineLiquidType("Lemonade",				2.1,	liquid_CarbonatedWater, liquid_Lemon, liquid_Sugar);
+	liquid_Orangeade		= DefineLiquidType("Orangeade",				2.5,	liquid_CarbonatedWater, liquid_Orange, liquid_Sugar);
+	liquid_Thermite			= DefineLiquidType("Thermite Mix I",		-101.0,	liquid_IronPowder, liquid_IronOxide, liquid_Magnesium);
+	liquid_StrongThermite	= DefineLiquidType("Thermite Mix II",		-101.0,	liquid_IronPowder, liquid_IronOxide, liquid_Magnesium, liquid_CopperOxide);
+
+
+	// LIQUID CONTAINER ITEM TYPE DEFINITIONS
+	DefineLiquidContainerItem(item_Detergent,		0.33,	true,	liquid_Turpentine, 1);
+	DefineLiquidContainerItem(item_Bottle,			0.5,	false,	liquid_Water, 100, liquid_Orange, 50, liquid_CarbonatedWater, 25, liquid_Lemon, 25, liquid_Lemonade, 30, liquid_Orangeade, 30);
+	DefineLiquidContainerItem(item_CanDrink,		0.33,	false,	liquid_Water, 100, liquid_Orange, 50, liquid_CarbonatedWater, 25, liquid_Lemon, 25, liquid_Lemonade, 30, liquid_Orangeade, 30);
+	DefineLiquidContainerItem(item_MilkBottle,		0.57,	false,	liquid_Milk, 100);
+	DefineLiquidContainerItem(item_MilkCarton,		1.0,	true,	liquid_Milk, 100);
+	DefineLiquidContainerItem(item_AppleJuice,		1.0,	true,	liquid_Apple, 100);
+	DefineLiquidContainerItem(item_OrangeJuice,		1.0,	true,	liquid_Orange, 100);
+	DefineLiquidContainerItem(item_Wine1,			0.75,	false,	liquid_WineRed, 100);
+	DefineLiquidContainerItem(item_Wine2,			0.75,	false,	liquid_WineWhite, 100);
+	DefineLiquidContainerItem(item_Wine3,			0.75,	false,	liquid_WineRed, 100);
+	DefineLiquidContainerItem(item_whisky,			1.5,	false,	liquid_Whiskey, 100);
+	DefineLiquidContainerItem(item_Champagne,		1.5,	false,	liquid_Champagne, 100);
+	DefineLiquidContainerItem(item_GasCan,			20.0,	true,	liquid_Petrol, 100);
+	DefineLiquidContainerItem(item_OilCan,			16.0,	true,	liquid_Oil, 100);
+	DefineLiquidContainerItem(item_Ketchup,			0.5,	true);
+	DefineLiquidContainerItem(item_Mustard,			0.5,	true);
 
 
 	// TREE SPECIES DEFINITIONS

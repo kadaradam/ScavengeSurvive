@@ -31,6 +31,21 @@ I encourage people to play around with this code, create a new map and put loot
 spawns in it or completely mod it into a new gamemode, I would love to see what
 creations are made! Please publish all bug fixes in order to benefit everyone.
 
+### Don't Be Selfish
+
+When you fix something, don't keep it to yourself. This is an open source
+project. An important part of open source is sharing, that's why this code is
+free of charge and available to all.
+
+Please respect this. Feel free to keep your unique features private, just submit
+*all* fixes to the base code as pull requests or just email them to me.
+
+### Builds
+
+Each time I compile a version of the gamemode, the build number (stored in BUILD_NUMBER) is incremented. This is also shown in-game at the top-right of the screen and will allow players and developers to know which version is in use which can help track issues and fix bugs.
+
+IMPORTANT: DO NOT USE THE BUILD SCRIPT YOURSELF! The reason for this is that you'll change the build number which is meant to reflect which BASE version of the gamemode you are using, NOT your own builds. This will greatly improve my ability to fix issues on your server.
+
 
 ## Setup
 
