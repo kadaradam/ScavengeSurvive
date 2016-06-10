@@ -26,7 +26,6 @@
 
 #define INVALID_FUEL_OUTLET_ID	(-1)
 #define MAX_FUEL_LOCATIONS		(78)
-#define FUEL_CAN_CAPACITY		(20)
 
 
 enum E_FUEL_DATA
@@ -43,7 +42,7 @@ Float:		fuel_posZ
 
 new
 			fuel_Data[MAX_FUEL_LOCATIONS][E_FUEL_DATA],
-   Iterator:fuel_Index<MAX_FUEL_LOCATIONS>,
+			fuel_Total,
 Timer:		fuel_RefuelTimer[MAX_PLAYERS],
 			fuel_CurrentFuelOutlet[MAX_PLAYERS],
 			fuel_CurrentlyRefuelling[MAX_PLAYERS],
@@ -54,96 +53,97 @@ hook OnPlayerConnect(playerid)
 {
 	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/world/fuel.pwn");
 
-	fuel_CurrentlyRefuelling[playerid] = INVALID_FUEL_OUTLET_ID;
+	fuel_CurrentlyRefuelling[playerid] = INVALID_VEHICLE_ID;
 }
 
 
 stock CreateFuelOutlet(Float:x, Float:y, Float:z, Float:areasize, Float:capacity, Float:startamount)
 {
-	new id = Iter_Free(fuel_Index);
-
-	if(id == -1)
+	if(fuel_Total >= MAX_FUEL_LOCATIONS - 1)
 	{
 		print("ERROR: MAX_FUEL_LOCATIONS limit reached!");
 		return -1;
 	}
 
-	fuel_Data[id][fuel_buttonId]	= CreateButton(x, y, z + 0.5, "Fill petrol can", .label = true, .labeltext = "0.0", .areasize = areasize);
+	fuel_Data[fuel_Total][fuel_buttonId]	= CreateButton(x, y, z + 0.5, "Fill petrol can", .label = true, .labeltext = "0.0", .areasize = areasize);
 
-	fuel_Data[id][fuel_state]		= 1;
-	fuel_Data[id][fuel_capacity]	= capacity;
-	fuel_Data[id][fuel_amount]		= startamount;
+	fuel_Data[fuel_Total][fuel_state]		= 1;
+	fuel_Data[fuel_Total][fuel_capacity]	= capacity;
+	fuel_Data[fuel_Total][fuel_amount]		= startamount;
 
-	fuel_Data[id][fuel_posX]		= x;
-	fuel_Data[id][fuel_posY]		= y;
-	fuel_Data[id][fuel_posZ]		= z;
+	fuel_Data[fuel_Total][fuel_posX]		= x;
+	fuel_Data[fuel_Total][fuel_posY]		= y;
+	fuel_Data[fuel_Total][fuel_posZ]		= z;
 
-	fuel_ButtonFuelOutlet[fuel_Data[id][fuel_buttonId]] = id;
+	fuel_ButtonFuelOutlet[fuel_Data[fuel_Total][fuel_buttonId]] = fuel_Total;
 
-	Iter_Add(fuel_Index, id);
+	UpdateFuelText(fuel_Total);
 
-	UpdateFuelText(id);
-	return id;
+	return fuel_Total++;
 }
 
-stock DestroyFuelOutlet(id)
+hook OnPlayerUseItemWithBtn(playerid, buttonid, itemid)
 {
-	if(!Iter_Contains(fuel_Index, id))
-		return 0;
+	d:3:GLOBAL_DEBUG("[OnPlayerUseItemWithBtn] in /gamemodes/sss/core/world/fuel.pwn");
 
-	fuel_ButtonFuelOutlet[fuel_Data[id][fuel_buttonId]] = INVALID_FUEL_OUTLET_ID;
+	if(fuel_ButtonFuelOutlet[buttonid] == INVALID_FUEL_OUTLET_ID)
+		return Y_HOOKS_CONTINUE_RETURN_0;
 
-	DestroyButton(fuel_Data[id][fuel_buttonId]);
+	if(fuel_Data[fuel_ButtonFuelOutlet[buttonid]][fuel_buttonId] != buttonid)
+		return Y_HOOKS_CONTINUE_RETURN_0;
 
-	fuel_Data[id][fuel_state]		= 0;
-	fuel_Data[id][fuel_capacity]	= 0.0;
-	fuel_Data[id][fuel_amount]		= 0.0;
+	new liqcont = GetItemTypeLiquidContainerType(GetItemType(itemid));
 
-	fuel_Data[id][fuel_posX]		= 0.0;
-	fuel_Data[id][fuel_posY]		= 0.0;
-	fuel_Data[id][fuel_posZ]		= 0.0;
+	if(liqcont == -1)
+		return Y_HOOKS_CONTINUE_RETURN_0;
 
-
-	Iter_Remove(fuel_Index, id);
-
-	return 1;
-}
-
-
-hook OnButtonPress(playerid, buttonid)
-{
-	d:3:GLOBAL_DEBUG("[OnButtonPress] in /gamemodes/sss/core/world/fuel.pwn");
-
-	if(fuel_ButtonFuelOutlet[buttonid] != INVALID_FUEL_OUTLET_ID)
+	if(GetLiquidItemLiquidAmount(itemid) >= GetLiquidContainerTypeCapacity(liqcont))
 	{
-		if(fuel_Data[fuel_ButtonFuelOutlet[buttonid]][fuel_buttonId] == buttonid)
-		{
-			new itemid = GetPlayerItem(playerid);
-			if(GetItemType(itemid) == item_GasCan)
-			{
-				if(GetItemExtraData(itemid) < FUEL_CAN_CAPACITY)
-				{
-					StartRefuellingFuelCan(playerid, fuel_ButtonFuelOutlet[buttonid]);
-				}
-			}
-		}
+		ShowActionText(playerid, ls(playerid, "FUELCANFULL"), 3000);
+		return Y_HOOKS_CONTINUE_RETURN_0;
 	}
+
+	StartRefuellingFuelCan(playerid, fuel_ButtonFuelOutlet[buttonid]);
 
 	return Y_HOOKS_CONTINUE_RETURN_0;
 }
 
-hook OnButtonRelease(playerid, buttonid)
+hook OnPlayerRelBtnWithItem(playerid, buttonid, itemid)
 {
 	if(fuel_CurrentFuelOutlet[playerid] != INVALID_FUEL_OUTLET_ID)
 	{
 		StopRefuellingFuelCan(playerid);
 	}
+
+	return Y_HOOKS_CONTINUE_RETURN_0;
+}
+
+hook OnPlayerInteractVehicle(playerid, vehicleid, Float:angle)
+{
+	d:3:GLOBAL_DEBUG("[OnPlayerInteractVehicle] in /gamemodes/sss/core/vehicle/repair.pwn");
+
+	if(angle < 25.0 || angle > 335.0)
+	{
+		new ItemType:itemtype = GetItemType(GetPlayerItem(playerid));
+		
+		if(GetItemTypeLiquidContainerType(itemtype) != -1)
+			StartRefuellingVehicle(playerid, vehicleid);
+	}
+
 	return Y_HOOKS_CONTINUE_RETURN_0;
 }
 
 StartRefuellingFuelCan(playerid, outletid)
 {
-	if(GetItemType(GetPlayerItem(playerid)) != item_GasCan)
+	if(!(0 <= outletid < fuel_Total))
+	{
+		printf("ERROR: [StartRefuellingFuelCan] invalid outletid: %d", outletid);
+		return 0;
+	}
+
+	new liqcont = GetItemTypeLiquidContainerType(GetItemType(GetPlayerItem(playerid)));
+
+	if(liqcont == -1)
 	{
 		ShowActionText(playerid, ls(playerid, "YOUNEEDFCAN"), 3000, 120);
 		return 0;
@@ -156,7 +156,7 @@ StartRefuellingFuelCan(playerid, outletid)
 	}
 
 	CancelPlayerMovement(playerid);
-	SetPlayerProgressBarMaxValue(playerid, ActionBar, FUEL_CAN_CAPACITY);
+	SetPlayerProgressBarMaxValue(playerid, ActionBar, GetLiquidContainerTypeCapacity(liqcont));
 	SetPlayerProgressBarValue(playerid, ActionBar, 0.0);
 	ShowPlayerProgressBar(playerid, ActionBar);
 
@@ -187,44 +187,70 @@ timer RefuelCanUpdate[500](playerid)
 	}
 
 	new
-		itemid = GetPlayerItem(playerid),
-		amount,
+		itemid,
+		liqcont,
+		Float:transfer,
+		Float:amount,
+		Float:capacity,
 		Float:px,
 		Float:py,
 		Float:pz;
 
-	amount = GetItemExtraData(itemid);
+	itemid = GetPlayerItem(playerid);
+	liqcont = GetItemTypeLiquidContainerType(GetItemType(itemid));
 
-	if(amount >= FUEL_CAN_CAPACITY || fuel_Data[fuel_CurrentFuelOutlet[playerid]][fuel_amount] <= 0.0 || GetItemType(itemid) != item_GasCan)
+	if(liqcont == -1)
 	{
 		StopRefuellingFuelCan(playerid);
 		return;
 	}
 
+	amount = GetLiquidItemLiquidAmount(itemid);
+	capacity = GetLiquidContainerTypeCapacity(liqcont);
+
+	if(amount >= capacity || fuel_Data[fuel_CurrentFuelOutlet[playerid]][fuel_amount] <= 0.0)
+	{
+		StopRefuellingFuelCan(playerid);
+		return;
+	}
 
 	GetPlayerPos(playerid, px, py, pz);
 	SetPlayerFacingAngle(playerid, GetAngleToPoint(px, py, fuel_Data[fuel_CurrentFuelOutlet[playerid]][fuel_posX], fuel_Data[fuel_CurrentFuelOutlet[playerid]][fuel_posY]));
 
-	SetPlayerProgressBarValue(playerid, ActionBar, float(amount));
-	SetPlayerProgressBarMaxValue(playerid, ActionBar, FUEL_CAN_CAPACITY);
+	SetPlayerProgressBarValue(playerid, ActionBar, amount);
+	SetPlayerProgressBarMaxValue(playerid, ActionBar, capacity);
 	ShowPlayerProgressBar(playerid, ActionBar);
 	ApplyAnimation(playerid, "PED", "DRIVE_BOAT", 4.0, 1, 0, 0, 0, 0);
 
-	SetItemExtraData(itemid, amount + 1);
-	fuel_Data[fuel_CurrentFuelOutlet[playerid]][fuel_amount] -= 1.0;
-	
-	if(fuel_Data[fuel_CurrentFuelOutlet[playerid]][fuel_amount] < 0.0)
-		fuel_Data[fuel_CurrentFuelOutlet[playerid]][fuel_amount] = 0.0;
-		
+	transfer = (amount + 1.2 > capacity) ? capacity - amount : 1.2;
+	SetLiquidItemLiquidAmount(itemid, amount + transfer);
+	SetLiquidItemLiquidType(itemid, liquid_Petrol);
+	fuel_Data[fuel_CurrentFuelOutlet[playerid]][fuel_amount] -= transfer;
+
 	UpdateFuelText(fuel_CurrentFuelOutlet[playerid]);
+
 	return;
 }
 
 
 StartRefuellingVehicle(playerid, vehicleid)
 {
-	if(GetItemType(GetPlayerItem(playerid)) != item_GasCan)
+	new itemid = GetPlayerItem(playerid);
+
+	if(GetItemTypeLiquidContainerType(GetItemType(itemid)) == -1)
 		return 0;
+
+	if(GetLiquidItemLiquidType(itemid) != liquid_Petrol)
+	{
+		ShowActionText(playerid, ls(playerid, "FUELNOTPETR"), 3000);
+		return 0;
+	}
+
+	if(GetLiquidItemLiquidAmount(itemid) <= 0.0)
+	{
+		ShowActionText(playerid, ls(playerid, "EMPTY"), 3000);
+		return 0;
+	}
 
 	CancelPlayerMovement(playerid);
 	ApplyAnimation(playerid, "PED", "DRIVE_BOAT", 4.0, 1, 0, 0, 0, 0);
@@ -248,7 +274,7 @@ StopRefuellingVehicle(playerid)
 
 	HidePlayerProgressBar(playerid, ActionBar);
 	ClearAnimations(playerid);
-	fuel_CurrentlyRefuelling[playerid] = INVALID_FUEL_OUTLET_ID;
+	fuel_CurrentlyRefuelling[playerid] = INVALID_VEHICLE_ID;
 
 	return 1;
 }
@@ -263,7 +289,8 @@ timer RefuelVehicleUpdate[500](playerid, vehicleid)
 
 	new
 		itemid = GetPlayerItem(playerid),
-		canfuel,
+		Float:canfuel,
+		Float:transfer,
 		Float:vehiclefuel,
 		Float:px,
 		Float:py,
@@ -272,10 +299,23 @@ timer RefuelVehicleUpdate[500](playerid, vehicleid)
 		Float:vy,
 		Float:vz;
 
-	canfuel = GetItemExtraData(itemid);
+	if(GetItemTypeLiquidContainerType(GetItemType(itemid)) == -1)
+	{
+		StopRefuellingVehicle(playerid);
+		return;
+	}
+
+	canfuel = GetLiquidItemLiquidAmount(itemid);
 	vehiclefuel = GetVehicleFuel(vehicleid);
 
-	if(vehiclefuel >= GetVehicleTypeMaxFuel(GetVehicleType(vehicleid)) || canfuel <= 0 || GetItemType(itemid) != item_GasCan || !IsPlayerInVehicleArea(playerid, vehicleid))
+	if(canfuel <= 0.0)
+	{
+		ShowActionText(playerid, ls(playerid, "EMPTY"), 3000, 80);
+		StopRefuellingVehicle(playerid);
+		return;
+	}
+
+	if(vehiclefuel >= GetVehicleTypeMaxFuel(GetVehicleType(vehicleid)) || !IsPlayerInVehicleArea(playerid, vehicleid))
 	{
 		StopRefuellingVehicle(playerid);
 		return;
@@ -289,11 +329,30 @@ timer RefuelVehicleUpdate[500](playerid, vehicleid)
 	GetVehiclePos(vehicleid, vx, vy, vz);
 	SetPlayerFacingAngle(playerid, GetAngleToPoint(px, py, vx, vy));
 
-	SetItemExtraData(itemid, canfuel - 1);
-	SetVehicleFuel(vehicleid, vehiclefuel + 1.0);
+	transfer = (canfuel - 0.8 < 0.0) ? canfuel : 0.8;
+	SetLiquidItemLiquidAmount(itemid, canfuel - transfer);
+	SetVehicleFuel(vehicleid, vehiclefuel + transfer);
 
 	return;
 }
 
+hook OnPlayerDrink(playerid, itemid)
+{
+	d:3:GLOBAL_DEBUG("[OnPlayerDrink] in /gamemodes/sss/core/world/fuel.pwn");
+
+	if(IsValidVehicle(fuel_CurrentlyRefuelling[playerid]))
+		return Y_HOOKS_BREAK_RETURN_1;
+
+	if(IsPlayerAtAnyVehicleTrunk(playerid))
+		return Y_HOOKS_BREAK_RETURN_1;
+
+	if(IsPlayerAtAnyVehicleBonnet(playerid))
+		return Y_HOOKS_BREAK_RETURN_1;
+
+	return Y_HOOKS_CONTINUE_RETURN_0;
+}
+
 UpdateFuelText(outletid)
+{
 	return SetButtonLabel(fuel_Data[outletid][fuel_buttonId], sprintf("%.1f/%.1f", fuel_Data[outletid][fuel_amount], fuel_Data[outletid][fuel_capacity]));
+}
