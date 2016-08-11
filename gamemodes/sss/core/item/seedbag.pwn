@@ -49,6 +49,12 @@ static
 	seed_Total;
 
 
+hook OnItemTypeDefined(uname[])
+{
+	if(!strcmp(uname, "SeedBag"))
+		SetItemTypeMaxArrayData(GetItemTypeFromUniqueName("SeedBag"), 2);
+}
+
 stock DefineSeedType(name[], ItemType:itemtype, growthtime, plantmodel, Float:plantoffset)
 {
 	if(seed_Total >= MAX_SEED_TYPES)

@@ -34,6 +34,12 @@ static
 	pill_CurrentlyTaking[MAX_PLAYERS];
 
 
+hook OnItemTypeDefined(uname[])
+{
+	if(!strcmp(uname, "Pills"))
+		SetItemTypeMaxArrayData(GetItemTypeFromUniqueName("Pills"), 1);
+}
+
 hook OnPlayerConnect(playerid)
 {
 	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/item/pills.pwn");

@@ -33,7 +33,8 @@ enum (<<= 1)
 {
 	WEAPON_FLAG_ASSISTED_FIRE_ONCE = 1,	// fired once by server fire key event.
 	WEAPON_FLAG_ASSISTED_FIRE,			// fired repeatedly while key pressed.
-	WEAPON_FLAG_ONLY_FIRE_AIMED			// only run a fire event while RMB held.
+	WEAPON_FLAG_ONLY_FIRE_AIMED,		// only run a fire event while RMB held.
+	WEAPON_FLAG_LIQUID_AMMO				// calibre argument is a liquid type
 }
 
 enum E_ITEM_WEAPON_DATA
@@ -113,6 +114,8 @@ hook OnPlayerConnect(playerid)
 
 stock DefineItemTypeWeapon(ItemType:itemtype, baseweapon, calibre, Float:muzzvelocity, magsize, maxreservemags, animset = -1, flags = 0)
 {
+	SetItemTypeMaxArrayData(itemtype, 4);
+
 	itmw_Data[itmw_Total][itmw_itemType] = itemtype;
 	itmw_Data[itmw_Total][itmw_baseWeapon] = baseweapon;
 	itmw_Data[itmw_Total][itmw_calibre] = calibre;
@@ -245,7 +248,12 @@ stock UpdatePlayerWeaponItem(playerid)
 
 	if(itmw_Data[itmw_ItemTypeWeapon[itemtype]][itmw_calibre] == NO_CALIBRE)
 	{
-		GivePlayerWeapon(playerid, itmw_Data[itmw_ItemTypeWeapon[itemtype]][itmw_baseWeapon], 1);
+		if(0 < itmw_Data[itmw_ItemTypeWeapon[itemtype]][itmw_magSize] < 1000)
+			GivePlayerWeapon(playerid, itmw_Data[itmw_ItemTypeWeapon[itemtype]][itmw_baseWeapon], itmw_Data[itmw_ItemTypeWeapon[itemtype]][itmw_magSize]);
+
+		else
+			GivePlayerWeapon(playerid, itmw_Data[itmw_ItemTypeWeapon[itemtype]][itmw_baseWeapon], 1);
+
 		return 1;
 	}
 
@@ -257,7 +265,7 @@ stock UpdatePlayerWeaponItem(playerid)
 	{
 		ResetPlayerWeapons(playerid);
 		_UpdateWeaponUI(playerid);
-		ShowActionText(playerid, ls(playerid, "WEAPNOAMMOL"), 3000);
+		ShowActionText(playerid, ls(playerid, "WEAPNOAMMOL", true), 3000);
 		return 0;
 	}
 
@@ -413,7 +421,7 @@ timer _RepeatingFire[100](playerid)
 
 	if(k & KEY_FIRE)
 	{
-		magammo -= 5;
+		magammo -= itmw_Data[itmw_ItemTypeWeapon[itemtype]][itmw_maxReserveMags];
 		SetItemWeaponItemMagAmmo(itemid, magammo);
 
 		if(magammo <= 0)
@@ -735,6 +743,9 @@ _unload_DropHandler(playerid, itemid)
 	if(itmw_DropItemID[playerid] != INVALID_ITEM_ID)
 		return 0;
 
+	if(itmw_Data[weapontype][itmw_flags] & WEAPON_FLAG_LIQUID_AMMO)
+		return 0;
+
 	d:1:HANDLER("[OnPlayerDropItem] dropping item %d magammo %d reserve %d", itemid, GetItemWeaponItemMagAmmo(itemid), GetItemWeaponItemReserve(itemid));
 	itmw_DropItemID[playerid] = itemid;
 	itmw_DropTimer[playerid] = defer _UnloadWeapon(playerid, itemid);
@@ -775,7 +786,8 @@ timer _UnloadWeapon[300](playerid, itemid)
 		x + (0.5 * floatsin(-r, degrees)),
 		y + (0.5 * floatcos(-r, degrees)),
 		z - FLOOR_OFFSET,
-		_, _, _, FLOOR_OFFSET, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid));
+		.world = GetPlayerVirtualWorld(playerid),
+		.interior = GetPlayerInterior(playerid));
 
 	SetItemExtraData(ammoitemid, GetItemWeaponItemMagAmmo(itemid) + GetItemWeaponItemReserve(itemid));
 
@@ -786,7 +798,7 @@ timer _UnloadWeapon[300](playerid, itemid)
 	itmw_DropItemID[playerid] = INVALID_ITEM_ID;
 
 	ApplyAnimation(playerid, "BOMBER", "BOM_PLANT_IN", 5.0, 1, 0, 0, 0, 450);
-	ShowActionText(playerid, ls(playerid, "WEAPAUNLOAD"), 3000);
+	ShowActionText(playerid, ls(playerid, "WEAPAUNLOAD", true), 3000);
 
 	return;
 }
@@ -809,7 +821,11 @@ hook OnItemNameRender(itemid, ItemType:itemtype)
 		ammoname[MAX_AMMO_CALIBRE_NAME],
 		exname[ITM_MAX_TEXT];
 
-	GetCalibreName(itmw_Data[itemweaponid][itmw_calibre], calibrename);
+	if(itmw_Data[itmw_ItemTypeWeapon[itemtype]][itmw_flags] & WEAPON_FLAG_LIQUID_AMMO)
+		calibrename = "Liquid";
+
+	else
+		GetCalibreName(itmw_Data[itemweaponid][itmw_calibre], calibrename);
 
 	if(ammotype == -1)
 		ammoname = "Unloaded";

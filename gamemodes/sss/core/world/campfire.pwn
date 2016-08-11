@@ -67,6 +67,12 @@ stock CreateCampfire(Float:x, Float:y, Float:z, Float:rz, world, interior)
 {
 	new id = Iter_Free(cmp_Index);
 
+	if(id == ITER_NONE)
+	{
+		print("ERROR: [CreateCampfire] id == ITER_NONE");
+		return -1;
+	}
+
 	cmp_Data[id][cmp_objMid1] = CreateDynamicObject(19475, x, y, z, 10.0, 90.0, rz + 18.0, world, interior, .streamdistance = 50.0);
 	cmp_Data[id][cmp_objMid2] = CreateDynamicObject(19475, x, y, z, -10.0, 90.0, rz + 36.0, world, interior, .streamdistance = 10.0);
 	cmp_Data[id][cmp_objMid3] = CreateDynamicObject(19475, x, y, z, 0.0, 100.0, rz + 54.0, world, interior, .streamdistance = 50.0);
@@ -261,7 +267,11 @@ hook OnPlayerUseItemWithItem(playerid, itemid, withitemid)
 				{
 					if(GetLiquidItemLiquidType(itemid) != liquid_Petrol)
 					{
+<<<<<<< HEAD
 						ShowActionText(playerid, ls(playerid, "FUELNOTPETR"), 3000);
+=======
+						ShowActionText(playerid, ls(playerid, "FUELNOTPETR", true), 3000);
+>>>>>>> upstream/master
 						return 1;
 					}
 
@@ -272,7 +282,7 @@ hook OnPlayerUseItemWithItem(playerid, itemid, withitemid)
 
 					if(cmp_Data[fireid][cmp_fueled])
 					{
-						ShowActionText(playerid, ls(playerid, "FIREALREADY"));
+						ShowActionText(playerid, ls(playerid, "FIREALREADY", true));
 					}
 					else
 					{
@@ -280,12 +290,16 @@ hook OnPlayerUseItemWithItem(playerid, itemid, withitemid)
 						{
 							transfer = (canfuel - 0.3 < 0.0) ? canfuel : 0.3;
 							SetLiquidItemLiquidAmount(itemid, canfuel - transfer);
+<<<<<<< HEAD
 							ShowActionText(playerid, ls(playerid, "FIREADDPETR"));
+=======
+							ShowActionText(playerid, ls(playerid, "FIREADDPETR", true));
+>>>>>>> upstream/master
 							cmp_Data[fireid][cmp_fueled] = 1;
 						}
 						else
 						{
-							ShowActionText(playerid, ls(playerid, "PETROLEMPTY"));
+							ShowActionText(playerid, ls(playerid, "PETROLEMPTY", true));
 						}
 					}
 				}
@@ -351,7 +365,7 @@ hook OnPlayerUseItemWithItem(playerid, itemid, withitemid)
 
 						cmp_Data[fireid][cmp_foodItem] = itemid;
 						cmp_CookTimer[fireid] = defer cmp_FinishCooking(fireid);
-						ShowActionText(playerid, ls(playerid, "FIRELITSTAR"), 3000);
+						ShowActionText(playerid, ls(playerid, "FIRELITSTAR", true), 3000);
 					}
 				}
 			}

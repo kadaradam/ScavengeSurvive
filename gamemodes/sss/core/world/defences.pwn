@@ -210,7 +210,7 @@ CreateDefence(type, Float:x, Float:y, Float:z, Float:rz, pose, motor = 0, keypad
 {
 	new id = Iter_Free(def_Index);
 
-	if(id == -1)
+	if(id == ITER_NONE)
 		return -1;
 
 	new	itemtypename[ITM_MAX_NAME];
@@ -389,7 +389,7 @@ StartBuildingDefence(playerid, itemid)
 	def_CurrentDefenceItem[playerid] = itemid;
 	StartHoldAction(playerid, 10000);
 	ApplyAnimation(playerid, "BOMBER", "BOM_Plant_Loop", 4.0, 1, 0, 0, 0, 0);
-	ShowActionText(playerid, sprintf(ls(playerid, "DEFBUILDING"), itemtypename));
+	ShowActionText(playerid, sprintf(ls(playerid, "DEFBUILDING", true), itemtypename));
 
 	return 1;
 }
@@ -493,7 +493,7 @@ hook OnButtonPress(playerid, buttonid)
 					}
 					else
 					{
-						ShowActionText(playerid, ls(playerid, "DEFMOVINGIT"), 3000);
+						ShowActionText(playerid, ls(playerid, "DEFMOVINGIT", true), 3000);
 						defer MoveDefence(id, playerid);
 					}
 
@@ -514,7 +514,7 @@ hook OnButtonPress(playerid, buttonid)
 					def_CurrentDefenceEdit[playerid] = id;
 					StartHoldAction(playerid, 10000);
 					ApplyAnimation(playerid, "COP_AMBIENT", "COPBROWSE_LOOP", 4.0, 1, 0, 0, 0, 0);
-					ShowActionText(playerid, sprintf(ls(playerid, "DEFREMOVING"), itemtypename));
+					ShowActionText(playerid, sprintf(ls(playerid, "DEFREMOVING", true), itemtypename));
 
 					return Y_HOOKS_BREAK_RETURN_1;
 				}
@@ -534,7 +534,7 @@ hook OnButtonPress(playerid, buttonid)
 					StartHoldAction(playerid, 6000);
 					ApplyAnimation(playerid, "COP_AMBIENT", "COPBROWSE_LOOP", 4.0, 1, 0, 0, 0, 0);
 
-					ShowActionText(playerid, sprintf(ls(playerid, "DEFMODIFYIN"), itemtypename));
+					ShowActionText(playerid, sprintf(ls(playerid, "DEFMODIFYIN", true), itemtypename));
 
 					return Y_HOOKS_BREAK_RETURN_1;
 				}
@@ -548,7 +548,7 @@ hook OnButtonPress(playerid, buttonid)
 				{
 					if(!def_Data[id][def_motor])
 					{
-						ShowActionText(playerid, ls(playerid, "DEFNEEDMOTO"));
+						ShowActionText(playerid, ls(playerid, "DEFNEEDMOTO", true));
 						return Y_HOOKS_BREAK_RETURN_1;
 					}
 
@@ -560,7 +560,7 @@ hook OnButtonPress(playerid, buttonid)
 					StartHoldAction(playerid, 6000);
 					ApplyAnimation(playerid, "COP_AMBIENT", "COPBROWSE_LOOP", 4.0, 1, 0, 0, 0, 0);
 
-					ShowActionText(playerid, sprintf(ls(playerid, "DEFMODIFYIN"), itemtypename));
+					ShowActionText(playerid, sprintf(ls(playerid, "DEFMODIFYIN", true), itemtypename));
 
 					return Y_HOOKS_BREAK_RETURN_1;
 				}
@@ -574,7 +574,7 @@ hook OnButtonPress(playerid, buttonid)
 				{
 					if(!def_Data[id][def_motor])
 					{
-						ShowActionText(playerid, ls(playerid, "DEFNEEDMOTO"));
+						ShowActionText(playerid, ls(playerid, "DEFNEEDMOTO", true));
 						return Y_HOOKS_BREAK_RETURN_1;
 					}
 
@@ -586,7 +586,7 @@ hook OnButtonPress(playerid, buttonid)
 					StartHoldAction(playerid, 6000);
 					ApplyAnimation(playerid, "COP_AMBIENT", "COPBROWSE_LOOP", 4.0, 1, 0, 0, 0, 0);
 
-					ShowActionText(playerid, sprintf(ls(playerid, "DEFMODIFYIN"), itemtypename));
+					ShowActionText(playerid, sprintf(ls(playerid, "DEFMODIFYIN", true), itemtypename));
 
 					return Y_HOOKS_BREAK_RETURN_1;
 				}
@@ -693,7 +693,7 @@ hook OnHoldActionFinish(playerid)
 
 		if(GetItemType(itemid) == item_Motor)
 		{
-			ShowActionText(playerid, ls(playerid, "DEFINSTMOTO"));
+			ShowActionText(playerid, ls(playerid, "DEFINSTMOTO", true));
 			def_Data[def_CurrentDefenceEdit[playerid]][def_motor] = true;
 			SaveDefenceItem(def_CurrentDefenceEdit[playerid]);
 			DestroyItem(itemid);
@@ -703,7 +703,7 @@ hook OnHoldActionFinish(playerid)
 
 		if(GetItemType(itemid) == item_Keypad)
 		{
-			ShowActionText(playerid, ls(playerid, "DEFINSTKEYP"));
+			ShowActionText(playerid, ls(playerid, "DEFINSTKEYP", true));
 			ShowSetPassDialog_Keypad(playerid);
 			def_Data[def_CurrentDefenceEdit[playerid]][def_keypad] = 1;
 			SaveDefenceItem(def_CurrentDefenceEdit[playerid]);
@@ -714,7 +714,7 @@ hook OnHoldActionFinish(playerid)
 
 		if(GetItemType(itemid) == item_AdvancedKeypad)
 		{
-			ShowActionText(playerid, ls(playerid, "DEFINSTADKP"));
+			ShowActionText(playerid, ls(playerid, "DEFINSTADKP", true));
 			ShowSetPassDialog_KeypadAdv(playerid);
 			def_Data[def_CurrentDefenceEdit[playerid]][def_keypad] = 2;
 			SaveDefenceItem(def_CurrentDefenceEdit[playerid]);
@@ -725,7 +725,7 @@ hook OnHoldActionFinish(playerid)
 
 		if(GetItemType(itemid) == item_Crowbar)
 		{
-			ShowActionText(playerid, ls(playerid, "DEFDISMANTL"));
+			ShowActionText(playerid, ls(playerid, "DEFDISMANTL", true));
 
 			CreateItem(def_TypeData[def_Data[def_CurrentDefenceEdit[playerid]][def_type]][def_itemtype],
 				def_Data[def_CurrentDefenceEdit[playerid]][def_posX],
@@ -733,8 +733,7 @@ hook OnHoldActionFinish(playerid)
 				def_Data[def_CurrentDefenceEdit[playerid]][def_posZ],
 				.rz = def_Data[def_CurrentDefenceEdit[playerid]][def_rotZ],
 				.world = def_Data[def_CurrentDefenceEdit[playerid]][def_worldid],
-				.interior = def_Data[def_CurrentDefenceEdit[playerid]][def_interiorid],
-				.zoffset = ITEM_BUTTON_OFFSET);
+				.interior = def_Data[def_CurrentDefenceEdit[playerid]][def_interiorid]);
 
 			switch(def_Data[def_CurrentDefenceEdit[playerid]][def_pose])
 			{
@@ -879,7 +878,7 @@ hook OnPlayerKeypadEnter(playerid, keypadid, code, match)
 		{
 			if(code == match)
 			{
-				ShowActionText(playerid, ls(playerid, "DEFMOVINGIT"), 3000);
+				ShowActionText(playerid, ls(playerid, "DEFMOVINGIT", true), 3000);
 				defer MoveDefence(def_CurrentDefenceOpen[playerid], playerid);
 				def_CurrentDefenceOpen[playerid] = -1;
 			}
@@ -1002,7 +1001,7 @@ ShowEnterPassDialog_KeypadAdv(playerid, msg = 0)
 
 			if(pass == def_Data[def_CurrentDefenceOpen[playerid]][def_pass] && strlen(inputtext) >= 4)
 			{
-				ShowActionText(playerid, ls(playerid, "DEFMOVINGIT"), 3000);
+				ShowActionText(playerid, ls(playerid, "DEFMOVINGIT", true), 3000);
 				defer MoveDefence(def_CurrentDefenceOpen[playerid], playerid);
 				def_CurrentDefenceOpen[playerid] = -1;
 			}
@@ -1349,6 +1348,7 @@ stock IsValidDefence(defenceid)
 }
 
 // def_itemtype
+forward ItemType:GetDefenceTypeItemType(defencetype);
 stock ItemType:GetDefenceTypeItemType(defencetype)
 {
 	if(!(0 <= defencetype < def_TypeIndex))
@@ -1388,6 +1388,7 @@ stock GetDefenceTypeHorizontalRot(defencetype, &Float:x, &Float:y, &Float:z)
 }
 
 // def_placeOffsetZ
+forward Float:GetDefenceTypeOffsetZ(defencetype);
 stock Float:GetDefenceTypeOffsetZ(defencetype)
 {
 	if(!(0 <= defencetype < def_TypeIndex))
@@ -1515,6 +1516,7 @@ stock GetDefencePos(defenceid, &Float:x, &Float:y, &Float:z)
 }
 
 // def_rotZ
+forward Float:GetDefenceRot(defenceid);
 stock Float:GetDefenceRot(defenceid)
 {
 	if(!Iter_Contains(def_Index, defenceid))
@@ -1541,4 +1543,34 @@ stock GetDefenceIDFromGEID(geid)
 	}
 
 	return 1;
+}
+
+stock GetClosestDefence(Float:x, Float:y, Float:z, Float:size)
+{
+	new
+		Float:defposx,
+		Float:defposy,
+		Float:defposz,
+		Float:smallestdistance = 9999999.9,
+		Float:tempdistance,
+		closestid;
+
+	foreach(new i : def_Index)
+	{
+		GetDefencePos(i, defposx, defposy, defposz);
+
+		tempdistance = Distance(x, y, z, defposx, defposy, defposz);
+
+		if(tempdistance < smallestdistance)
+		{
+			smallestdistance = tempdistance;
+			closestid = i;
+		}
+	}
+
+	if(smallestdistance < size)
+		return closestid;
+
+	else
+		return -1;
 }

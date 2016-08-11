@@ -83,13 +83,13 @@ hook OnPlayerInteractVehicle(playerid, vehicleid, Float:angle)
 		{
 			if(IsVehicleTrunkLocked(vehicleid))
 			{
-				ShowActionText(playerid, ls(playerid, "TRUNKLOCKED"), 3000);
+				ShowActionText(playerid, ls(playerid, "TRUNKLOCKED", true), 3000);
 				return Y_HOOKS_BREAK_RETURN_1;
 			}
 
 			if(IsVehicleLocked(vehicleid))
 			{
-				ShowActionText(playerid, ls(playerid, "TRUNKLOCKED"), 3000);
+				ShowActionText(playerid, ls(playerid, "TRUNKLOCKED", true), 3000);
 				return Y_HOOKS_BREAK_RETURN_1;
 			}
 
@@ -154,16 +154,6 @@ hook OnItemRemovedFromCnt(containerid, slotid, playerid)
 
 	if(IsPlayerConnected(playerid))
 		VehicleTrunkUpdateSave(playerid);
-
-	return Y_HOOKS_CONTINUE_RETURN_0;
-}
-
-hook OnVehicleDestroyed(vehicleid)
-{
-	d:3:GLOBAL_DEBUG("[OnVehicleDestroyed] in /gamemodes/sss/core/vehicle/trunk.pwn");
-
-	if(IsValidContainer(trunk_ContainerID[vehicleid]))
-		DestroyContainer(trunk_ContainerID[vehicleid]);
 
 	return Y_HOOKS_CONTINUE_RETURN_0;
 }

@@ -160,7 +160,7 @@ CreateTree(speciesid, Float:x, Float:y, Float:z)
 		id = Iter_Free(tree_Index),
 		data[2];
 
-	if(id == -1)
+	if(id == ITER_NONE)
 	{
 		printf("ERROR: CreateTree() limit reached at [%i, %f, %f, %f]", speciesid, x, y, z);
 		return -1;
@@ -272,7 +272,7 @@ timer _DeleteTree[2000](treeid, Float:x, Float:y, Float:z)
 		y += woodDistance * floatcos(-woodAngle, degrees);
 
 		MapAndreas_FindZ_For2DCoord(x, y, z);
-		CreateItem(treeSpecies_Data[tree_Data[treeid][tree_species]][tree_result_item], x, y, z + 0.088, .rz = frandom(360.0), .zoffset = FLOOR_OFFSET);
+		CreateItem(treeSpecies_Data[tree_Data[treeid][tree_species]][tree_result_item], x, y, z + 0.088, .rz = frandom(360.0));
 	}
 
 	DestroyTree(treeid);

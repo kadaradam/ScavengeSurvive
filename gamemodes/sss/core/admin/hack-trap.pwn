@@ -34,7 +34,10 @@ stock CreateHackerTrap(Float:x, Float:y, Float:z, lootindex)
 {
 	new id = Iter_Free(hak_Index);
 
-	hak_ItemID[id] = CreateLootItem(lootindex, x, y, z, 0, 0, 0.7);
+	if(id == ITER_NONE)
+		return INVALID_ITEM_ID;
+
+	hak_ItemID[id] = CreateLootItem(lootindex, x, y, z);
 
 	Iter_Add(hak_Index, id);
 

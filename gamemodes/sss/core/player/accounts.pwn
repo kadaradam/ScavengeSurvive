@@ -608,7 +608,7 @@ Logout(playerid, docombatlogcheck = 1)
 	{
 		if(!IsContainerEmpty(GetItemExtraData(itemid)))
 		{
-			CreateItemInWorld(itemid, x + floatsin(-r, degrees), y + floatcos(-r, degrees), z - FLOOR_OFFSET, .zoffset = ITEM_BUTTON_OFFSET);
+			CreateItemInWorld(itemid, x + floatsin(-r, degrees), y + floatcos(-r, degrees), z - FLOOR_OFFSET);
 
 			itemid = INVALID_ITEM_ID;
 		}
@@ -627,11 +627,11 @@ Logout(playerid, docombatlogcheck = 1)
 		for(new i; i < INV_MAX_SLOTS; i++)
 			DestroyItem(GetInventorySlotItem(playerid, 0));
 
-		if(IsValidItem(GetPlayerHat(playerid)))
-			RemovePlayerHat(playerid);
+		if(IsValidItem(GetPlayerHatItem(playerid)))
+			RemovePlayerHatItem(playerid);
 
-		if(IsValidItem(GetPlayerMask(playerid)))
-			RemovePlayerMask(playerid);
+		if(IsValidItem(GetPlayerMaskItem(playerid)))
+			RemovePlayerMaskItem(playerid);
 
 		if(IsPlayerInAnyVehicle(playerid))
 		{

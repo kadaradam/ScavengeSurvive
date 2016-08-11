@@ -85,6 +85,8 @@ stock DefineLiquidContainerItem(ItemType:itemtype, Float:capacity, bool:reusable
 		return -1;
 	}
 
+	SetItemTypeMaxArrayData(itemtype, 2);
+
 	liq_Data[liq_Total][liq_itemtype] = itemtype;
 	liq_Data[liq_Total][liq_capacity] = capacity;
 	liq_Data[liq_Total][liq_reusable] = reusable;
@@ -175,9 +177,9 @@ hook OnPlayerUseItem(playerid, itemid)
 
 	if(liq_ItemTypeLiquidContainer[GetItemType(itemid)] != INVALID_LIQUID_CONTAINER)
 	{
-		d:2:HANDLER("[OnPlayerUseItem] tick since usewithbutton %d", GetTickCountDifference(liq_UseWithItemTick[playerid], GetTickCount()));
+		d:2:HANDLER("[OnPlayerUseItem] tick since usewithbutton %d", GetTickCountDifference(GetTickCount(), liq_UseWithItemTick[playerid]));
 
-		if(GetTickCountDifference(liq_UseWithItemTick[playerid], GetTickCount()) > 10)
+		if(GetTickCountDifference(GetTickCount(), liq_UseWithItemTick[playerid]) > 10)
 			_StartDrinking(playerid, itemid);
 	}
 

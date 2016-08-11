@@ -180,6 +180,12 @@ _vint_EnterArea(playerid, areaid)
 	{
 		new cell = Iter_Free(varea_NearIndex[playerid]);
 
+		if(cell == ITER_NONE)
+		{
+			print("ERROR: [_vint_EnterArea] cell == ITER_NONE");
+			return;
+		}
+
 		varea_NearList[playerid][cell] = data[1];
 		Iter_Add(varea_NearIndex[playerid], cell);
 	}
@@ -243,15 +249,6 @@ _vint_LeaveArea(playerid, areaid)
 	}
 
 	return;
-}
-
-hook OnVehicleDestroyed(vehicleid)
-{
-	d:3:GLOBAL_DEBUG("[OnVehicleDestroyed] in /gamemodes/sss/core/vehicle/interact.pwn");
-
-	DestroyDynamicArea(varea_AreaID[vehicleid]);
-
-	return Y_HOOKS_CONTINUE_RETURN_0;
 }
 
 hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)

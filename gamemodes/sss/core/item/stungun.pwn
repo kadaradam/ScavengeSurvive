@@ -25,6 +25,12 @@
 #include <YSI\y_hooks>
 
 
+hook OnItemTypeDefined(uname[])
+{
+	if(!strcmp(uname, "StunGun"))
+		SetItemTypeMaxArrayData(GetItemTypeFromUniqueName("StunGun"), 1);
+}
+
 hook OnPlayerMeleePlayer(playerid, targetid, Float:bleedrate, Float:knockmult)
 {
 	d:3:GLOBAL_DEBUG("[OnPlayerMeleePlayer] in /gamemodes/sss/core/item/stungun.pwn");
@@ -50,7 +56,7 @@ hook OnPlayerMeleePlayer(playerid, targetid, Float:bleedrate, Float:knockmult)
 		}
 		else
 		{
-			ShowActionText(playerid, ls(playerid, "STUNGUNOUTC"), 3000);
+			ShowActionText(playerid, ls(playerid, "STUNGUNOUTC", true), 3000);
 			return Y_HOOKS_BREAK_RETURN_1;
 		}
 	}
@@ -66,7 +72,7 @@ hook OnPlayerUseItemWithItem(playerid, itemid, withitemid)
 	{
 		SetItemExtraData(itemid, 1);
 		DestroyItem(withitemid);
-		ShowActionText(playerid, ls(playerid, "STUNGUNCHAR"), 3000);
+		ShowActionText(playerid, ls(playerid, "STUNGUNCHAR", true), 3000);
 	}
 
 	return Y_HOOKS_CONTINUE_RETURN_0;

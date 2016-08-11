@@ -9,7 +9,7 @@ start.bat
 crashinfo.txt
 
 # My private SS resources
-scriptfiles/
+private/
 gamemodes/sss/extensions/
 gamemodes/ScavengeSurvive.tar.gz
 
@@ -19,6 +19,7 @@ gamemodes/ScavengeSurvive.tar.gz
 # stuff no one else needs
 *.lnk
 misc/*.jpg
+build-config.json
 
 # Python stuff
 __pycache__/
@@ -28,4 +29,21 @@ __pycache__/
 
 misc/config.json
 *.mmd
+<<<<<<< HEAD
 misc/logmarkov.cfg
+=======
+misc/logmarkov.cfg
+
+scriptfiles/geoip.db
+scriptfiles/geoip_city.db
+scriptfiles/SAfull.hmap
+scriptfiles/SAfull.jpg
+scriptfiles/Maps/
+scriptfiles/txmap/
+scriptfiles/logs/
+scriptfiles/data/
+scriptfiles/carmour/
+scriptfiles/loot/
+scriptfiles/.gitignore
+scriptfiles/.git/
+>>>>>>> upstream/master

@@ -25,6 +25,12 @@
 #include <YSI\y_hooks>
 
 
+hook OnItemTypeDefined(uname[])
+{
+	if(!strcmp(uname, "Note"))
+		SetItemTypeMaxArrayData(GetItemTypeFromUniqueName("Note"), 256);
+}
+
 hook OnPlayerUseItem(playerid, itemid)
 {
 	d:3:GLOBAL_DEBUG("[OnPlayerUseItem] in /gamemodes/sss/core/item/note.pwn");

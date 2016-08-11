@@ -36,6 +36,12 @@ static
 	inj_CurrentTarget[MAX_PLAYERS];
 
 
+hook OnItemTypeDefined(uname[])
+{
+	if(!strcmp(uname, "AutoInjec"))
+		SetItemTypeMaxArrayData(GetItemTypeFromUniqueName("AutoInjec"), 1);
+}
+
 hook OnPlayerConnect(playerid)
 {
 	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/item/injector.pwn");

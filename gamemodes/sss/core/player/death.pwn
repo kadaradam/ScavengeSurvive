@@ -97,7 +97,6 @@ _OnDeath(playerid, killerid)
 	DropItems(playerid, death_PosX[playerid], death_PosY[playerid], death_PosZ[playerid], death_RotZ[playerid], true);
 	RemovePlayerWeapon(playerid);
 	SpawnPlayer(playerid);
-	ToggleArmour(playerid, false);
 
 	KillPlayer(playerid, killerid, deathreason);
 
@@ -192,7 +191,6 @@ DropItems(playerid, Float:x, Float:y, Float:z, Float:r, bool:death)
 			y + floatcos(345.0, degrees),
 			z - FLOOR_OFFSET,
 			.rz = r,
-			.zoffset = ITEM_BUTTON_OFFSET,
 			.world = world,
 			.interior = interior);
 	}
@@ -212,7 +210,6 @@ DropItems(playerid, Float:x, Float:y, Float:z, Float:r, bool:death)
 			y + floatcos(15.0, degrees),
 			z - FLOOR_OFFSET,
 			.rz = r,
-			.zoffset = ITEM_BUTTON_OFFSET,
 			.world = world,
 			.interior = interior);
 	}
@@ -234,7 +231,6 @@ DropItems(playerid, Float:x, Float:y, Float:z, Float:r, bool:death)
 			y + floatcos(45.0 + (90.0 * float(i)), degrees),
 			z - FLOOR_OFFSET,
 			.rz = r,
-			.zoffset = ITEM_BUTTON_OFFSET,
 			.world = world,
 			.interior = interior);
 	}
@@ -249,7 +245,7 @@ DropItems(playerid, Float:x, Float:y, Float:z, Float:r, bool:death)
 	{
 		RemovePlayerBag(playerid);
 
-		SetItemPos(itemid, x + floatsin(180.0, degrees), y + floatcos(180.0, degrees), z - FLOOR_OFFSET, .zoffset = ITEM_BUTTON_OFFSET);
+		SetItemPos(itemid, x + floatsin(180.0, degrees), y + floatcos(180.0, degrees), z - FLOOR_OFFSET);
 		SetItemRot(itemid, 0.0, 0.0, r, true);
 		SetItemInterior(itemid, interior);
 		SetItemWorld(itemid, world);
@@ -259,40 +255,34 @@ DropItems(playerid, Float:x, Float:y, Float:z, Float:r, bool:death)
 		Head-wear item
 	*/
 
-	itemid = GetPlayerHat(playerid);
+	itemid = RemovePlayerHatItem(playerid);
 
 	if(IsValidItem(itemid))
 	{
-		CreateItem(GetItemTypeFromHat(itemid),
+		CreateItemInWorld(itemid,
 			x + floatsin(270.0, degrees),
 			y + floatcos(270.0, degrees),
 			z - FLOOR_OFFSET,
 			.rz = r,
-			.zoffset = ITEM_BUTTON_OFFSET,
 			.world = world,
 			.interior = interior);
-
-		RemovePlayerHat(playerid);
 	}
 
 	/*
 		Face-wear item
 	*/
 
-	itemid = GetPlayerMask(playerid);
+	itemid = RemovePlayerMaskItem(playerid);
 
 	if(IsValidItem(itemid))
 	{
-		CreateItem(GetItemTypeFromMask(itemid),
+		CreateItemInWorld(itemid,
 			x + floatsin(280.0, degrees),
 			y + floatcos(280.0, degrees),
 			z - FLOOR_OFFSET,
 			.rz = r,
-			.zoffset = ITEM_BUTTON_OFFSET,
 			.world = world,
 			.interior = interior);
-
-		RemovePlayerMask(playerid);
 	}
 
 	/*
@@ -301,17 +291,14 @@ DropItems(playerid, Float:x, Float:y, Float:z, Float:r, bool:death)
 
 	if(GetPlayerAP(playerid) > 0.0)
 	{
-		itemid = CreateItem(item_Armour,
+		itemid = CreateItemInWorld(RemovePlayerArmourItem(playerid),
 			x + floatsin(80.0, degrees),
 			y + floatcos(80.0, degrees),
 			z - FLOOR_OFFSET,
 			.rz = r,
-			.zoffset = ITEM_BUTTON_OFFSET,
 			.world = world,
 			.interior = interior);
 
-		SetItemExtraData(itemid, floatround(GetPlayerAP(playerid)));
-		ToggleArmour(playerid, false);
 		SetPlayerAP(playerid, 0.0);
 	}
 
@@ -333,7 +320,6 @@ DropItems(playerid, Float:x, Float:y, Float:z, Float:r, bool:death)
 			y + floatcos(135.0, degrees),
 			z - FLOOR_OFFSET,
 			.rz = r,
-			.zoffset = ITEM_BUTTON_OFFSET,
 			.world = world,
 			.interior = interior);
 
@@ -349,7 +335,6 @@ DropItems(playerid, Float:x, Float:y, Float:z, Float:r, bool:death)
 		y + floatcos(90.0, degrees),
 		z - FLOOR_OFFSET,
 		.rz = r,
-		.zoffset = ITEM_BUTTON_OFFSET,
 		.world = world,
 		.interior = interior);
 

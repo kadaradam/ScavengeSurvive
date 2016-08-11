@@ -25,6 +25,12 @@
 #include <YSI\y_hooks>
 
 
+hook OnItemTypeDefined(uname[])
+{
+	if(!strcmp(uname, "Campfire"))
+		SetItemTypeMaxArrayData(GetItemTypeFromUniqueName("Campfire"), 1);
+}
+
 hook OnItemCreateInWorld(itemid)
 {
 	d:3:GLOBAL_DEBUG("[OnItemCreateInWorld] in /gamemodes/sss/core/item/campfire.pwn");
@@ -112,7 +118,7 @@ hook OnPlayerConstructed(playerid, consset)
 		ty /= float(i);
 		tz /= float(i);
 
-		CreateItem(item_Campfire, tx, ty, tz, .zoffset = FLOOR_OFFSET, .world = GetPlayerVirtualWorld(playerid), .interior = GetPlayerInterior(playerid));
+		CreateItem(item_Campfire, tx, ty, tz, .world = GetPlayerVirtualWorld(playerid), .interior = GetPlayerInterior(playerid));
 	}
 
 	return Y_HOOKS_CONTINUE_RETURN_0;

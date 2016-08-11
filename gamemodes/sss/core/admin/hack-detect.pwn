@@ -32,6 +32,8 @@
 #define CAMERA_DISTANCE_INCAR_CINEMOVE	(150.0)
 #define CAMERA_DISTANCE_ONFOOT			(45.0)
 #define VEHICLE_TELEPORT_DISTANCE		(15.0)
+#define	NUM_SHOT_CHECK					(10)
+#define	EXCESS_AMOUNT					(7)
 
 
 enum
@@ -63,7 +65,13 @@ Float:	tp_SetPos			[MAX_PLAYERS][3],
 		vh_ReportTick		[MAX_PLAYERS],
 // Camera Distance
 		cd_ReportTick		[MAX_PLAYERS],
-		cd_DetectDelay		[MAX_PLAYERS];
+		cd_DetectDelay		[MAX_PLAYERS],
+// Excess Accuracy
+		ea_PlayerShots		[MAX_PLAYERS],
+		ea_PlayerHits		[MAX_PLAYERS],
+		ea_LastShots		[MAX_PLAYERS][NUM_SHOT_CHECK],
+		ea_Currshot			[MAX_PLAYERS],
+		ea_TotalChecks		[MAX_PLAYERS];
 
 
 hook OnGameModeInit()
@@ -93,6 +101,11 @@ hook OnGameModeInit()
 	sf_LVTrainTunnel_Area = CreateDynamicPolygon(lv_points, -6.0, 0.0, 8);
 	sf_SFDryDock_Area = CreateDynamicPolygon(sf_points, -14, 0.0, 8);
 
+	for(new i = 0; i < MAX_PLAYERS; i++)
+	{
+		for(new j = 0; j < NUM_SHOT_CHECK; j++)
+			ea_LastShots[i][j] = -1;
+	}
 }
 /*==============================================================================
 
@@ -495,9 +508,11 @@ stock _hd_IsPlayerInWater(playerid)
 
 VehicleHealthCheck(playerid)
 {
-	new Float:vehiclehp;
+	new
+		Float:vehiclehp,
+		vehicleid = GetPlayerVehicleID(playerid);
 
-	GetVehicleHealth(GetPlayerVehicleID(playerid), vehiclehp);
+	GetVehicleHealth(vehicleid, vehiclehp);
 
 	if(vehiclehp > 990.0 && GetPlayerVehicleSeat(playerid) == 0) // Only check the driver - Checking passengers causes a false ban
 	{
@@ -514,7 +529,7 @@ VehicleHealthCheck(playerid)
 		ReportPlayer(name, reason, -1, REPORT_TYPE_VHEALTH, x, y, z, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid), "");
 		BanPlayer(playerid, reason, -1, 0);
 
-		defer vh_ResetVehiclePosition(GetPlayerVehicleID(playerid));
+		defer vh_ResetVehiclePosition(vehicleid);
 
 		vh_ReportTick[playerid] = GetTickCount();
 	}
@@ -702,6 +717,7 @@ CameraDistanceCheck(playerid)
 			format(reason, sizeof(reason), "Camera distance from player %.0f (onfoot, %d, %d at %.0f, %.0f, %.0f)", distance, type, cameramode, cx, cy, cz);
 			format(info, sizeof(info), "%.1f, %.1f, %.1f, %.1f, %.1f, %.1f", cx, cy, cz, cx_vec, cy_vec, cz_vec);
 			ReportPlayer(name, reason, -1, REPORT_TYPE_CAMDIST, px, py, pz, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid), info);
+			TimeoutPlayer(playerid, reason);
 
 			cd_ReportTick[playerid] = GetTickCount();
 		}
@@ -795,6 +811,7 @@ public OnUnoccupiedVehicleUpdate(vehicleid, playerid, passenger_seat, Float:new_
 
 			format(info, sizeof(info), "%f, %f, %f", new_x, new_y, new_z);
 			ReportPlayer(name, reason, -1, REPORT_TYPE_CARTELE, x, y, z, GetPlayerVirtualWorld(vt_MovedFarPlayer[vehicleid]), GetPlayerInterior(vt_MovedFarPlayer[vehicleid]), info);
+			TimeoutPlayer(vt_MovedFarPlayer[vehicleid], reason);
 
 			// RespawnVehicle(vehicleid);
 			return 0;
@@ -865,6 +882,7 @@ hook OnPlayerStateChange(playerid, newstate, oldstate)
 			GetPlayerPos(playerid, px, py, pz);
 
 			ReportPlayer(name, sprintf("Entered locked vehicle (%d) as driver", vehicleid), -1, REPORT_TYPE_LOCKEDCAR, px, py, pz, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid), "");
+			TimeoutPlayer(playerid, sprintf("Entered locked vehicle (%d) as driver", vehicleid));
 			RemovePlayerFromVehicle(playerid);
 			SetPlayerPos(playerid, px, py, pz);
 
@@ -890,6 +908,7 @@ hook OnPlayerStateChange(playerid, newstate, oldstate)
 			GetPlayerPos(playerid, x, y, z);
 
 			ReportPlayer(name, sprintf("Entered locked vehicle (%d) as passenger", vehicleid), -1, REPORT_TYPE_LOCKEDCAR, x, y, z, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid), "");
+			TimeoutPlayer(playerid, sprintf("Entered locked vehicle (%d) as passenger", vehicleid));
 			RemovePlayerFromVehicle(playerid);
 			SetPlayerPos(playerid, x, y, z);
 
@@ -908,7 +927,7 @@ timer CheckIsPlayerStillInVehicle[1000](playerid, vehicleid)
 		return;
 
 	if(IsPlayerInVehicle(playerid, vehicleid))
-		BanPlayer(playerid, "Staying in a locked vehicle", -1, 0);
+		TimeoutPlayer(playerid, "Staying in a locked vehicle");
 
 	SetVehicleExternalLock(vehicleid, 1);
 }
@@ -929,27 +948,7 @@ hook OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, 
 {
 	d:3:GLOBAL_DEBUG("[OnPlayerWeaponShot] in /gamemodes/sss/core/admin/hack-detect.pwn");
 
-	// by IstuntmanI, thanks!
-	if(hittype == BULLET_HIT_TYPE_PLAYER)
-	{
-		if(!(-20.0 <= fX <= 20.0) || !(-20.0 <= fY <= 20.0) || !(-20.0 <= fZ <= 20.0))
-		{
-			new
-				name[MAX_PLAYER_NAME],
-				Float:x,
-				Float:y,
-				Float:z;
-
-			GetPlayerName(playerid, name, MAX_PLAYER_NAME);
-			GetPlayerPos(playerid, x, y, z);
-
-			ReportPlayer(name, "Bad bullet hit offset, attempted crash", -1, REPORT_TYPE_BADHITOFFSET, x, y, z, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid), "");
-
-			return 0;
-		}
-	}
-
-	if(GetTickCountDifference(ammo_LastShot[playerid], GetTickCount()) < GetWeaponShotInterval(weaponid) + 10)
+	if(GetTickCountDifference(GetTickCount(), ammo_LastShot[playerid]) < GetWeaponShotInterval(weaponid) + 10)
 	{
 		ammo_ShotCounter[playerid]++;
 
@@ -965,6 +964,7 @@ hook OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, 
 			GetPlayerPos(playerid, x, y, z);
 
 			ReportPlayer(name, sprintf("fired %d bullets from a %w without reloading", ammo_ShotCounter[playerid], weaponid), -1, REPORT_TYPE_AMMO, x, y, z, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid), "");
+			TimeoutPlayer(playerid, sprintf("fired %d bullets from a %w without reloading", ammo_ShotCounter[playerid], weaponid));
 		}
 	}
 	else
@@ -990,6 +990,7 @@ hook OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, 
 				GetPlayerPos(playerid, x, y, z);
 
 				ReportPlayer(name, "Used animation 222 while shooting weapon 27", -1, REPORT_TYPE_SHOTANIM, x, y, z, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid), "");
+				TimeoutPlayer(playerid, "Used animation 222 while shooting weapon 27");
 
 				return 0;
 			}
@@ -1008,6 +1009,7 @@ hook OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, 
 				GetPlayerPos(playerid, x, y, z);
 
 				ReportPlayer(name, "Used animation 1454 while shooting weapon 23", -1, REPORT_TYPE_SHOTANIM, x, y, z, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid), "");
+				TimeoutPlayer(playerid, "Used animation 1454 while shooting weapon 23");
 
 				return 0;
 			}
@@ -1026,6 +1028,7 @@ hook OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, 
 				GetPlayerPos(playerid, x, y, z);
 
 				ReportPlayer(name, "Used animation 1450 while shooting weapon 25", -1, REPORT_TYPE_SHOTANIM, x, y, z, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid), "");
+				TimeoutPlayer(playerid, "Used animation 1450 while shooting weapon 25");
 
 				return 0;
 			}
@@ -1044,6 +1047,7 @@ hook OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, 
 				GetPlayerPos(playerid, x, y, z);
 
 				ReportPlayer(name, "Used animation 1645 while shooting weapon 29", -1, REPORT_TYPE_SHOTANIM, x, y, z, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid), "");
+				TimeoutPlayer(playerid, "Used animation 1645 while shooting weapon 29");
 
 				return 0;
 			}
@@ -1062,6 +1066,7 @@ hook OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, 
 				GetPlayerPos(playerid, x, y, z);
 
 				ReportPlayer(name, "Used animation 1367 while shooting weapon 30/31/33", -1, REPORT_TYPE_SHOTANIM, x, y, z, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid), "");
+				TimeoutPlayer(playerid, "Used animation 1367 while shooting weapon 30/31/33");
 
 				return 0;
 			}
@@ -1080,6 +1085,7 @@ hook OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, 
 				GetPlayerPos(playerid, x, y, z);
 
 				ReportPlayer(name, "Used animation 1333 while shooting weapon 24", -1, REPORT_TYPE_SHOTANIM, x, y, z, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid), "");
+				TimeoutPlayer(playerid, "Used animation 1333 while shooting weapon 24");
 
 				return 0;
 			}
@@ -1111,5 +1117,154 @@ hook OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, 
 		}
 	}
 
+	// by IstuntmanI, thanks!
+	if(hittype == BULLET_HIT_TYPE_PLAYER)
+	{
+		if(!(-20.0 <= fX <= 20.0) || !(-20.0 <= fY <= 20.0) || !(-20.0 <= fZ <= 20.0))
+		{
+			new
+				name[MAX_PLAYER_NAME],
+				Float:x,
+				Float:y,
+				Float:z;
+
+			GetPlayerName(playerid, name, MAX_PLAYER_NAME);
+			GetPlayerPos(playerid, x, y, z);
+
+			ReportPlayer(name, "Bad bullet hit offset, attempted crash", -1, REPORT_TYPE_BADHITOFFSET, x, y, z, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid), "");
+			TimeoutPlayer(playerid, "Bad bullet hit offset, attempted crash");
+
+			return 0;
+		}
+
+
+/*==============================================================================
+
+	Excess accuracy checks
+
+==============================================================================*/
+
+
+		if(GetPlayerTargetPlayer(playerid) != INVALID_PLAYER_ID)
+		{
+			if(!IsPlayerNPC(hitid))
+			{
+				// Check if player shot is standing still
+				new
+					Float:vx,
+					Float:vy,
+					Float:vz;
+
+				GetPlayerVelocity(hitid, vx, vy, vz);
+
+				if(vx != 0.0 || vy != 0.0 || vz != 0.0)
+				{
+					ea_PlayerShots[playerid]++;
+					ea_PlayerHits[playerid]++;
+					ea_LastShots[playerid][ea_Currshot[playerid]] = 1;
+
+					new total = CheckLastShots(playerid);
+
+					if(total > 0)
+					{
+						ea_TotalChecks[playerid]++;
+						AccuracyWarning(playerid, total);
+					}
+
+					ea_Currshot[playerid]++;
+
+					if(ea_Currshot[playerid] == NUM_SHOT_CHECK)
+					{
+						ea_Currshot[playerid] = 0;
+
+						for(new i = 0; i < NUM_SHOT_CHECK; i++)
+							ea_LastShots[playerid][i] = -1;
+					}
+				}
+			}
+		}
+		else
+		{
+			ea_PlayerShots[playerid]++;
+			ea_LastShots[playerid][ea_Currshot[playerid]] = 0;
+
+			new total = CheckLastShots(playerid);
+
+			if(total > 0)
+			{
+				ea_TotalChecks[playerid]++;
+				AccuracyWarning(playerid, total);
+			}
+
+			ea_Currshot[playerid]++;
+
+			if(ea_Currshot[playerid] == NUM_SHOT_CHECK)
+			{
+				ea_Currshot[playerid] = 0;
+
+				for(new i = 0; i < NUM_SHOT_CHECK; i++)
+					ea_LastShots[playerid][i] = -1;
+			}
+		}
+	}
+
 	return 1;
+}
+
+hook OnPlayerDisconnect(playerid, reason)
+{
+	ea_PlayerShots[playerid] = 0;
+	ea_PlayerHits[playerid] = 0;
+	ea_Currshot[playerid] = 0;
+	ea_TotalChecks[playerid] = 0;
+
+	for(new i = 0; i < NUM_SHOT_CHECK; i++)
+		ea_LastShots[playerid][i] = -1;
+
+	return 1;
+}
+
+stock GetPlayerShotStats(playerid, &shots, &hits, &Float:accuracy)
+{
+	if(!IsPlayerConnected(playerid))
+		return 0;
+
+	shots = ea_PlayerShots[playerid];
+	hits = ea_PlayerHits[playerid];
+	accuracy = floatdiv(float(ea_PlayerHits[playerid]), float(ea_PlayerShots[playerid]));
+
+	return 1;
+}
+
+stock CheckLastShots(playerid)
+{
+	new count;
+
+	for(new i = 0; i < NUM_SHOT_CHECK; i++)
+	{
+		if(ea_LastShots[playerid][i] == -1)
+			return 0;
+
+		if(ea_LastShots[playerid][i])
+			count++;
+	}
+
+	if(count >= EXCESS_AMOUNT)
+		return count;
+
+	return 0;
+}
+
+AccuracyWarning(playerid, total)
+{
+	new
+		shots,
+		hits,
+		Float:accuracy;
+
+	GetPlayerShotStats(playerid, shots, hits, accuracy);
+
+	ChatMsgAdmins(2, YELLOW,
+		"Accuracy Warning: %P (%d) Shots: %d Hits: %d Accuracy: %.2f (%d/10) Checks: %d",
+		playerid, playerid, shots, hits, accuracy, total, ea_TotalChecks[playerid]);
 }

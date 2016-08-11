@@ -145,7 +145,7 @@ DefineSafeboxType(ItemType:itemtype, size)
 	if(box_TypeTotal == MAX_SAFEBOX_TYPE)
 		return -1;
 
-	SetItemTypeMaxArrayData(itemtype, 2);
+	SetItemTypeMaxArrayData(itemtype, 3);
 
 	box_TypeData[box_TypeTotal][box_itemtype]	= itemtype;
 	box_TypeData[box_TypeTotal][box_size]		= size;
@@ -574,7 +574,7 @@ LoadSafeboxItem(filename[], forceactive = 0, skipgeid = 1)
 	if(skipgeid)
 		box_SkipGEID = true;
 
-	boxitemid = CreateItem(ItemType:type[0], Float:data[0], Float:data[1], Float:data[2], .rz = Float:data[3], .world = data[4], .interior = data[5], .zoffset = FLOOR_OFFSET);
+	boxitemid = CreateItem(ItemType:type[0], Float:data[0], Float:data[1], Float:data[2], .rz = Float:data[3], .world = data[4], .interior = data[5]);
 
 	if(skipgeid)
 		box_SkipGEID = false;

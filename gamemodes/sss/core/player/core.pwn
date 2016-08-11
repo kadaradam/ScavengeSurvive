@@ -171,6 +171,12 @@ public OnPlayerDisconnect(playerid, reason)
 
 timer LoadAccountDelay[5000](playerid)
 {
+	if(!IsPlayerConnected(playerid))
+	{
+		print("[LoadAccountDelay] WARNING: Player not connected any more.");
+		return;
+	}
+
 	if(gServerInitialising || GetTickCountDifference(GetTickCount(), gServerInitialiseTick) < 5000)
 	{
 		defer LoadAccountDelay(playerid);
@@ -497,13 +503,13 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 		{
 			if(newkeys & 128)
 			{
-				TogglePlayerHeadwear(playerid, false);
-				TogglePlayerMask(playerid, false);
+				TogglePlayerHatItemVisibility(playerid, false);
+				TogglePlayerMaskItemVisibility(playerid, false);
 			}
 			if(oldkeys & 128)
 			{
-				TogglePlayerHeadwear(playerid, true);
-				TogglePlayerMask(playerid, true);
+				TogglePlayerHatItemVisibility(playerid, true);
+				TogglePlayerMaskItemVisibility(playerid, true);
 			}
 		}
 	}
@@ -755,20 +761,6 @@ stock SetPlayerAP(playerid, Float:amount)
 {
 	if(!IsPlayerConnected(playerid))
 		return 0;
-
-	if(amount <= 0.0)
-	{
-		amount = 0.0;
-
-		ToggleArmour(playerid, false);
-	}
-	else
-	{
-		if(amount > 100.0)
-			amount = 100.0;
-
-		ToggleArmour(playerid, true);
-	}
 
 	ply_Data[playerid][ply_ArmourPoints] = amount;
 

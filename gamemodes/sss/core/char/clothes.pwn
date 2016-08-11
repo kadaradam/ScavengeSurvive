@@ -47,6 +47,12 @@ static
 			skin_CurrentlyUsing[MAX_PLAYERS];
 
 
+hook OnItemTypeDefined(uname[])
+{
+	if(!strcmp(uname, "Clothes"))
+		SetItemTypeMaxArrayData(GetItemTypeFromUniqueName("Clothes"), 1);
+}
+
 hook OnPlayerConnect(playerid)
 {
 	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/char/clothes.pwn");
@@ -131,7 +137,7 @@ hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 				StartUsingClothes(playerid, itemid);
 
 			else
-				ShowActionText(playerid, ls(playerid, "CLOTHESWRGE"), 3000, 130);
+				ShowActionText(playerid, ls(playerid, "CLOTHESWRGE", true), 3000, 130);
 		}
 	}
 

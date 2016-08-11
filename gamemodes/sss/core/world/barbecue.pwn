@@ -59,6 +59,12 @@ hook OnScriptInit()
 	HANDLER = debug_register_handler("BBQ");
 }
 
+hook OnItemTypeDefined(uname[])
+{
+	if(!strcmp(uname, "Barbecue"))
+		SetItemTypeMaxArrayData(GetItemTypeFromUniqueName("Barbecue"), 7);
+}
+
 hook OnItemCreate(itemid)
 {
 	d:3:GLOBAL_DEBUG("[OnItemCreate] in /gamemodes/sss/core/world/barbecue.pwn");
@@ -135,7 +141,11 @@ _UseBbqHandler(playerid, itemid, withitemid)
 
 		if(GetLiquidItemLiquidType(itemid) != liquid_Petrol)
 		{
+<<<<<<< HEAD
 			ShowActionText(playerid, ls(playerid, "FUELNOTPETR"), 3000);
+=======
+			ShowActionText(playerid, ls(playerid, "FUELNOTPETR", true), 3000);
+>>>>>>> upstream/master
 			return 1;
 		}
 
@@ -148,11 +158,15 @@ _UseBbqHandler(playerid, itemid, withitemid)
 			transfer = (canfuel - 0.6 < 0.0) ? canfuel : 0.6;
 			SetLiquidItemLiquidAmount(itemid, canfuel - transfer);
 			SetItemArrayDataAtCell(withitemid, data[bbq_fuel] + 10, bbq_fuel);
+<<<<<<< HEAD
 			ShowActionText(playerid, ls(playerid, "BBQADDPETRO"), 3000);
+=======
+			ShowActionText(playerid, ls(playerid, "BBQADDPETRO", true), 3000);
+>>>>>>> upstream/master
 		}
 		else
 		{
-			ShowActionText(playerid, ls(playerid, "PETROLEMPTY"), 3000);
+			ShowActionText(playerid, ls(playerid, "PETROLEMPTY", true), 3000);
 		}
 
 		return 1;
@@ -164,7 +178,7 @@ _UseBbqHandler(playerid, itemid, withitemid)
 
 		if(GetItemExtraData(itemid) != 0)
 		{
-			ShowActionText(playerid, ls(playerid, "BBQALREADYC"), 3000);
+			ShowActionText(playerid, ls(playerid, "BBQALREADYC", true), 3000);
 			return 1;
 		}
 
@@ -190,7 +204,7 @@ _UseBbqHandler(playerid, itemid, withitemid)
 			bbq_ItemBBQ[itemid] = withitemid;
 			SetItemArrayDataAtCell(withitemid, itemid, bbq_grillItem1);
 			bbq_PlaceFoodTick[playerid] = GetTickCount();
-			ShowActionText(playerid, ls(playerid, "BBQFOODADDE"), 3000);
+			ShowActionText(playerid, ls(playerid, "BBQFOODADDE", true), 3000);
 
 			return 1;
 		}
@@ -207,7 +221,7 @@ _UseBbqHandler(playerid, itemid, withitemid)
 			bbq_ItemBBQ[itemid] = withitemid;
 			SetItemArrayDataAtCell(withitemid, itemid, bbq_grillItem2);
 			bbq_PlaceFoodTick[playerid] = GetTickCount();
-			ShowActionText(playerid, ls(playerid, "BBQFOODADDE"), 3000);
+			ShowActionText(playerid, ls(playerid, "BBQFOODADDE", true), 3000);
 
 			return 1;
 		}
@@ -220,7 +234,7 @@ _UseBbqHandler(playerid, itemid, withitemid)
 		if(data[bbq_fuel] <= 0)
 		{
 			d:2:HANDLER("[_UseBbqHandler] Fuel empty");
-			ShowActionText(playerid, ls(playerid, "BBQFUELEMPT"), 3000);
+			ShowActionText(playerid, ls(playerid, "BBQFUELEMPT", true), 3000);
 			return 1;
 		}
 
@@ -231,7 +245,7 @@ _UseBbqHandler(playerid, itemid, withitemid)
 
 		_LightBBQ(withitemid);
 
-		ShowActionText(playerid, ls(playerid, "BBQLITSTART"), 3000);
+		ShowActionText(playerid, ls(playerid, "BBQLITSTART", true), 3000);
 
 		return 1;
 	}

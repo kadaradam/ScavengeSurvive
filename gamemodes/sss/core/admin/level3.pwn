@@ -386,6 +386,15 @@ ACMD:vehicle[3](playerid, params[])
 		return 1;
 	}
 
+	if(!strcmp(command, "destroy"))
+	{
+		SetVehicleHealth(vehicleid, 0.0);
+
+		ChatMsg(playerid, YELLOW, " >  Vehicle %d set on fire", vehicleid);
+
+		return 1;
+	}
+
 	ChatMsg(playerid, YELLOW, " >  Usage: /vehicle [get/enter/owner/delete/respawn/reset/lock/unlock] [id]");
 
 	return 1;
@@ -528,7 +537,7 @@ ACMD:additem[3](playerid, params[])
 	itemid = CreateItem(type,
 		x + (0.5 * floatsin(-r, degrees)),
 		y + (0.5 * floatcos(-r, degrees)),
-		z - 0.8568, .rz = r, .zoffset = 0.7);
+		z - FLOOR_OFFSET, .rz = r);
 
 	if(exdatasize > 0)
 		SetItemArrayData(itemid, exdata, exdatasize);

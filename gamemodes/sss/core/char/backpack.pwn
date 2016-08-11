@@ -116,6 +116,8 @@ stock DefineBagType(name[ITM_MAX_NAME], ItemType:itemtype, size, Float:attachOff
 	if(bag_TypeTotal == MAX_BAG_TYPE)
 		return -1;
 
+	SetItemTypeMaxArrayData(itemtype, 2);
+
 	bag_TypeData[bag_TypeTotal][bag_name]			= name;
 	bag_TypeData[bag_TypeTotal][bag_itemtype]		= itemtype;
 	bag_TypeData[bag_TypeTotal][bag_size]			= size;
@@ -277,13 +279,13 @@ stock AddItemToPlayer(playerid, itemid, useinventory = false, playeraction = tru
 
 	if(itemsize > freeslots)
 	{
-		ShowActionText(playerid, sprintf(ls(playerid, "BAGEXTRASLO"), itemsize - freeslots), 3000, 150);
+		ShowActionText(playerid, sprintf(ls(playerid, "BAGEXTRASLO", true), itemsize - freeslots), 3000, 150);
 		return -4;
 	}
 
 	if(playeraction)
 	{
-		ShowActionText(playerid, ls(playerid, "BAGITMADDED"), 3000, 150);
+		ShowActionText(playerid, ls(playerid, "BAGITMADDED", true), 3000, 150);
 		ApplyAnimation(playerid, "PED", "PHONE_IN", 4.0, 1, 0, 0, 0, 300);
 		bag_PuttingInBag[playerid] = true;
 		defer bag_PutItemIn(playerid, itemid, containerid);
@@ -665,7 +667,7 @@ hook OnPlayerSelectInvOpt(playerid, option)
 			new required = AddItemToContainer(containerid, itemid, playerid);
 
 			if(required > 0)
-				ShowActionText(playerid, sprintf(ls(playerid, "BAGEXTRASLO"), required), 3000, 150);
+				ShowActionText(playerid, sprintf(ls(playerid, "BAGEXTRASLO", true), required), 3000, 150);
 
 			DisplayPlayerInventory(playerid);
 		}
@@ -710,7 +712,7 @@ hook OnPlayerSelectCntOpt(playerid, containerid, option)
 			new required = AddItemToContainer(bagcontainerid, itemid, playerid);
 
 			if(required > 0)
-				ShowActionText(playerid, sprintf(ls(playerid, "BAGEXTRASLO"), required), 3000, 150);
+				ShowActionText(playerid, sprintf(ls(playerid, "BAGEXTRASLO", true), required), 3000, 150);
 
 			DisplayContainerInventory(playerid, containerid);
 		}

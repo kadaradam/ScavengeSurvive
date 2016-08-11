@@ -25,6 +25,12 @@
 #include <YSI\y_hooks>
 
 
+hook OnItemTypeDefined(uname[])
+{
+	if(!strcmp(uname, "Locator"))
+		SetItemTypeMaxArrayData(GetItemTypeFromUniqueName("Locator"), 1);
+}
+
 hook OnPlayerUseItemWithItem(playerid, itemid, withitemid)
 {
 	d:3:GLOBAL_DEBUG("[OnPlayerUseItemWithItem] in /gamemodes/sss/core/item/locator.pwn");
@@ -69,8 +75,13 @@ hook OnPlayerUseItem(playerid, itemid)
 				new
 					Float:distance = Distance(phone_x, phone_y, phone_z, x, y, z);
 					
+<<<<<<< HEAD
 				ShowActionText(playerid, sprintf("Distance: %.3f", distance), 2000);
 			    return 1;
+=======
+				ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
+				return 1;
+>>>>>>> upstream/master
 			}
 			
 			new containerid = GetItemContainer(phoneItemID);
@@ -86,7 +97,11 @@ hook OnPlayerUseItem(playerid, itemid)
 					new
 						Float:distance = Distance(phone_x, phone_y, phone_z, x, y, z);
 
+<<<<<<< HEAD
 					ShowActionText(playerid, sprintf("Distance: %.3f", distance), 2000);
+=======
+					ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
+>>>>>>> upstream/master
 					return 1;
 				}
 
@@ -99,7 +114,11 @@ hook OnPlayerUseItem(playerid, itemid)
 					new
 						Float:distance = Distance(phone_x, phone_y, phone_z, x, y, z);
 
+<<<<<<< HEAD
 					ShowActionText(playerid, sprintf("Distance: %.3f", distance), 2000);
+=======
+					ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
+>>>>>>> upstream/master
 					return 1;
 				}
 
@@ -113,7 +132,11 @@ hook OnPlayerUseItem(playerid, itemid)
 					new
 						Float:distance = Distance(phone_x, phone_y, phone_z, x, y, z);
 
+<<<<<<< HEAD
 					ShowActionText(playerid, sprintf("Distance: %.3f", distance), 2000);
+=======
+					ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
+>>>>>>> upstream/master
 					return 1;
 				}
 
@@ -127,7 +150,11 @@ hook OnPlayerUseItem(playerid, itemid)
 					new
 						Float:distance = Distance(phone_x, phone_y, phone_z, x, y, z);
 
+<<<<<<< HEAD
 					ShowActionText(playerid, sprintf("Distance: %.3f", distance), 2000);
+=======
+					ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
+>>>>>>> upstream/master
 					return 1;
 				}
 				
@@ -141,7 +168,11 @@ hook OnPlayerUseItem(playerid, itemid)
 					new
 						Float:distance = Distance(phone_x, phone_y, phone_z, x, y, z);
 
+<<<<<<< HEAD
 					ShowActionText(playerid, sprintf("Distance: %.3f", distance), 2000);
+=======
+					ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
+>>>>>>> upstream/master
 					return 1;
 				}
 			}
@@ -156,14 +187,15 @@ hook OnPlayerUseItem(playerid, itemid)
 				new
 					Float:distance = Distance(phone_x, phone_y, phone_z, x, y, z);
 
+<<<<<<< HEAD
 				ShowActionText(playerid, sprintf("Distance: %.3f", distance), 2000);
+=======
+				ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
+>>>>>>> upstream/master
 				return 1;
 			}
-			
-			
-			ShowActionText(playerid, "Unable to trace the mobile phone", 2000);
-	
 
+			ShowActionText(playerid, ls(playerid, "LOCATORDIS", true), 2000);
 		}
 	}
 

@@ -65,6 +65,7 @@ native gpci(playerid, serial[], len);
 #define BTN_MAX							(32768) // SIF/Button
 #define ITM_MAX							(32768) // SIF/Item
 #define CNT_MAX_SLOTS					(100)
+#define ITER_NONE						(cellmin) // Temporary fix for https://github.com/Misiur/YSI-Includes/issues/109
 
 /*==============================================================================
 
@@ -124,40 +125,37 @@ public OnGameModeInit()
 
 #include "sss\core\server\hooks.pwn"// Internal library for hooking functions before they are used in external libraries.
 
-#include <streamer>					// By Incognito, v2.7.5.2:	http://forum.sa-mp.com/showthread.php?t=102865
-#include <irc>						// By Incognito, 1.4.5:		http://forum.sa-mp.com/showthread.php?t=98803
-#include <dns>						// By Incognito, 2.4:		http://forum.sa-mp.com/showthread.php?t=75605
-#include <sqlitei>					// By Slice, v0.9.7:		http://forum.sa-mp.com/showthread.php?t=303682
+#include <streamer>					// By Incognito, v2.8.2:	https://github.com/samp-incognito/samp-streamer-plugin/releases/tag/v2.82
+#include <irc>						// By Incognito, 1.4.8:		https://github.com/samp-incognito/samp-irc-plugin/releases/tag/v1.4.8-non-ssl
+#include <dns>						// By Incognito, 2.4:		https://github.com/samp-incognito/samp-dns-plugin/releases/tag/v2.4
+#include <sqlitei>					// By Slice, v0.9.7:		https://github.com/oscar-broman/sqlitei
 #include <formatex>					// By Slice:				http://forum.sa-mp.com/showthread.php?t=313488
-#include <strlib>					// By Slice:				http://forum.sa-mp.com/showthread.php?t=362764
-#include <md-sort>					// By Slice:				http://forum.sa-mp.com/showthread.php?t=343172
+#include <strlib>					// By Slice:				https://github.com/oscar-broman/strlib
+#include <md-sort>					// By Slice:				https://github.com/oscar-broman/md-sort
 #include <geolocation>				// By Whitetiger:			https://github.com/Whitetigerswt/SAMP-geoip
-
-#define time ctime_time
-#include <CTime>					// By RyDeR:				http://forum.sa-mp.com/showthread.php?t=294054
-#undef time
+#include <ctime>					// By RyDeR`:				https://github.com/Southclaw/samp-ctime
 
 #include <progress2>				// By Toribio/Southclaw:	https://github.com/Southclaw/PlayerProgressBar
-#include <FileManager>				// By JaTochNietDan, 1.5:	http://forum.sa-mp.com/showthread.php?t=92246
+#include <FileManager>				// By JaTochNietDan, 1.5:	http://www.jatochnietdan.com/project/sa-mp/filemanager
 #include <mapandreas>				// By Kalcor				http://forum.sa-mp.com/showthread.php?t=120013
 
 #include <SimpleINI>				// By Southclaw:			https://github.com/Southclaw/SimpleINI
 #include <modio>					// By Southclaw:			https://github.com/Southclaw/modio
-#include <SIF>						// By Southclaw, HEAD:		https://github.com/Southclaw/SIF
-#include <SIF\extensions\ItemArrayData>
-#include <SIF\extensions\ItemList>
-#include <SIF\extensions\InventoryDialog>
-#include <SIF\extensions\InventoryKeys>
-#include <SIF\extensions\ContainerDialog>
-#include <SIF\extensions\Craft>
-#include <SIF\extensions\DebugLabels>
+#include <SIF>						// By Southclaw, v1.5.0:	https://github.com/Southclaw/SIF
+#include <SIF\extensions\ItemArrayData.pwn>
+#include <SIF\extensions\ItemList.pwn>
+#include <SIF\extensions\InventoryDialog.pwn>
+#include <SIF\extensions\InventoryKeys.pwn>
+#include <SIF\extensions\ContainerDialog.pwn>
+#include <SIF\extensions\Craft.pwn>
+#include <SIF\extensions\DebugLabels.pwn>
 #include <WeaponData>				// By Southclaw:			https://github.com/Southclaw/AdvancedWeaponData
 #include <Line>						// By Southclaw:			https://github.com/Southclaw/Line
 #include <Zipline>					// By Southclaw:			https://github.com/Southclaw/Zipline
 #include <Ladder>					// By Southclaw:			https://github.com/Southclaw/Ladder
 
 native WP_Hash(buffer[], len, const str[]);
-									// By Y_Less:				http://forum.sa-mp.com/showthread.php?t=65290
+									// By Y_Less:				https://github.com/Southclaw/samp-whirlpool
 
 
 /*==============================================================================
@@ -395,6 +393,7 @@ new stock
 #include "sss/utils/string.pwn"
 #include "sss/utils/debug.pwn"
 #include "sss/utils/dialog-pages.pwn"
+#include "sss/utils/item.pwn"
 
 // SERVER CORE
 #include "sss/core/server/settings.pwn"
@@ -405,7 +404,6 @@ new stock
 #include "sss/core/server/info-message.pwn"
 #include "sss/core/server/language.pwn"
 #include "sss/core/player/language.pwn"
-#include "sss/core/server/version.pwn"
 
 /*
 	PARENT SYSTEMS
@@ -424,6 +422,7 @@ new stock
 #include "sss/core/item/liquid.pwn"
 #include "sss/core/item/liquid-container.pwn"
 #include "sss/core/world/tree.pwn"
+#include "sss/core/world/explosive.pwn"
 
 /*
 	MODULE INITIALISATION CALLS
@@ -471,7 +470,6 @@ new stock
 #include "sss/core/player/afk-check.pwn"
 #include "sss/core/player/alt-tab-check.pwn"
 #include "sss/core/player/disallow-actions.pwn"
-#include "sss/core/player/tool-tips.pwn"
 #include "sss/core/player/whitelist.pwn"
 #include "sss/core/player/irc.pwn"
 #include "sss/core/player/country.pwn"
@@ -509,11 +507,12 @@ new stock
 
 // UI
 #include "sss/core/ui/radio.pwn"
-#include "sss/core/ui/tip-text.pwn"
+#include "sss/core/ui/tool-tip.pwn"
 #include "sss/core/ui/key-actions.pwn"
 #include "sss/core/ui/watch.pwn"
 #include "sss/core/ui/keypad.pwn"
 #include "sss/core/ui/body-preview.pwn"
+#include "sss/core/ui/status.pwn"
 
 // WORLD ENTITIES
 #include "sss/core/world/fuel.pwn"
@@ -524,7 +523,6 @@ new stock
 #include "sss/core/world/tent.pwn"
 #include "sss/core/world/campfire.pwn"
 #include "sss/core/world/emp.pwn"
-#include "sss/core/world/explosive.pwn"
 #include "sss/core/world/sign.pwn"
 #include "sss/core/world/supply-crate.pwn"
 #include "sss/core/world/weapons-cache.pwn"
@@ -564,7 +562,6 @@ new stock
 // ITEMS
 #include "sss/core/item/food.pwn"
 #include "sss/core/item/firework.pwn"
-#include "sss/core/item/tnttimebomb.pwn"
 #include "sss/core/item/sign.pwn"
 #include "sss/core/item/shield.pwn"
 #include "sss/core/item/handcuffs.pwn"
@@ -576,8 +573,6 @@ new stock
 #include "sss/core/item/dice.pwn"
 #include "sss/core/item/armour.pwn"
 #include "sss/core/item/injector.pwn"
-#include "sss/core/item/tntphonebomb.pwn"
-#include "sss/core/item/tnttripmine.pwn"
 #include "sss/core/item/parachute.pwn"
 #include "sss/core/item/molotov.pwn"
 #include "sss/core/item/screwdriver.pwn"
@@ -592,15 +587,6 @@ new stock
 #include "sss/core/item/policecap.pwn"
 #include "sss/core/item/tophat.pwn"
 #include "sss/core/item/herpderp.pwn"
-#include "sss/core/item/tntproxmine.pwn"
-#include "sss/core/item/iedtimebomb.pwn"
-#include "sss/core/item/iedtripmine.pwn"
-#include "sss/core/item/iedproxmine.pwn"
-#include "sss/core/item/iedphonebomb.pwn"
-#include "sss/core/item/emptimebomb.pwn"
-#include "sss/core/item/emptripmine.pwn"
-#include "sss/core/item/empproxmine.pwn"
-#include "sss/core/item/empphonebomb.pwn"
 #include "sss/core/item/gasmask.pwn"
 #include "sss/core/item/hockeymask.pwn"
 #include "sss/core/item/xmashat.pwn"
@@ -822,7 +808,8 @@ DatabaseTableCheck(DB:database, tablename[], expectedcolumns)
 	}
 }
 
-public Streamer_OnPluginError()
+public Streamer_OnPluginError(error[])
 {
+	print(error);
 	PrintAmxBacktrace();
 }

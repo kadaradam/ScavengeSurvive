@@ -79,7 +79,8 @@ CreateFireworkProjectile(model,
 {
 	new id = Iter_Free(fwk_ProjectileIndex);
 	
-	if(id == -1)return -1;
+	if(id == ITER_NONE)
+		return -1;
 
 	fwk_Data[id][fwk_object] = CreateDynamicObject(model, x, y, z, rx, ry, rz);
 	MoveDynamicObject(fwk_Data[id][fwk_object],
@@ -215,11 +216,11 @@ CMD:addfirework(playerid, params[])
 
 	CreateItem(fireworkLighterType,
 		x + (0.5 * floatsin(-r, degrees)),
-		y + (0.5 * floatcos(-r, degrees)), z-0.8568, .rz = r, .zoffset = 0.8568);
+		y + (0.5 * floatcos(-r, degrees)), z - FLOOR_OFFSET, .rz = r);
 
 	CreateItem(fireworkItemType,
 		x + (3.5 * floatsin(-r, degrees)),
-		y + (3.5 * floatcos(-r, degrees)), z-0.8568, .rz = r, .zoffset = 0.8568);
+		y + (3.5 * floatcos(-r, degrees)), z - FLOOR_OFFSET, .rz = r);
 
 	return 1;
 }

@@ -36,7 +36,11 @@ hook OnPlayerUseItemWithItem(playerid, itemid, withitemid)
 			
 		if(GetLiquidItemLiquidType(itemid) != liquid_Petrol)
 		{
+<<<<<<< HEAD
 			ShowActionText(playerid, ls(playerid, "FUELNOTPETR"), 3000);
+=======
+			ShowActionText(playerid, ls(playerid, "FUELNOTPETR", true), 3000);
+>>>>>>> upstream/master
 			return Y_HOOKS_BREAK_RETURN_1;
 		}
 
@@ -45,7 +49,11 @@ hook OnPlayerUseItemWithItem(playerid, itemid, withitemid)
 
 		if(canfuel <= 0.0)
 		{
+<<<<<<< HEAD
 			ShowActionText(playerid, ls(playerid, "PETROLEMPTY"), 3000);
+=======
+			ShowActionText(playerid, ls(playerid, "PETROLEMPTY", true), 3000);
+>>>>>>> upstream/master
 			return Y_HOOKS_BREAK_RETURN_1;
 		}
 
@@ -60,10 +68,17 @@ hook OnPlayerUseItemWithItem(playerid, itemid, withitemid)
 		GetItemRot(withitemid, rz, rz, rz);
 
 		DestroyItem(withitemid);
+<<<<<<< HEAD
 		CreateItem(ItemType:18, x, y, z, .rz = rz, .zoffset = FLOOR_OFFSET);
 
 		ApplyAnimation(playerid, "BOMBER", "BOM_PLANT_IN", 4.0, 0, 0, 0, 0, 0);
 		ShowActionText(playerid, ls(playerid, "MOLOPOURBOT"), 3000);
+=======
+		CreateItem(ItemType:18, x, y, z, .rz = rz);
+
+		ApplyAnimation(playerid, "BOMBER", "BOM_PLANT_IN", 4.0, 0, 0, 0, 0, 0);
+		ShowActionText(playerid, ls(playerid, "MOLOPOURBOT", true), 3000);
+>>>>>>> upstream/master
 		
 		transfer = (canfuel - 0.5 < 0.0) ? canfuel : 0.5;
 		SetLiquidItemLiquidAmount(itemid, canfuel - transfer);

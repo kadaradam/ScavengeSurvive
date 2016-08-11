@@ -132,6 +132,12 @@ stock CreateTent(Float:x, Float:y, Float:z, Float:rz, worldid, interiorid)
 {
 	new id = Iter_Free(tnt_Index);
 
+	if(id == ITER_NONE)
+	{
+		print("ERROR: [CreateTent] id == ITER_NONE");
+		return -1;
+	}
+
 	tnt_Data[id][tnt_buttonId] = CreateButton(x, y, z, "Hold "KEYTEXT_INTERACT" with crowbar to dismantle", worldid, interiorid, .areasize = 1.5, .label = 0);
 
 	tnt_ButtonTent[tnt_Data[id][tnt_buttonId]] = id;
@@ -276,7 +282,7 @@ AddItemToTentIndex(tentid, itemid)
 
 	new cell = Iter_Free(tnt_ItemIndex[tentid]);
 
-	if(cell == -1)
+	if(cell == ITER_NONE)
 		return 0;
 
 	tnt_Items[tentid][cell] = itemid;
@@ -437,7 +443,7 @@ hook OnButtonPress(playerid, buttonid)
 				tnt_CurrentTentID[playerid] = i;
 				StartHoldAction(playerid, 15000);
 				ApplyAnimation(playerid, "BOMBER", "BOM_Plant_Loop", 4.0, 1, 0, 0, 0, 0);
-				ShowActionText(playerid, ls(playerid, "TENTREMOVE"));
+				ShowActionText(playerid, ls(playerid, "TENTREMOVE", true));
 
 				return Y_HOOKS_BREAK_RETURN_1;
 			}
@@ -477,8 +483,7 @@ hook OnHoldActionFinish(playerid)
 				tnt_Data[tnt_CurrentTentID[playerid]][tnt_posX],
 				tnt_Data[tnt_CurrentTentID[playerid]][tnt_posY],
 				tnt_Data[tnt_CurrentTentID[playerid]][tnt_posZ] - 0.4,
-				.rz = tnt_Data[tnt_CurrentTentID[playerid]][tnt_posX],
-				.zoffset = FLOOR_OFFSET);
+				.rz = tnt_Data[tnt_CurrentTentID[playerid]][tnt_posX]);
 
 			DestroyTent(tnt_CurrentTentID[playerid]);
 			ClearAnimations(playerid);
@@ -707,7 +712,7 @@ LoadTent(filename[])
 
 		cell = Iter_Free(tnt_ItemIndex[tentid]);
 
-		if(cell == -1)
+		if(cell == ITER_NONE)
 			return 0;
 
 		tnt_Items[tentid][cell] = itemid;
@@ -720,7 +725,7 @@ LoadTent(filename[])
 
 		UpdateTentDebugLabel(tentid);
 
-		CreateItem_ExplicitID(itemid, x, y, z, .rz = r, .world = world, .interior = interior, .zoffset = FLOOR_OFFSET);
+		CreateItem_ExplicitID(itemid, x, y, z, .rz = r, .world = world, .interior = interior);
 	}
 
 	DestroyItemList(itemlist);

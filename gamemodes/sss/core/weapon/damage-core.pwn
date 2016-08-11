@@ -115,7 +115,7 @@ stock PlayerInflictWound(playerid, targetid, E_WND_TYPE:type, Float:bleedrate, F
 		woundcount,
 		Float:totalbleedrate = GetPlayerBleedRate(targetid);
 
-	if(woundid == -1)
+	if(woundid == ITER_NONE)
 	{
 		SetPlayerHP(targetid, 0.0);
 		return 0;
@@ -189,7 +189,7 @@ stock PlayerInflictWound(playerid, targetid, E_WND_TYPE:type, Float:bleedrate, F
 		logf("[WOUND] %p wounded. bleedrate %f knockmult %f bodypart %d source '%s'", targetid, bleedrate, knockmult, bodypart, source);
 	}
 
-	ShowActionText(targetid, sprintf(ls(targetid, "WOUNDEDMSSG"), source, (knockmult * (((woundcount + 1) * 0.2) * ((totalbleedrate * 50) + 1)) < 50.0 ? ("Minor") : ("Severe"))), 5000);
+	ShowActionText(targetid, sprintf(ls(targetid, "WOUNDEDMSSG", true), source, (knockmult * (((woundcount + 1) * 0.2) * ((totalbleedrate * 50) + 1)) < 50.0 ? ("Minor") : ("Severe"))), 5000);
 
 	return 1;
 }
@@ -413,7 +413,7 @@ stock SetPlayerWoundDataFromArray(playerid, input[])
 	{
 		woundid = Iter_Free(wnd_Index[playerid]);
 
-		if(woundid == -1)
+		if(woundid == ITER_NONE)
 		{
 			printf("[SetPlayerWoundDataFromArray] ERROR: Ran out of wound slots on wound %d cell: %d", (idx - 1) / _:E_WOUND_DATA, idx);
 			break;
