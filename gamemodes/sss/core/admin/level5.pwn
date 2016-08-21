@@ -159,27 +159,6 @@ ACMD:gotoitem[4](playerid, params[])
 	return 1;
 }
 
-ACMD:gotodef[4](playerid, params[])
-{
-	new id = strval(params);
-
-	if(!IsValidDefence(id))
-	{
-		ChatMsg(playerid, YELLOW, " >  Invalid ID");
-		return 1;
-	}
-
-	new
-		Float:x,
-		Float:y,
-		Float:z;
-
-	GetDefencePos(id, x, y, z);
-	SetPlayerPos(playerid, x, y, z);
-
-	return 1;
-}
-
 ACMD:addloot[5](playerid, params[])
 {
 	new
@@ -210,6 +189,23 @@ ACMD:addloot[5](playerid, params[])
 
 	CreateLootItem(lootindex, x, y, z, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid));
 	//CreateStaticLootSpawn(x, y, z - 0.8568, lootindex, 100, size, GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid));
+
+	return 1;
+}
+
+ACMD:setitemhp[5](playerid, params[])
+{
+	new
+		itemid,
+		hitpoints;
+
+	if(sscanf(params, "dd", itemid, hitpoints))
+	{
+		ChatMsg(playerid, YELLOW, " >  Usage: /setitemhp [itemid] [hitpoints]");
+		return 1;
+	}
+
+	SetItemHitPoints(itemid, hitpoints);
 
 	return 1;
 }

@@ -59,9 +59,9 @@ native gpci(playerid, serial[], len);
 #define ITM_MAX_NAME					(20) // SIF/Item
 #define ITM_MAX_TEXT					(64) // SIF/Item
 #define ITM_DROP_ON_DEATH				(false) // SIF/Item
-#define SIF_USE_DEBUG_LABELS			(true) // SIF/extensions/DebugLabels
-//	#define DEBUG_LABELS_BUTTON				(true) // SIF/Button
-//	#define DEBUG_LABELS_ITEM				(true) // SIF/Item
+#define SIF_USE_DEBUG_LABELS			// SIF/extensions/DebugLabels
+#define DEBUG_LABELS_BUTTON				// SIF/Button
+#define DEBUG_LABELS_ITEM				// SIF/Item
 #define BTN_MAX							(32768) // SIF/Button
 #define ITM_MAX							(32768) // SIF/Item
 #define CNT_MAX_SLOTS					(100)
@@ -143,7 +143,7 @@ public OnGameModeInit()
 #include <modio>					// By Southclaw:			https://github.com/Southclaw/modio
 #include <SIF>						// By Southclaw, v1.5.0:	https://github.com/Southclaw/SIF
 #include <SIF\extensions\ItemArrayData.pwn>
-#include <SIF\extensions\ItemList.pwn>
+#include <SIF\extensions\ItemSerializer.pwn>
 #include <SIF\extensions\InventoryDialog.pwn>
 #include <SIF\extensions\InventoryKeys.pwn>
 #include <SIF\extensions\ContainerDialog.pwn>
@@ -214,11 +214,9 @@ native WP_Hash(buffer[], len, const str[]);
 
 // Colours
 #define YELLOW						0xFFFF00FF
-
 #define RED							0xE85454FF
 #define GREEN						0x33AA33FF
 #define BLUE						0x33CCFFFF
-
 #define ORANGE						0xFFAA00FF
 #define GREY						0xAFAFAFFF
 #define PINK						0xFFC0CBFF
@@ -228,7 +226,6 @@ native WP_Hash(buffer[], len, const str[]);
 #define TEAL						0x008080FF
 #define BROWN						0xA52A2AFF
 #define AQUA						0xF0F8FFFF
-
 #define BLACK						0x000000FF
 #define WHITE						0xFFFFFFFF
 #define CHAT_LOCAL					0xADABD1FF
@@ -237,11 +234,9 @@ native WP_Hash(buffer[], len, const str[]);
 
 // Embedding Colours
 #define C_YELLOW					"{FFFF00}"
-
 #define C_RED						"{E85454}"
 #define C_GREEN						"{33AA33}"
 #define C_BLUE						"{33CCFF}"
-
 #define C_ORANGE					"{FFAA00}"
 #define C_GREY						"{AFAFAF}"
 #define C_PINK						"{FFC0CB}"
@@ -251,10 +246,8 @@ native WP_Hash(buffer[], len, const str[]);
 #define C_TEAL						"{008080}"
 #define C_BROWN						"{A52A2A}"
 #define C_AQUA						"{F0F8FF}"
-
 #define C_BLACK						"{000000}"
 #define C_WHITE						"{FFFFFF}"
-
 #define C_SPECIAL					"{0025AA}"
 
 
@@ -266,26 +259,6 @@ native WP_Hash(buffer[], len, const str[]);
 #define BODY_PART_LEFT_LEG			(7)
 #define BODY_PART_RIGHT_LEG			(8)
 #define BODY_PART_HEAD				(9)
-
-
-// Report types
-#define REPORT_TYPE_PLAYER_ID		"PLY ID"
-#define REPORT_TYPE_PLAYER_NAME		"PLY NAME"
-#define REPORT_TYPE_PLAYER_CLOSE	"PLY CLOSE"
-#define REPORT_TYPE_PLAYER_KILLER	"PLY KILL"
-#define REPORT_TYPE_TELEPORT		"TELE"
-#define REPORT_TYPE_SWIMFLY			"FLY"
-#define REPORT_TYPE_VHEALTH			"VHP"
-#define REPORT_TYPE_CAMDIST			"CAM"
-#define REPORT_TYPE_CARNITRO		"NOS"
-#define REPORT_TYPE_CARHYDRO		"HYDRO"
-#define REPORT_TYPE_CARTELE			"VTP"
-#define REPORT_TYPE_HACKTRAP		"TRAP"
-#define REPORT_TYPE_LOCKEDCAR		"LCAR"
-#define REPORT_TYPE_AMMO			"AMMO"
-#define REPORT_TYPE_SHOTANIM		"ANIM"
-#define REPORT_TYPE_BADHITOFFSET	"BHIT"
-#define REPORT_TYPE_BAD_SHOT_WEAP	"BSHT"
 
 
 // Genders
@@ -303,6 +276,7 @@ native WP_Hash(buffer[], len, const str[]);
 #define KEYTEXT_LIGHTS				"~k~~CONVERSATION_NO~"
 #define KEYTEXT_DOORS				"~k~~TOGGLE_SUBMISSIONS~"
 #define KEYTEXT_RADIO				"R"
+
 
 // Attachment slots
 enum
@@ -410,6 +384,7 @@ new stock
 	Modules that declare setup functions and constants used throughout.
 */
 #include "sss/core/vehicle/vehicle-type.pwn"
+#include "sss/core/vehicle/lock.pwn"
 #include "sss/core/vehicle/core.pwn"
 #include "sss/core/player/core.pwn"
 #include "sss/core/player/save-load.pwn"
@@ -434,8 +409,6 @@ new stock
 	CHILD SYSTEMS
 	Modules that do not declare anything globally accessible besides interfaces.
 */
-// GAME DATA LOADING
-#include "sss/data/loot.pwn" // todo: load from file
 
 // VEHICLE
 #include "sss/core/vehicle/player-vehicle.pwn"
@@ -447,7 +420,6 @@ new stock
 #include "sss/core/vehicle/lock-break.pwn"
 #include "sss/core/vehicle/locksmith.pwn"
 #include "sss/core/vehicle/carmour.pwn"
-#include "sss/core/vehicle/lock.pwn"
 #include "sss/core/vehicle/anti-ninja.pwn"
 #include "sss/core/vehicle/bike-collision.pwn"
 #include "sss/core/vehicle/trailer.pwn"
@@ -473,6 +445,7 @@ new stock
 #include "sss/core/player/whitelist.pwn"
 #include "sss/core/player/irc.pwn"
 #include "sss/core/player/country.pwn"
+#include "sss/core/player/recipes.pwn"
 
 // CHARACTER SCRIPTS
 #include "sss/core/char/food.pwn"
@@ -533,7 +506,10 @@ new stock
 #include "sss/core/world/scrap-machine.pwn"
 #include "sss/core/world/refine-machine.pwn"
 #include "sss/core/world/tree-loader.pwn"
-#include "sss/core/world/water-purifier.pwn"
+// #include "sss/core/world/water-purifier.pwn"
+#include "sss/core/world/loot-loader.pwn"
+#include "sss/core/world/plot-pole.pwn"
+#include "sss/core/world/item-tweak.pwn"
 
 // ADMINISTRATION TOOLS
 #include "sss/core/admin/report.pwn"
@@ -562,7 +538,6 @@ new stock
 // ITEMS
 #include "sss/core/item/food.pwn"
 #include "sss/core/item/firework.pwn"
-#include "sss/core/item/sign.pwn"
 #include "sss/core/item/shield.pwn"
 #include "sss/core/item/handcuffs.pwn"
 #include "sss/core/item/wheel.pwn"
@@ -578,7 +553,6 @@ new stock
 #include "sss/core/item/screwdriver.pwn"
 #include "sss/core/item/torso.pwn"
 #include "sss/core/item/ammotin.pwn"
-#include "sss/core/item/tentpack.pwn"
 #include "sss/core/item/campfire.pwn"
 #include "sss/core/item/cowboyhat.pwn"
 #include "sss/core/item/truckcap.pwn"

@@ -52,7 +52,7 @@ enum EXP_PRESET_DATA
 {
 			exp_type,
 Float:		exp_size,
-			exp_defdmg
+			exp_itemDmg
 }
 
 enum E_EXPLOSIVE_ITEM_DATA
@@ -101,6 +101,17 @@ hook OnItemCreate(itemid)
 	}
 
 	return Y_HOOKS_CONTINUE_RETURN_0;
+}
+
+hook OnItemDestroy(itemid)
+{
+	if(exp_ItemTypeExplosive[GetItemType(itemid)] != -1)
+	{
+		if(GetItemHitPoints(itemid) <= 0)
+		{
+			SetItemToExplode(itemid);
+		}
+	}
 }
 
 stock DefineExplosiveItem(ItemType:itemtype, EXP_TRIGGER:trigger, EXP_PRESET:preset)
@@ -543,46 +554,27 @@ stock CreateExplosionOfPreset(Float:x, Float:y, Float:z, EXP_PRESET:preset)
 			CreateExplosion(x, y, z, exp_Presets[preset][exp_type], exp_Presets[preset][exp_size]);
 	}
 
-	new
-		defenceid,
-		newhitpoints;
-
-	defenceid = GetClosestDefence(x, y, z, exp_Presets[preset][exp_size]);
-
-	if(defenceid == -1)
-		return 0;
-
-	newhitpoints = GetDefenceHitPoints(defenceid) - exp_Presets[preset][exp_defdmg];
-
-	if(newhitpoints <= 0)
+	if(exp_Presets[preset][exp_itemDmg] > 0)
 	{
 		new
-			defencetype = GetDefenceType(defenceid),
-			ItemType:itemtype = GetDefenceTypeItemType(defencetype),
-			Float:vrotx,
-			Float:vroty,
-			Float:vrotz,
-			Float:rotz;
+			items[256],
+			count;
 
-		GetDefenceTypeVerticalRot(defencetype, vrotx, vroty, vrotz);
-		rotz = GetDefenceRot(defenceid);
-
-		logf("[DESTRUCTION] Defence %d From %.1f, %.1f, %.1f (GEID: %d) type %d (%d, %f, %f, %f, %f, %f, %f)",
-			defenceid, x, y, z,
-			GetDefenceGEID(defenceid),
-			_:itemtype,
-			GetItemTypeModel(itemtype),
-			x, y, z + GetDefenceTypeOffsetZ(defencetype),
-			vrotx, vroty, vrotz + rotz);
-
-		DestroyDefence(defenceid);
-	}
-	else
-	{
-		SetDefenceHitPoints(defenceid, newhitpoints);
+		count = GetItemsInRange(x, y, z, exp_Presets[preset][exp_size], items);
+		defer _IterateItemDmg(items, sizeof(items), count, 0, exp_Presets[preset][exp_itemDmg]);
 	}
 
 	return 1;
+}
+
+// i, s, c, o, d = items, size, count, offset, damage
+timer _IterateItemDmg[100](i[], s, c, o, d)
+{
+	#pragma unused s
+	SetItemHitPoints(i[o], GetItemHitPoints(i[o]) - d);
+
+	if(o < c)
+		defer _IterateItemDmg(i, s, c, o + 1, d);
 }
 
 

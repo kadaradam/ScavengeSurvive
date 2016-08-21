@@ -361,7 +361,7 @@ ACMD:vehicle[3](playerid, params[])
 
 	if(!strcmp(command, "lock"))
 	{
-		SetVehicleExternalLock(vehicleid, 1);
+		SetVehicleExternalLock(vehicleid, E_LOCK_STATE_EXTERNAL);
 
 		ChatMsg(playerid, YELLOW, " >  Vehicle %d locked", vehicleid);
 
@@ -370,7 +370,7 @@ ACMD:vehicle[3](playerid, params[])
 
 	if(!strcmp(command, "unlock"))
 	{
-		SetVehicleExternalLock(vehicleid, 0);
+		SetVehicleExternalLock(vehicleid, E_LOCK_STATE_OPEN);
 
 		ChatMsg(playerid, YELLOW, " >  Vehicle %d unlocked", vehicleid);
 
@@ -726,26 +726,15 @@ ACMD:delete[3](playerid, params[])
 	}
 	else if(!strcmp(type, "defence", true, 7))
 	{
-		foreach(new i : def_Index)
+		foreach(new i : itm_Index)
 		{
-			GetDefencePos(i, ix, iy, iz);
+			if(GetItemTypeDefenceType(GetItemType(i)) == INVALID_DEFENCE_TYPE)
+				continue;
+
+			GetItemPos(i, ix, iy, iz);
 
 			if(Distance(px, py, pz, ix, iy, iz) < range)
-				i = DestroyDefence(i);
-		}
-
-		return 1;
-	}
-	else if(!strcmp(type, "sign", true, 4))
-	{
-		foreach(new i : sgn_Index)
-		{
-			GetSignPos(i, ix, iy, iz);
-
-			if(Distance(px, py, pz, ix, iy, iz) < range)
-			{
-				i = DestroySign(i);
-			}
+				i = DestroyItem(i);
 		}
 
 		return 1;

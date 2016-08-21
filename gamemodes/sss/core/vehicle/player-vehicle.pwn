@@ -29,10 +29,6 @@
 #define DIRECTORY_VEHICLE			DIRECTORY_MAIN"vehicle/"
 
 
-static
-		vehicle_ItemList[ITM_LST_OF_ITEMS(64)];
-
-
 enum
 {
 		VEH_CELL_TYPE,		// 00
@@ -300,7 +296,7 @@ LoadPlayerVehicle(filename[])
 	SetVehicleColours(vehicleid, data[VEH_CELL_COL1], data[VEH_CELL_COL2]);
 	SetVehicleKey(vehicleid, data[VEH_CELL_KEY]);
 
-	SetVehicleExternalLock(vehicleid, data[VEH_CELL_LOCKED]);
+	SetVehicleExternalLock(vehicleid, E_LOCK_STATE:data[VEH_CELL_LOCKED]);
 
 	new
 		containerid,
@@ -345,7 +341,7 @@ LoadPlayerVehicle(filename[])
 		SetVehicleDamageData(trailerid, data[VEH_CELL_PANELS], data[VEH_CELL_DOORS], data[VEH_CELL_LIGHTS], data[VEH_CELL_TIRES]);
 		SetVehicleKey(trailerid, data[VEH_CELL_KEY]);
 
-		SetVehicleExternalLock(trailerid, data[VEH_CELL_LOCKED]);
+		SetVehicleExternalLock(trailerid, E_LOCK_STATE:data[VEH_CELL_LOCKED]);
 
 		new itemcount;
 
@@ -353,39 +349,40 @@ LoadPlayerVehicle(filename[])
 		{
 			new
 				ItemType:itemtype,
-				itemid,
-				itemlist;
+				itemid;
 
-			length = modio_read(filepath, _T<T,T,R,N>, sizeof(vehicle_ItemList), vehicle_ItemList, false, false);
+			length = modio_read(filepath, _T<T,T,R,N>, ITEM_SERIALIZER_RAW_SIZE, itm_arr_Serialized, false, false);
 		
-			itemlist = ExtractItemList(vehicle_ItemList, length);
-			itemcount = GetItemListItemCount(itemlist);
-
-			containerid = GetVehicleContainer(trailerid);
-
-			for(new i; i < itemcount; i++)
+			if(!DeserialiseItems(itm_arr_Serialized, length, false))
 			{
-				itemtype = GetItemListItem(itemlist, i);
+				itemcount = GetStoredItemCount();
 
-				if(itemtype == INVALID_ITEM_TYPE)
-					break;
+				containerid = GetVehicleContainer(trailerid);
 
-				if(itemtype == ItemType:0)
-					break;
+				for(new i; i < itemcount; i++)
+				{
+					itemtype = GetStoredItemType(i);
 
-				itemid = CreateItem(itemtype);
+					if(itemtype == INVALID_ITEM_TYPE)
+						break;
 
-				if(!IsItemTypeSafebox(itemtype) && !IsItemTypeBag(itemtype))
-					SetItemArrayDataFromListItem(itemid, itemlist, i);
+					if(itemtype == ItemType:0)
+						break;
 
-				AddItemToContainer(containerid, itemid);
+					itemid = CreateItem(itemtype);
+
+					if(!IsItemTypeSafebox(itemtype) && !IsItemTypeBag(itemtype))
+						SetItemArrayDataFromStored(itemid, i);
+
+					AddItemToContainer(containerid, itemid);
+				}
+
+				ClearSerializer();
 			}
-
-			DestroyItemList(itemlist);
 		}
 
 		if(veh_PrintEach)
-			logf("\t[LOAD] Trailer %d (%s) %d items: %s for %s at %.2f, %.2f, %.2f", trailerid, data[VEH_CELL_LOCKED] ? ("L") : ("U"), itemcount, trailername, owner, data[VEH_CELL_POSX], data[VEH_CELL_POSY], data[VEH_CELL_POSZ], data[VEH_CELL_ROTZ]);
+			logf("\t[LOAD] Trailer %d (%d) %d items: %s for %s at %.2f, %.2f, %.2f", trailerid, data[VEH_CELL_LOCKED], itemcount, trailername, owner, data[VEH_CELL_POSX], data[VEH_CELL_POSY], data[VEH_CELL_POSZ], data[VEH_CELL_ROTZ]);
 	}
 
 	new itemcount;
@@ -396,44 +393,45 @@ LoadPlayerVehicle(filename[])
 
 		new
 			ItemType:itemtype,
-			itemid,
-			itemlist;
+			itemid;
 
-		length = modio_read(filepath, _T<T,R,N,K>, sizeof(vehicle_ItemList), vehicle_ItemList, true);
+		length = modio_read(filepath, _T<T,R,N,K>, ITEM_SERIALIZER_RAW_SIZE, itm_arr_Serialized, true);
 
-		itemlist = ExtractItemList(vehicle_ItemList, length);
-		itemcount = GetItemListItemCount(itemlist);
-
-		containerid = GetVehicleContainer(vehicleid);
-
-		d:1:HANDLER("[LoadPlayerVehicle] modio read length:%d itemlist:%d length:%d", length, itemlist, itemcount);
-
-		for(new i; i < itemcount; i++)
+		if(!DeserialiseItems(itm_arr_Serialized, length, false))
 		{
-			itemtype = GetItemListItem(itemlist, i);
+			itemcount = GetStoredItemCount();
 
-			d:2:HANDLER("[LoadPlayerVehicle] item %d/%d type:%d", i, itemcount, _:itemtype);
+			containerid = GetVehicleContainer(vehicleid);
 
-			if(itemtype == INVALID_ITEM_TYPE)
-				break;
+			d:1:HANDLER("[LoadPlayerVehicle] modio read length:%d items:%d", length, itemcount);
 
-			if(itemtype == ItemType:0)
-				break;
+			for(new i; i < itemcount; i++)
+			{
+				itemtype = GetStoredItemType(i);
 
-			itemid = CreateItem(itemtype);
-			d:2:HANDLER("[LoadPlayerVehicle] created item:%d container:%d", itemid, containerid);
+				d:2:HANDLER("[LoadPlayerVehicle] item %d/%d type:%d", i, itemcount, _:itemtype);
 
-			if(!IsItemTypeSafebox(itemtype) && !IsItemTypeBag(itemtype))
-				SetItemArrayDataFromListItem(itemid, itemlist, i);
+				if(itemtype == INVALID_ITEM_TYPE)
+					break;
 
-			AddItemToContainer(containerid, itemid);
+				if(itemtype == ItemType:0)
+					break;
+
+				itemid = CreateItem(itemtype);
+				d:2:HANDLER("[LoadPlayerVehicle] created item:%d container:%d", itemid, containerid);
+
+				if(!IsItemTypeSafebox(itemtype) && !IsItemTypeBag(itemtype))
+					SetItemArrayDataFromStored(itemid, i);
+
+				AddItemToContainer(containerid, itemid);
+			}
+
+			ClearSerializer();
 		}
-
-		DestroyItemList(itemlist);
 	}
 
 	if(veh_PrintEach)
-		logf("\t[LOAD] Vehicle %d (%s) %d items: %s for %s at %.2f, %.2f, %.2f", vehicleid, data[VEH_CELL_LOCKED] ? ("L") : ("U"), itemcount, vehiclename, owner, data[VEH_CELL_POSX], data[VEH_CELL_POSY], data[VEH_CELL_POSZ], data[VEH_CELL_ROTZ]);
+		logf("\t[LOAD] Vehicle %d (%d) %d items: %s for %s at %.2f, %.2f, %.2f", vehicleid, data[VEH_CELL_LOCKED], itemcount, vehiclename, owner, data[VEH_CELL_POSX], data[VEH_CELL_POSY], data[VEH_CELL_POSZ], data[VEH_CELL_ROTZ]);
 
 	return 1;
 }
@@ -485,7 +483,7 @@ _SaveVehicle(vehicleid)
 	data[VEH_CELL_KEY] = GetVehicleKey(vehicleid);
 
 	if(!IsVehicleOccupied(vehicleid))
-		data[VEH_CELL_LOCKED] = IsVehicleLocked(vehicleid);
+		data[VEH_CELL_LOCKED] = _:GetVehicleLockState(vehicleid);
 
 	modio_push(filename, _T<D,A,T,A>, VEH_CELL_END, data);
 
@@ -505,7 +503,7 @@ _SaveVehicle(vehicleid)
 		GetVehicleColours(trailerid, data[VEH_CELL_COL1], data[VEH_CELL_COL2]);
 		GetVehicleDamageStatus(trailerid, data[VEH_CELL_PANELS], data[VEH_CELL_DOORS], data[VEH_CELL_LIGHTS], data[VEH_CELL_TIRES]);
 		data[VEH_CELL_KEY] = GetVehicleKey(trailerid);
-		data[VEH_CELL_LOCKED] = IsVehicleLocked(trailerid);
+		data[VEH_CELL_LOCKED] = _:GetVehicleLockState(trailerid);
 
 		// TDAT = Trailer Data
 		modio_push(filename, _T<T,D,A,T>, VEH_CELL_END, data);
@@ -514,9 +512,7 @@ _SaveVehicle(vehicleid)
 
 		if(IsValidContainer(containerid))
 		{
-			new
-				items[64],
-				itemlist;
+			new items[64];
 
 			for(new i, j = GetContainerSize(containerid); i < j; i++)
 			{
@@ -528,22 +524,21 @@ _SaveVehicle(vehicleid)
 				itemcount++;
 			}
 
-			itemlist = CreateItemList(items, itemcount);
-			GetItemList(itemlist, vehicle_ItemList);
-
-			// TTRN = Trailer Trunk
-			modio_push(filename, _T<T,T,R,N>, GetItemListSize(itemlist), vehicle_ItemList);
-
-			DestroyItemList(itemlist);
+			if(!SerialiseItems(items, itemcount))
+			{
+				// TTRN = Trailer Trunk
+				modio_push(filename, _T<T,T,R,N>, GetSerialisedSize(), itm_arr_Serialized);
+				ClearSerializer();
+			}
 		}
 
 		GetVehicleTypeName(GetVehicleType(trailerid), vehiclename);
 
 		if(veh_PrintEach)
 		{
-			logf("[SAVE] Trailer %d (%s) %d items: %s for %s at %.2f, %.2f, %.2f",
+			logf("[SAVE] Trailer %d (%d) %d items: %s for %s at %.2f, %.2f, %.2f",
 				trailerid,
-				IsVehicleLocked(trailerid) ? ("L") : ("U"),
+				_:GetVehicleLockState(trailerid),
 				itemcount,
 				vehiclename,
 				pveh_Owner[trailerid],
@@ -563,8 +558,7 @@ _SaveVehicle(vehicleid)
 
 	new
 		items[64],
-		itemcount,
-		itemlist;
+		itemcount;
 
 	for(new i, j = GetContainerSize(containerid); i < j; i++)
 	{
@@ -576,20 +570,19 @@ _SaveVehicle(vehicleid)
 		itemcount++;
 	}
 
-	itemlist = CreateItemList(items, itemcount);
-	GetItemList(itemlist, vehicle_ItemList);
-
-	modio_push(filename, _T<T,R,N,K>, GetItemListSize(itemlist), vehicle_ItemList);
-
-	DestroyItemList(itemlist);
+	if(!SerialiseItems(items, itemcount))
+	{
+		modio_push(filename, _T<T,R,N,K>, GetSerialisedSize(), itm_arr_Serialized);
+		ClearSerializer();
+	}
 
 	if(active[0])
 	{
 		if(veh_PrintEach)
 		{
-			logf("[SAVE] Vehicle %d (%s) %d items: %s for %s at %.2f, %.2f, %.2f",
+			logf("[SAVE] Vehicle %d (%d) %d items: %s for %s at %.2f, %.2f, %.2f",
 				vehicleid,
-				IsVehicleLocked(vehicleid) ? ("L") : ("U"),
+				_:GetVehicleLockState(vehicleid),
 				itemcount,
 				vehiclename,
 				pveh_Owner[vehicleid],
