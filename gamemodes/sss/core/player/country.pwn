@@ -22,6 +22,9 @@
 ==============================================================================*/
 
 
+#include <YSI\y_hooks>
+
+
 enum E_COUNTRY_DATA
 {
 			cntr_Hostname[60],
@@ -48,7 +51,7 @@ forward OnLookupResponse(sessionid, response, data[]);
 
 hook OnPlayerLogin(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerLogin] in /gamemodes/sss/core/player/country.pwn");
+	dbg("global", CORE, "[OnPlayerLogin] in /gamemodes/sss/core/player/country.pwn");
 
 	_cntr_HandleLogin(playerid);
 
@@ -57,7 +60,7 @@ hook OnPlayerLogin(playerid)
 
 hook OnPlayerRegister(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerRegister] in /gamemodes/sss/core/player/country.pwn");
+	dbg("global", CORE, "[OnPlayerRegister] in /gamemodes/sss/core/player/country.pwn");
 
 	_cntr_HandleLogin(playerid);
 
@@ -97,16 +100,16 @@ _cntr_UseWeb(playerid)
 	new
 		cell,
 		ip[16],
-		query[60];
+		query[66];
 
 	GetPlayerIp(playerid, ip, sizeof(ip));
-	format(query, sizeof(query), "iphub.info/api.php?ip=%s", ip);
+	format(query, sizeof(query), "legacy.iphub.info/api.php?ip=%s&source=ScavengeSurvive", ip);
 
 	cell = Iter_Free(PlayerSessionIndex);
 
 	if(cell == ITER_NONE)
 	{
-		printf("ERROR: [_cntr_UseWeb] cell == ITER_NONE");
+		err("[_cntr_UseWeb] cell == ITER_NONE");
 		return 0;
 	}
 
@@ -122,7 +125,7 @@ public OnLookupResponse(sessionid, response, data[])
 {
 	if(!(0 <= sessionid < MAX_PLAYERS))
 	{
-		printf("ERROR: OnLookupResponse sessionid out of bounds (%d)", sessionid);
+		err("OnLookupResponse sessionid out of bounds (%d)", sessionid);
 		return;
 	}
 
@@ -156,7 +159,7 @@ public OnLookupResponse(sessionid, response, data[])
 
 	PlayerCountryData[playerid][cntr_Proxy] = strval(proxy);
 
-	printf("[COUNTRY] Player country: '%s' (host: '%s' proxy: %d)",
+	log("[COUNTRY] Player country: '%s' (host: '%s' proxy: %d)",
 		PlayerCountryData[playerid][cntr_Country],
 		PlayerCountryData[playerid][cntr_Hostname],
 		PlayerCountryData[playerid][cntr_Proxy]);

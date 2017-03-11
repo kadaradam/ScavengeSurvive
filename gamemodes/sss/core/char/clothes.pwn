@@ -25,7 +25,7 @@
 #include <YSI\y_hooks>
 
 
-#define MAX_SKINS		(22)
+#define MAX_SKINS		(29)
 #define MAX_SKIN_NAME	(32)
 
 
@@ -34,7 +34,9 @@ enum E_SKIN_DATA
 			skin_model,
 			skin_name[MAX_SKIN_NAME],
 			skin_gender,
-Float:		skin_lootSpawnChance
+Float:		skin_lootSpawnChance,
+			skin_canWearHats,
+			skin_canWearMasks
 }
 
 
@@ -55,24 +57,26 @@ hook OnItemTypeDefined(uname[])
 
 hook OnPlayerConnect(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/char/clothes.pwn");
+	dbg("global", CORE, "[OnPlayerConnect] in /gamemodes/sss/core/char/clothes.pwn");
 
 	skin_CurrentlyUsing[playerid] = INVALID_ITEM_ID;
 }
 
 
-DefineClothesType(modelid, name[MAX_SKIN_NAME], gender, Float:spawnchance)
+DefineClothesType(modelid, name[MAX_SKIN_NAME], gender, Float:spawnchance, bool:wearhats, bool:wearmasks)
 {
 	skin_Data[skin_Total][skin_model] = modelid;
 	skin_Data[skin_Total][skin_name] = name;
 	skin_Data[skin_Total][skin_gender] = gender;
 	skin_Data[skin_Total][skin_lootSpawnChance] = spawnchance;
+	skin_Data[skin_Total][skin_canWearHats] = wearhats;
+	skin_Data[skin_Total][skin_canWearMasks] = wearmasks;
 	return skin_Total++;
 }
 
 hook OnItemCreate(itemid)
 {
-	d:3:GLOBAL_DEBUG("[OnItemCreate] in /gamemodes/sss/core/char/clothes.pwn");
+	dbg("global", CORE, "[OnItemCreate] in /gamemodes/sss/core/char/clothes.pwn");
 
 	if(GetItemType(itemid) == item_Clothes)
 	{
@@ -100,7 +104,7 @@ hook OnItemCreate(itemid)
 
 hook OnItemNameRender(itemid, ItemType:itemtype)
 {
-	d:3:GLOBAL_DEBUG("[OnItemNameRender] in /gamemodes/sss/core/char/clothes.pwn");
+	dbg("global", CORE, "[OnItemNameRender] in /gamemodes/sss/core/char/clothes.pwn");
 
 	if(itemtype == item_Clothes)
 	{
@@ -123,7 +127,7 @@ hook OnItemNameRender(itemid, ItemType:itemtype)
 
 hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerKeyStateChange] in /gamemodes/sss/core/char/clothes.pwn");
+	dbg("global", CORE, "[OnPlayerKeyStateChange] in /gamemodes/sss/core/char/clothes.pwn");
 
 	if(newkeys == 16)
 	{
@@ -170,7 +174,7 @@ StopUsingClothes(playerid)
 
 hook OnHoldActionFinish(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnHoldActionFinish] in /gamemodes/sss/core/char/clothes.pwn");
+	dbg("global", CORE, "[OnHoldActionFinish] in /gamemodes/sss/core/char/clothes.pwn");
 
 	if(skin_CurrentlyUsing[playerid] != INVALID_ITEM_ID)
 	{
@@ -235,4 +239,20 @@ stock GetClothesGender(skinid)
 		return -1;
 
 	return skin_Data[skinid][skin_gender];
+}
+
+stock GetClothesHatStatus(skinid)
+{
+	if(!(0 <= skinid < skin_Total))
+		return false;
+
+	return skin_Data[skinid][skin_canWearHats];
+}
+
+stock GetClothesMaskStatus(skinid)
+{
+	if(!(0 <= skinid < skin_Total))
+		return false;
+
+	return skin_Data[skinid][skin_canWearMasks];
 }

@@ -50,8 +50,6 @@ DBStatement:	stmt_HostGetRecordsFromName;
 
 hook OnGameModeInit()
 {
-	print("\n[OnGameModeInit] Initialising 'host-log'...");
-
 	db_query(gAccounts, "CREATE TABLE IF NOT EXISTS "ACCOUNTS_TABLE_HOST" (\
 		"FIELD_HOST_NAME" TEXT,\
 		"FIELD_HOST_HOST" TEXT,\
@@ -67,7 +65,7 @@ hook OnGameModeInit()
 
 hook OnPlayerConnect(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/player/host-log.pwn");
+	dbg("global", CORE, "[OnPlayerConnect] in /gamemodes/sss/core/player/host-log.pwn");
 
 	JoinResolve[playerid] = true;
 	GetPlayerHost(playerid);
@@ -218,7 +216,7 @@ public OnReverseDNS(ip[], host[], extra)
 			stmt_bind_value(stmt_HostInsert, 2, DB::TYPE_INTEGER, gettime());
 
 			if(!stmt_execute(stmt_HostInsert))
-				print("ERROR: Failed to execute statement 'stmt_HostInsert'.");
+				err("Failed to execute statement 'stmt_HostInsert'.");
 		}
 	}
 

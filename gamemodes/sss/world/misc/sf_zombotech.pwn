@@ -221,7 +221,7 @@ public OnPlayerCommandText(playerid, cmdtext[])
 
 public OnFilterScriptInit()
 {
-    // Display information in the Server Console
+    // Display information in the Server log
 	print("\n");
 	print("  |---------------------------------------------------");
 	print("  |--- SF ZomboTech Filterscript");
@@ -235,7 +235,7 @@ public OnFilterScriptInit()
     // Create the SF ZomboTech Lab object
     SFZomboTechLabObject = CreateObject(19594, -1951.687500, 660.023986, 29.507797, 0, 0, 0);
 
-    // Display information in the Server Console
+    // Display information in the Server log
     print("  |--  SF ZomboTech Building and Lab objects created");
 
     // Reset the elevator queue
@@ -244,7 +244,7 @@ public OnFilterScriptInit()
 	// Create the elevator object, the elevator doors and the floor doors
 	Elevator_Initialize();
 	
-	// Display information in the Server Console
+	// Display information in the Server log
     print("  |--  SF ZomboTech Building Elevator created");
     print("  |---------------------------------------------------");
     
@@ -274,7 +274,7 @@ public OnFilterScriptExit()
 		// Destroy the SF ZombotTech Building object
 		DestroyObject(SFZomboTechBuildingObject);
 
-		// Display information in the Server Console
+		// Display information in the Server log
 		print("  |---------------------------------------------------");
     	print("  |--  SF ZomboTech Building object destroyed");
     }
@@ -285,14 +285,14 @@ public OnFilterScriptExit()
 		// Destroy the SF ZomboTech Lab object
 		DestroyObject(SFZomboTechLabObject);
 
-		// Display information in the Server Console
+		// Display information in the Server log
     	print("  |--  SF ZomboTech Lab object destroyed");
     }
     
     // Destroy the elevator, the elevator doors and the elevator floor doors
 	Elevator_Destroy();
 	
-	// Display information in the Server Console
+	// Display information in the Server log
     print("  |--  SF ZomboTech Building Elevator destroyed");
     print("  |---------------------------------------------------");
     	
@@ -374,7 +374,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 	    new Float:pos[3];
 	    GetPlayerPos(playerid, pos[0], pos[1], pos[2]);
 
-		//printf("X = %0.2f | Y = %0.2f | Z = %0.2f", pos[0], pos[1], pos[2]);
+		// log("X = %0.2f | Y = %0.2f | Z = %0.2f", pos[0], pos[1], pos[2]);
 	    
 	    if(pos[1] < (Y_ELEVATOR_POS + 1.8) && pos[1] > (Y_ELEVATOR_POS - 1.8) && pos[0] < (X_ELEVATOR_POS + 1.8) && pos[0] > (X_ELEVATOR_POS - 1.8))    // He is using the elevator button
 	        ShowElevatorDialog(playerid);
@@ -392,7 +392,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 		        }
 		        else i = 1;
 		        
-		        //printf("Floor = %d | State = %d | i = %d", ElevatorFloor, ElevatorState, i);
+		        // log("Floor = %d | State = %d | i = %d", ElevatorFloor, ElevatorState, i);
 		        
 		        // Check if the elevator is not moving and already on the requested floor
 		        if (ElevatorState != ELEVATOR_STATE_MOVING && ElevatorFloor == i)
@@ -402,7 +402,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 		            return 1;
 		        }
 				
-			    //printf("Call Elevator to Floor %i", i);
+			    // log("Call Elevator to Floor %i", i);
 			    
 				CallElevator(playerid, i);
 				GameTextForPlayer(playerid, "~r~Elevator called", 3500, 4);

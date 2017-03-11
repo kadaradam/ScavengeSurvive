@@ -30,15 +30,11 @@
 
 hook OnScriptInit()
 {
-	print("\n[OnScriptInit] Initialising 'tree-loader'...");
-
 	DirectoryCheck(DIRECTORY_SCRIPTFILES DIRECTORY_TREES);
 }
 
 hook OnGameModeInit()
 {
-	print("\n[OnGameModeInit] Initialising 'tree-loader'...");
-
 	LoadTreesFromFolder(DIRECTORY_TREES);
 }
 
@@ -104,7 +100,7 @@ LoadTrees(filename[])
 
 	if(!fexist(filename))
 	{
-		printf("ERROR: file: \"%s\" NOT FOUND", filename);
+		err("file: \"%s\" NOT FOUND", filename);
 		return 0;
 	}
 
@@ -112,7 +108,7 @@ LoadTrees(filename[])
 
 	if(!file)
 	{
-		printf("ERROR: file: \"%s\" NOT LOADED", filename);
+		err("file: \"%s\" NOT LOADED", filename);
 		return 0;
 	}
 
@@ -134,7 +130,7 @@ LoadTrees(filename[])
 		{
 			if(sscanf(funcargs, "p<,>s[32]fff", category_name, x, y, z))
 			{
-				printf("ERROR: [LoadTrees] Malformed parameters on line %d", linenumber);
+				err("[LoadTrees] Malformed parameters on line %d", linenumber);
 				linenumber++;
 				continue;
 			}
@@ -146,7 +142,7 @@ LoadTrees(filename[])
 		}
 	}
 
-	printf("Loaded %d trees from '%s'.", count, filename);
+	log("Loaded %d trees from '%s'.", count, filename);
 
 	return 1;
 }

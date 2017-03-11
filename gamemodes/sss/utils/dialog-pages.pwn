@@ -48,7 +48,7 @@ HidePlayerPageButtons(playerid)
 
 hook OnPlayerClickTextDraw(playerid, Text:clickedid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerClickTextDraw] in /gamemodes/sss/utils/dialog-pages.pwn");
+	dbg("global", CORE, "[OnPlayerClickTextDraw] in /gamemodes/sss/utils/dialog-pages.pwn");
 
 	if(clickedid == page_Left)
 	{
@@ -62,8 +62,6 @@ hook OnPlayerClickTextDraw(playerid, Text:clickedid)
 
 hook OnGameModeInit()
 {
-	print("\n[OnGameModeInit] Initialising 'DialogPages'...");
-
 	page_Left					=TextDrawCreate(280.0, 360.0, "<");
 	TextDrawAlignment			(page_Left, 2);
 	TextDrawBackgroundColor		(page_Left, 255);

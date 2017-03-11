@@ -55,8 +55,6 @@ static	veh_DebugLabelType;
 
 hook OnScriptInit()
 {
-	print("\n[OnScriptInit] Initialising 'Vehicle/Spawn'...");
-
 	DirectoryCheck(DIRECTORY_SCRIPTFILES DIRECTORY_VEHICLESPAWNS);
 
 	GetSettingFloat("vehicle-spawn/spawn-chance", 4.0, veh_SpawnChance);
@@ -66,12 +64,12 @@ hook OnScriptInit()
 
 hook OnGameModeInit()
 {
-	print("\n[OnGameModeInit] Initialising 'Vehicle/Spawn'...");
+	if(veh_SpawnChance == 0.0)
+		return Y_HOOKS_CONTINUE_RETURN_0;
 
-	//LoadPlayerVehicles(true, true);
 	LoadVehiclesFromFolder(DIRECTORY_VEHICLESPAWNS);
 
-	printf("Loaded %d Vehicles", Iter_Count(veh_Index));
+	log("Loaded %d Vehicles", Iter_Count(veh_Index));
 
 	if(veh_PrintTotal)
 	{
@@ -86,16 +84,19 @@ hook OnGameModeInit()
 			if(vehicletypecount > 0)
 			{
 				GetVehicleTypeName(i, vehicletypename);
-				logf("[%02d] Spawned %d '%s'", i, vehicletypecount, vehicletypename);
+				log("[%02d] Spawned %d '%s'", i, vehicletypecount, vehicletypename);
 			}
 		}
 	}
 
 	veh_DebugLabelType = DefineDebugLabelType("VEHICLESPAWN", 0xFFCCFFFF);
+
+	return Y_HOOKS_CONTINUE_RETURN_0;
 }
 
 LoadVehiclesFromFolder(foldername[])
 {
+	log("[LoadVehiclesFromFolder] Loading vehicles from: '%s'...", foldername);
 	new
 		dir:dirhandle,
 		directory_with_root[256],
@@ -110,7 +111,7 @@ LoadVehiclesFromFolder(foldername[])
 
 	if(!dirhandle)
 	{
-		printf("ERROR: [LoadVehiclesFromFolder] Reading directory '%s'.", foldername);
+		err("[LoadVehiclesFromFolder] Reading directory '%s'.", foldername);
 		return 0;
 	}
 
@@ -142,7 +143,7 @@ LoadVehiclesFromFile(file[])
 {
 	if(!fexist(file))
 	{
-		printf("ERROR: [LoadVehiclesFromFile] File '%s' not found.", file);
+		err("[LoadVehiclesFromFile] File '%s' not found.", file);
 		return 0;
 	}
 
@@ -187,7 +188,7 @@ LoadVehiclesFromFile(file[])
 
 			if(sscanf(args, "P<,>ffffS()[32]S()[9]S()[4]", posX, posY, posZ, rotZ, group, categories, sizes))
 			{
-				printf("ERROR: [LoadVehiclesFromFile] reading 'Vehicle' in '%s':%d.", file, linenum);
+				err("[LoadVehiclesFromFile] reading 'Vehicle' in '%s':%d.", file, linenum);
 				continue;
 			}
 
@@ -205,7 +206,7 @@ LoadVehiclesFromFile(file[])
 			{
 				if(default_group == -2)
 				{
-					printf("ERROR: Default group is invalid (%d) in '%s':%d", default_group, file, linenum);
+					err("Default group is invalid (%d) in '%s':%d", default_group, file, linenum);
 					continue;
 				}
 				else
@@ -227,7 +228,7 @@ LoadVehiclesFromFile(file[])
 				{
 					if(default_maxcategories == 0)
 					{
-						printf("ERROR: Default categories are empty in '%s':%d", file, linenum);
+						err("Default categories are empty in '%s':%d", file, linenum);
 						continue;
 					}
 
@@ -239,7 +240,7 @@ LoadVehiclesFromFile(file[])
 				else
 				{
 					if(!_CatStringToInts(categories, veh_SpawnData[count][vspawn_categories], strlen(categories)))
-						printf("ERROR: [Vehicle] Invalid category character in '%s':%d", file, linenum);
+						err("[Vehicle] Invalid category character in '%s':%d", file, linenum);
 				}
 
 				/*
@@ -249,7 +250,7 @@ LoadVehiclesFromFile(file[])
 				{
 					if(default_maxsizes == 0)
 					{
-						printf("ERROR: Default sizes are empty in '%s':%d", file, linenum);
+						err("Default sizes are empty in '%s':%d", file, linenum);
 						continue;
 					}
 
@@ -261,7 +262,7 @@ LoadVehiclesFromFile(file[])
 				else
 				{
 					if(!_SizeStringToInts(sizes, veh_SpawnData[count][vspawn_sizes], strlen(sizes)))
-						printf("ERROR: [Vehicle] Invalid size character in '%s':%d", file, linenum);
+						err("[Vehicle] Invalid size character in '%s':%d", file, linenum);
 				}
 
 				type = PickRandomVehicleTypeFromGroup(veh_SpawnData[count][vspawn_group], veh_SpawnData[count][vspawn_categories], maxcategories, veh_SpawnData[count][vspawn_sizes], maxsizes);
@@ -272,7 +273,7 @@ LoadVehiclesFromFile(file[])
 
 				if(!IsValidVehicleType(type))
 				{
-					printf("ERROR: Explicit vehicle type '%s' is invalid in '%s':%d", group, file, linenum);
+					err("Explicit vehicle type '%s' is invalid in '%s':%d", group, file, linenum);
 					continue;
 				}
 
@@ -292,7 +293,7 @@ LoadVehiclesFromFile(file[])
 
 			if(vehicleid == MAX_VEHICLES - 1)
 			{
-				printf("WARNING: MAX_VEHICLES limit reached at '%s':%d", file, linenum);
+				err("MAX_VEHICLES limit reached at '%s':%d", file, linenum);
 				break;
 			}
 
@@ -306,7 +307,7 @@ LoadVehiclesFromFile(file[])
 		{
 			if(sscanf(args, "p<,>s[32]s[9]s[4]", group, categories, sizes))
 			{
-				printf("ERROR: [LoadVehiclesFromFile] reading 'Defaults' in '%s'%d.", file, linenum);
+				err("[LoadVehiclesFromFile] reading 'Defaults' in '%s'%d.", file, linenum);
 				continue;
 			}
 
@@ -315,17 +316,17 @@ LoadVehiclesFromFile(file[])
 			default_maxsizes = strlen(sizes);
 
 			if(!_CatStringToInts(categories, default_categories, strlen(categories)))
-				printf("ERROR: [Defaults] Invalid category character in '%s':%d", file, linenum);
+				err("[Defaults] Invalid category character in '%s':%d", file, linenum);
 
 			if(!_SizeStringToInts(sizes, default_sizes, strlen(sizes)))
-				printf("ERROR: [Defaults] Invalid size character in '%s':%d", file, linenum);
+				err("[Defaults] Invalid size character in '%s':%d", file, linenum);
 		}
 	}
 
 	fclose(f);
 
 	if(veh_PrintEach)
-		printf("\t[LOAD] %d vehicles from %s (from total %d spawns)", count, file, total);
+		log("[LOAD] %d vehicles from %s (from total %d spawns)", count, file, total);
 
 	return 1;
 }

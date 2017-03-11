@@ -75,8 +75,6 @@ new
 
 hook OnGameModeInit()
 {
-	print("\n[OnGameModeInit] Initialising 'Weather'...");
-
 	// Todo: custom weather array loaded from settings
 
 	weather_Current = random(sizeof(WeatherData));
@@ -85,7 +83,7 @@ hook OnGameModeInit()
 
 hook OnPlayerConnect(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/server/weather.pwn");
+	dbg("global", CORE, "[OnPlayerConnect] in /gamemodes/sss/core/server/weather.pwn");
 
 	weather_PlayerWeather[playerid] = -1;
 	weather_PlayerHour[playerid] = -1;

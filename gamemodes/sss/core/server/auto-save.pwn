@@ -39,8 +39,6 @@ bool:	autosave_Toggle,
 
 hook OnScriptInit()
 {
-	print("\n[OnScriptInit] Initialising 'Autosave'...");
-
 	GetSettingInt("autosave/autosave-toggle", 1, autosave_Toggle);
 	GetSettingInt("autosave/autosave-interval", 60000, autosave_Interval);
 

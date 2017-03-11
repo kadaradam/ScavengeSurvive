@@ -33,7 +33,7 @@ static
 
 hook OnPlayerConnect(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/admin/ban-command.pwn");
+	dbg("global", CORE, "[OnPlayerConnect] in /gamemodes/sss/core/admin/ban-command.pwn");
 
 	ResetBanVariables(playerid);
 }
@@ -127,7 +127,7 @@ FinaliseBan(playerid)
 
 	ChatMsg(playerid, YELLOW, " >  Banned "C_BLUE"%s", ban_CurrentName[playerid]);
 
-	logf("[BAN] %p banned %s reason: %s", playerid, ban_CurrentName[playerid], ban_CurrentReason[playerid]);
+	log("[BAN] %p banned %s reason: %s", playerid, ban_CurrentName[playerid], ban_CurrentReason[playerid]);
 
 	return 1;
 }

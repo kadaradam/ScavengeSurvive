@@ -37,7 +37,7 @@
 enum E_SUPPLY_DROP_TYPE_DATA
 {
 			supt_name[MAX_SUPPLY_DROP_TYPE_NAME],
-			supt_loot,
+			supt_loot[32],
 			supt_interval,
 			supt_random,
 			supt_required,
@@ -73,32 +73,25 @@ Float:		sup_DropX,
 Float:		sup_DropY,
 Float:		sup_DropZ;
 
-static
-			HANDLER = -1;
-
 
 hook OnGameModeInit()
 {
-	print("\n[OnGameModeInit] Initialising 'SupplyCrate'...");
-
 	sup_UpdateTimer = repeat SupplyDropTimer();
-
-	HANDLER = debug_register_handler("SupplyCrate");
 
 	return 1;
 }
 
 
-DefineSupplyDropType(name[], lootindex, interval, rand, required)
+DefineSupplyDropType(name[], lootindex[], interval, rand, required)
 {
 	if(sup_TypeTotal == MAX_SUPPLY_DROP_TYPE)
 	{
-		print("ERROR: Supply drop type limit reached.");
+		err("Supply drop type limit reached.");
 		return -1;
 	}
 
 	strcat(sup_TypeData[sup_TypeTotal][supt_name], name, MAX_SUPPLY_DROP_TYPE_NAME);
-	sup_TypeData[sup_TypeTotal][supt_loot] = lootindex;
+	strcat(sup_TypeData[sup_TypeTotal][supt_loot], lootindex, 32);
 	sup_TypeData[sup_TypeTotal][supt_interval] = interval * 1000;
 	sup_TypeData[sup_TypeTotal][supt_random] = rand * 1000;
 	sup_TypeData[sup_TypeTotal][supt_required] = required;
@@ -115,7 +108,7 @@ DefineSupplyDropPos(name[MAX_SUPPLY_DROP_LOCATION_NAME], Float:x, Float:y, Float
 
 	if(id == ITER_NONE)
 	{
-		printf("ERROR: Supply drop pos definition limit reached.");
+		err("Supply drop pos definition limit reached.");
 		return -1;
 	}
 
@@ -137,7 +130,7 @@ timer SupplyDropTimer[SUPPLY_DROP_TICK_INTERVAL]()
 	// a drop starting and landing.
 	if(sup_CurrentType != -1)
 	{
-		d:1:HANDLER("[SupplyDropTimer] Current type != -1: %d", sup_CurrentType);
+		dbg("gamemodes/sss/core/world/supply-crate.pwn", 1, "[SupplyDropTimer] Current type != -1: %d", sup_CurrentType);
 		return;
 	}
 
@@ -145,7 +138,7 @@ timer SupplyDropTimer[SUPPLY_DROP_TICK_INTERVAL]()
 	// there are no more locations so stop the timer.
 	if(Iter_Count(sup_Index) == 0)
 	{
-		printf("[SupplyDropTimer] ERROR: Supply drops run out, stopping supply drop timer.");
+		err("Supply drops run out, stopping supply drop timer.");
 		stop sup_UpdateTimer;
 		return;
 	}
@@ -155,7 +148,7 @@ timer SupplyDropTimer[SUPPLY_DROP_TICK_INTERVAL]()
 	// cooldown time, the script just waits for the next timer call.
 	if(GetTickCountDifference(GetTickCount(), sup_LastSupplyDrop) < SUPPLY_DROP_COOLDOWN)
 	{
-		d:1:HANDLER("[SupplyDropTimer] Cooling down: %d/%d.", GetTickCountDifference(GetTickCount(), sup_LastSupplyDrop), SUPPLY_DROP_COOLDOWN);
+		dbg("gamemodes/sss/core/world/supply-crate.pwn", 1, "[SupplyDropTimer] Cooling down: %d/%d.", GetTickCountDifference(GetTickCount(), sup_LastSupplyDrop), SUPPLY_DROP_COOLDOWN);
 		return;
 	}
 
@@ -179,7 +172,7 @@ timer SupplyDropTimer[SUPPLY_DROP_TICK_INTERVAL]()
 		// the next.
 		if(Iter_Count(Player) < sup_TypeData[type][supt_required])
 		{
-			d:1:HANDLER("[SupplyDropTimer] Checking %d: Not enough players (%d < %d).", type, Iter_Count(Player), sup_TypeData[type][supt_required]);
+			dbg("gamemodes/sss/core/world/supply-crate.pwn", 1, "[SupplyDropTimer] Checking %d: Not enough players (%d < %d).", type, Iter_Count(Player), sup_TypeData[type][supt_required]);
 			type++;
 			continue;
 		}
@@ -197,7 +190,7 @@ timer SupplyDropTimer[SUPPLY_DROP_TICK_INTERVAL]()
 		// offset value, the code skips this drop type.
 		if(GetTickCountDifference(GetTickCount(), sup_TypeData[type][supt_lastDrop]) < sup_TypeData[type][supt_interval] + sup_TypeData[type][supt_offset])
 		{
-			d:1:HANDLER("[SupplyDropTimer] Checking %d: Last drop too soon (%d < %d).", type, GetTickCountDifference(GetTickCount(), sup_TypeData[type][supt_lastDrop]), sup_TypeData[type][supt_interval] + sup_TypeData[type][supt_offset]);
+			dbg("gamemodes/sss/core/world/supply-crate.pwn", 1, "[SupplyDropTimer] Checking %d: Last drop too soon (%d < %d).", type, GetTickCountDifference(GetTickCount(), sup_TypeData[type][supt_lastDrop]), sup_TypeData[type][supt_interval] + sup_TypeData[type][supt_offset]);
 			type++;
 			continue;
 		}
@@ -210,7 +203,7 @@ timer SupplyDropTimer[SUPPLY_DROP_TICK_INTERVAL]()
 	// they either don't meet the player requirement or are still cooling down.
 	if(type == sup_TypeTotal)
 	{
-		d:1:HANDLER("[SupplyDropTimer] No supply drop type available.");
+		dbg("gamemodes/sss/core/world/supply-crate.pwn", 1, "[SupplyDropTimer] No supply drop type available.");
 		return;
 	}
 
@@ -229,7 +222,7 @@ timer SupplyDropTimer[SUPPLY_DROP_TICK_INTERVAL]()
 	// This would be a red flag for memory corruption!
 	if(!ret)
 	{
-		printf("[SupplyDropTimer] ERROR: Supply crate already active (type: %d)", sup_CurrentType);
+		err("Supply crate already active (type: %d)", sup_CurrentType);
 		return;
 	}
 
@@ -264,11 +257,11 @@ timer SupplyDropTimer[SUPPLY_DROP_TICK_INTERVAL]()
 
 SupplyCrateDrop(type, Float:x, Float:y, Float:z)
 {
-	d:1:HANDLER("[SupplyCrateDrop] Dropping supply crate of type %d at %f %f %f", type, x, y, z);
+	dbg("gamemodes/sss/core/world/supply-crate.pwn", 1, "[SupplyCrateDrop] Dropping supply crate of type %d at %f %f %f", type, x, y, z);
 
 	if(sup_CurrentType != -1)
 	{
-		d:1:HANDLER("[SupplyCrateDrop] ERROR: sup_CurrentType is not -1 (%d)", sup_CurrentType);
+		dbg("gamemodes/sss/core/world/supply-crate.pwn", 1, "[SupplyCrateDrop] ERROR: sup_CurrentType is not -1 (%d)", sup_CurrentType);
 		return 0;
 	}
 
@@ -291,11 +284,11 @@ SupplyCrateDrop(type, Float:x, Float:y, Float:z)
 
 SupplyCrateLand()
 {
-	d:1:HANDLER("[SupplyCrateLand] Supply crate landed, type: %d", sup_CurrentType);
+	dbg("gamemodes/sss/core/world/supply-crate.pwn", 1, "[SupplyCrateLand] Supply crate landed, type: %d", sup_CurrentType);
 
 	if(sup_CurrentType == -1)
 	{
-		print("ERROR: sup_CurrentType == -1");
+		err("sup_CurrentType == -1");
 		return;
 	}
 
@@ -304,7 +297,8 @@ SupplyCrateLand()
 		Float:a,
 		Float:x,
 		Float:y,
-		Float:z;
+		Float:z,
+		lootindex;
 
 	foreach(new i : Player)
 	{
@@ -319,8 +313,9 @@ SupplyCrateLand()
 
 	containerid = CreateContainer("Supply Crate", 32, CreateButton(sup_DropX + 1.5, sup_DropY, sup_DropZ + 1.0, "Supply Crate", .label = 1, .labeltext = "Supply Crate"));
 
-	FillContainerWithLoot(containerid, 4 + random(16), sup_TypeData[sup_CurrentType][supt_loot]);
-	d:2:HANDLER("[SupplyCrateLand] Spawned %d items in supply crate container %d", 32 - GetContainerFreeSlots(containerid), containerid);
+	lootindex = GetLootIndexFromName(sup_TypeData[sup_CurrentType][supt_loot]);
+	FillContainerWithLoot(containerid, 4 + random(16), lootindex);
+	dbg("gamemodes/sss/core/world/supply-crate.pwn", 2, "[SupplyCrateLand] Spawned %d items in supply crate container %d", 32 - GetContainerFreeSlots(containerid), containerid);
 
 	DestroyDynamicObject(sup_ObjPara);
 	sup_CurrentType = -1;
@@ -335,7 +330,7 @@ SupplyCrateLand()
 
 hook OnDynamicObjectMoved(objectid)
 {
-	d:3:GLOBAL_DEBUG("[OnDynamicObjectMoved] in /gamemodes/sss/core/world/supply-crate.pwn");
+	dbg("global", CORE, "[OnDynamicObjectMoved] in /gamemodes/sss/core/world/supply-crate.pwn");
 
 	if(objectid == sup_ObjPara)
 		SupplyCrateLand();

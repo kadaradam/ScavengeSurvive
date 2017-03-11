@@ -33,14 +33,14 @@ hook OnItemTypeDefined(uname[])
 
 hook OnPlayerUseItemWithItem(playerid, itemid, withitemid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerUseItemWithItem] in /gamemodes/sss/core/item/locator.pwn");
+	dbg("global", CORE, "[OnPlayerUseItemWithItem] in /gamemodes/sss/core/item/locator.pwn");
 
 	if(GetItemType(itemid) == item_Locator && GetItemType(withitemid) == item_MobilePhone)
 	{
 		SetItemExtraData(itemid, withitemid);
 		SetItemExtraData(withitemid, 1);
 
-		Msg(playerid, YELLOW, " >  Locator synced, you can now locate the phone.");
+		ChatMsgLang(playerid, YELLOW, "LOCATORSYNC");
 	}
 
 	return Y_HOOKS_CONTINUE_RETURN_0;
@@ -48,163 +48,42 @@ hook OnPlayerUseItemWithItem(playerid, itemid, withitemid)
 
 hook OnPlayerUseItem(playerid, itemid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerUseItem] in /gamemodes/sss/core/item/locator.pwn");
+	dbg("global", CORE, "[OnPlayerUseItem] in /gamemodes/sss/core/item/locator.pwn");
 
-	if(GetItemType(itemid) == item_Locator)
-	{
-		new phoneItemID = GetItemExtraData(itemid);
-		
-		if(IsValidItem(phoneItemID) && GetItemType(phoneItemID) == item_MobilePhone && GetItemExtraData(phoneItemID) == 1)
-		{
-		
-			new
-				Float:x,
-				Float:y,
-				Float:z,
-				Float:phone_x,
-				Float:phone_y,
-				Float:phone_z;
+	if(GetItemType(itemid) != item_Locator)
+		return Y_HOOKS_CONTINUE_RETURN_0;
 
-			GetPlayerPos(playerid, x, y, z);
-			
-			if(IsItemInWorld(phoneItemID))
-			{
-			
-				GetItemPos(phoneItemID, phone_x, phone_y, phone_z);
-                
-				new
-					Float:distance = Distance(phone_x, phone_y, phone_z, x, y, z);
-					
-<<<<<<< HEAD
-				ShowActionText(playerid, sprintf("Distance: %.3f", distance), 2000);
-			    return 1;
-=======
-				ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
-				return 1;
->>>>>>> upstream/master
-			}
-			
-			new containerid = GetItemContainer(phoneItemID);
+	new phoneitemid = GetItemExtraData(itemid);
 
-			if(IsValidContainer(containerid))
-			{
-				new buttonid = GetContainerButton(containerid);
+	if(!IsValidItem(phoneitemid) || GetItemType(phoneitemid) != item_MobilePhone)
+		return Y_HOOKS_CONTINUE_RETURN_0;
 
-				if(IsValidButton(buttonid))
-				{
-					GetButtonPos(buttonid, phone_x, phone_y, phone_z);
+	if(GetItemExtraData(phoneitemid) != 1)
+		return Y_HOOKS_CONTINUE_RETURN_0;
 
-					new
-						Float:distance = Distance(phone_x, phone_y, phone_z, x, y, z);
+	new
+		Float:x,
+		Float:y,
+		Float:z,
+		Float:phone_x,
+		Float:phone_y,
+		Float:phone_z,
+		Float:distance;
 
-<<<<<<< HEAD
-					ShowActionText(playerid, sprintf("Distance: %.3f", distance), 2000);
-=======
-					ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
->>>>>>> upstream/master
-					return 1;
-				}
+	GetPlayerPos(playerid, x, y, z);
+	GetItemAbsolutePos(phoneitemid, phone_x, phone_y, phone_z);
+	distance = Distance(phone_x, phone_y, phone_z, x, y, z);
 
-				new vehicleid = GetContainerTrunkVehicleID(containerid);
+	ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
 
-				if(IsValidVehicle(vehicleid))
-				{
-					GetVehiclePos(vehicleid, phone_x, phone_y, phone_z);
-
-					new
-						Float:distance = Distance(phone_x, phone_y, phone_z, x, y, z);
-
-<<<<<<< HEAD
-					ShowActionText(playerid, sprintf("Distance: %.3f", distance), 2000);
-=======
-					ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
->>>>>>> upstream/master
-					return 1;
-				}
-
-				new safeboxitemid = GetContainerSafeboxItem(containerid);
-
-				if(IsValidItem(safeboxitemid))
-				{
-					
-					GetItemPos(safeboxitemid, phone_x, phone_y, phone_z);
-
-					new
-						Float:distance = Distance(phone_x, phone_y, phone_z, x, y, z);
-
-<<<<<<< HEAD
-					ShowActionText(playerid, sprintf("Distance: %.3f", distance), 2000);
-=======
-					ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
->>>>>>> upstream/master
-					return 1;
-				}
-
-				new playerid_ = GetContainerPlayerBag(containerid);
-				
-				if(IsPlayerConnected(playerid_))
-				{
-					
-					GetPlayerPos(playerid_, phone_x, phone_y, phone_z);
-				
-					new
-						Float:distance = Distance(phone_x, phone_y, phone_z, x, y, z);
-
-<<<<<<< HEAD
-					ShowActionText(playerid, sprintf("Distance: %.3f", distance), 2000);
-=======
-					ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
->>>>>>> upstream/master
-					return 1;
-				}
-				
-				new bagitemid = GetContainerBagItem(containerid);
-
-				if(IsValidItem(bagitemid))
-				{
-
-					GetItemPos(bagitemid, phone_x, phone_y, phone_z);
-
-					new
-						Float:distance = Distance(phone_x, phone_y, phone_z, x, y, z);
-
-<<<<<<< HEAD
-					ShowActionText(playerid, sprintf("Distance: %.3f", distance), 2000);
-=======
-					ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
->>>>>>> upstream/master
-					return 1;
-				}
-			}
-			
-			new playerid_ = GetItemPlayerInventory(phoneItemID);
-
-			if(IsPlayerConnected(playerid_))
-			{
-				
-				GetPlayerPos(playerid_, phone_x, phone_y, phone_z);
-				
-				new
-					Float:distance = Distance(phone_x, phone_y, phone_z, x, y, z);
-
-<<<<<<< HEAD
-				ShowActionText(playerid, sprintf("Distance: %.3f", distance), 2000);
-=======
-				ShowActionText(playerid, sprintf(ls(playerid, "DISTANCEVAL", true), distance), 2000);
->>>>>>> upstream/master
-				return 1;
-			}
-
-			ShowActionText(playerid, ls(playerid, "LOCATORDIS", true), 2000);
-		}
-	}
+	// ShowActionText(playerid, ls(playerid, "LOCATORDIS", true), 2000);
 
 	return Y_HOOKS_CONTINUE_RETURN_0;
 }
 
 hook OnItemCreate(itemid)
 {
-	d:3:GLOBAL_DEBUG("[OnItemCreate] in /gamemodes/sss/core/item/locator.pwn");
+	dbg("global", CORE, "[OnItemCreate] in /gamemodes/sss/core/item/locator.pwn");
 
 	if(GetItemType(itemid) == item_Locator)
 	{

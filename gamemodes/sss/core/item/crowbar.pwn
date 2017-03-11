@@ -26,13 +26,13 @@
 
 
 new
-	cbr_TargetVehicle[MAX_PLAYERS],
+	cbr_TargetVehicle[MAX_PLAYERS] = {INVALID_VEHICLE_ID, ...},
 	cbr_OpenType[MAX_PLAYERS];
 
 
 hook OnPlayerConnect(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/item/crowbar.pwn");
+	dbg("global", CORE, "[OnPlayerConnect] in /gamemodes/sss/core/item/crowbar.pwn");
 
 	cbr_TargetVehicle[playerid] = INVALID_VEHICLE_ID;
 }
@@ -106,7 +106,7 @@ public OnHoldActionUpdate(playerid, progress)
 
 hook OnHoldActionFinish(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnHoldActionFinish] in /gamemodes/sss/core/item/crowbar.pwn");
+	dbg("global", CORE, "[OnHoldActionFinish] in /gamemodes/sss/core/item/crowbar.pwn");
 
 	if(cbr_TargetVehicle[playerid] != INVALID_VEHICLE_ID)
 	{

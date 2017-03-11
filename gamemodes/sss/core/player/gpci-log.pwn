@@ -49,8 +49,6 @@ DBStatement:	stmt_GpciGetRecordsFromName;
 
 hook OnGameModeInit()
 {
-	print("\n[OnGameModeInit] Initialising 'gpci-log'...");
-
 	db_query(gAccounts, "CREATE TABLE IF NOT EXISTS "ACCOUNTS_TABLE_GPCI" (\
 		"FIELD_GPCI_NAME" TEXT,\
 		"FIELD_GPCI_GPCI" TEXT,\
@@ -66,7 +64,7 @@ hook OnGameModeInit()
 
 hook OnPlayerConnect(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/player/gpci-log.pwn");
+	dbg("global", CORE, "[OnPlayerConnect] in /gamemodes/sss/core/player/gpci-log.pwn");
 
 	new
 		name[MAX_PLAYER_NAME],
@@ -91,7 +89,7 @@ hook OnPlayerConnect(playerid)
 		stmt_bind_value(stmt_GpciInsert, 2, DB::TYPE_INTEGER, gettime());
 
 		if(!stmt_execute(stmt_GpciInsert))
-			print("ERROR: Failed to execute statement 'stmt_GpciInsert'.");
+			err("Failed to execute statement 'stmt_GpciInsert'.");
 	}
 
 	return 1;

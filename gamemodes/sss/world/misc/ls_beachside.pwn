@@ -259,7 +259,7 @@ public OnPlayerCommandText(playerid, cmdtext[])
 
 public OnFilterScriptInit()
 {
-    // Display information in the Server Console
+    // Display information in the Server log
 	print("\n");
 	print("  |---------------------------------------------------");
 	print("  |--- LS BeachSide Filterscript");
@@ -273,7 +273,7 @@ public OnFilterScriptInit()
 	// Create the elevator object, the elevator doors and the floor doors
 	Elevator_Initialize();
 
-	// Display information in the Server Console
+	// Display information in the Server log
     print("  |--  LS BeachSide Building Elevator created");
     print("  |---------------------------------------------------");
     
@@ -301,7 +301,7 @@ public OnFilterScriptExit()
     // Destroy the elevator, the elevator doors and the elevator floor doors
 	Elevator_Destroy();
 
-	// Display information in the Server Console
+	// Display information in the Server log
     print("  |--  LS BeachSide Building Elevator destroyed");
     print("  |---------------------------------------------------");
 
@@ -393,7 +393,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 	    GetPlayerPos(playerid, pos[0], pos[1], pos[2]);
 	    
 	    // For debug
-	    //printf("X = %0.2f | Y = %0.2f | Z = %0.2f", pos[0], pos[1], pos[2]);
+	    // log("X = %0.2f | Y = %0.2f | Z = %0.2f", pos[0], pos[1], pos[2]);
 
         // Check if the player is using the button inside the elevator
 	    if (pos[1] > (Y_ELEVATOR_POS - 1.8) && pos[1] < (Y_ELEVATOR_POS + 1.8) && pos[0] < (X_ELEVATOR_POS + 1.8) && pos[0] > (X_ELEVATOR_POS - 1.8))

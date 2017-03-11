@@ -42,7 +42,10 @@ static
 	PlayerText:GearSlot_Back[3],
 
 	inv_TempContainerID[MAX_PLAYERS],
-	inv_InventoryOptionID[MAX_PLAYERS];
+	inv_InventoryOptionID[MAX_PLAYERS],
+
+	inv_EscInventory[MAX_PLAYERS],
+	inv_EscContainer[MAX_PLAYERS];
 
 
 forward CreatePlayerTile(playerid, &PlayerText:title, &PlayerText:tile, &PlayerText:item, Float:x, Float:y, Float:width, Float:height, colour, overlaycolour);
@@ -50,7 +53,7 @@ forward CreatePlayerTile(playerid, &PlayerText:title, &PlayerText:tile, &PlayerT
 
 hook OnPlayerConnect(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/char/inventory.pwn");
+	dbg("global", CORE, "[OnPlayerConnect] in /gamemodes/sss/core/char/inventory.pwn");
 
 	CreatePlayerTile(playerid, GearSlot_Head[0], GearSlot_Head[1], GearSlot_Head[2], 490.0, 120.0, 60.0, 60.0, 0xFFFFFF08, 0xFFFFFFFF);
 	CreatePlayerTile(playerid, GearSlot_Face[0], GearSlot_Face[1], GearSlot_Face[2], 560.0, 120.0, 60.0, 60.0, 0xFFFFFF08, 0xFFFFFFFF);
@@ -305,7 +308,7 @@ UpdatePlayerGear(playerid, show = 1)
 
 hook OnPlayerOpenInventory(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerOpenInventory] in /gamemodes/sss/core/char/inventory.pwn");
+	dbg("global", CORE, "[OnPlayerOpenInventory] in /gamemodes/sss/core/char/inventory.pwn");
 
 	ShowPlayerGear(playerid);
 	UpdatePlayerGear(playerid);
@@ -317,18 +320,23 @@ hook OnPlayerOpenInventory(playerid)
 
 hook OnPlayerCloseInventory(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerCloseInventory] in /gamemodes/sss/core/char/inventory.pwn");
+	dbg("global", CORE, "[OnPlayerCloseInventory] in /gamemodes/sss/core/char/inventory.pwn");
 
 	HidePlayerGear(playerid);
 	HidePlayerHealthInfo(playerid);
-	CancelSelectTextDraw(playerid);
+
+	if(inv_EscInventory[playerid])
+		inv_EscInventory[playerid] = false;
+
+	else
+		CancelSelectTextDraw(playerid);
 
 	return Y_HOOKS_CONTINUE_RETURN_0;
 }
 
 hook OnPlayerOpenContainer(playerid, containerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerOpenContainer] in /gamemodes/sss/core/char/inventory.pwn");
+	dbg("global", CORE, "[OnPlayerOpenContainer] in /gamemodes/sss/core/char/inventory.pwn");
 
 	ShowPlayerGear(playerid);
 	UpdatePlayerGear(playerid);
@@ -340,18 +348,23 @@ hook OnPlayerOpenContainer(playerid, containerid)
 
 hook OnPlayerCloseContainer(playerid, containerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerCloseContainer] in /gamemodes/sss/core/char/inventory.pwn");
+	dbg("global", CORE, "[OnPlayerCloseContainer] in /gamemodes/sss/core/char/inventory.pwn");
 
 	HidePlayerGear(playerid);
 	HidePlayerHealthInfo(playerid);
-	CancelSelectTextDraw(playerid);
+
+	if(inv_EscContainer[playerid])
+		inv_EscContainer[playerid] = false;
+
+	else
+		CancelSelectTextDraw(playerid);
 
 	return Y_HOOKS_CONTINUE_RETURN_0;
 }
 
 hook OnItemRemoveFromCnt(containerid, slotid, playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnItemRemoveFromCnt] in /gamemodes/sss/core/char/inventory.pwn");
+	dbg("global", CORE, "[OnItemRemoveFromCnt] in /gamemodes/sss/core/char/inventory.pwn");
 
 	if(IsPlayerConnected(playerid))
 	{
@@ -366,7 +379,7 @@ hook OnItemRemoveFromCnt(containerid, slotid, playerid)
 
 hook OnItemRemoveFromInv(playerid, itemid, slot)
 {
-	d:3:GLOBAL_DEBUG("[OnItemRemoveFromInv] in /gamemodes/sss/core/char/inventory.pwn");
+	dbg("global", CORE, "[OnItemRemoveFromInv] in /gamemodes/sss/core/char/inventory.pwn");
 
 	UpdatePlayerGear(playerid, 0);
 
@@ -375,7 +388,7 @@ hook OnItemRemoveFromInv(playerid, itemid, slot)
 
 hook OnItemAddToInventory(playerid, itemid, slot)
 {
-	d:3:GLOBAL_DEBUG("[OnItemAddToInventory] in /gamemodes/sss/core/char/inventory.pwn");
+	dbg("global", CORE, "[OnItemAddToInventory] in /gamemodes/sss/core/char/inventory.pwn");
 
 	if(IsItemTypeCarry(GetItemType(itemid)))
 		return 1;
@@ -387,7 +400,7 @@ hook OnItemAddToInventory(playerid, itemid, slot)
 
 hook OnItemRemovedFromPlayer(playerid, itemid)
 {
-	d:3:GLOBAL_DEBUG("[OnItemRemovedFromPlayer] in /gamemodes/sss/core/char/inventory.pwn");
+	dbg("global", CORE, "[OnItemRemovedFromPlayer] in /gamemodes/sss/core/char/inventory.pwn");
 
 	if(IsItemTypeCarry(GetItemType(itemid)))
 		SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
@@ -397,7 +410,7 @@ hook OnItemRemovedFromPlayer(playerid, itemid)
 
 hook OnPlayerClickPlayerTD(playerid, PlayerText:playertextid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerClickPlayerTD] in /gamemodes/sss/core/char/inventory.pwn");
+	dbg("global", CORE, "[OnPlayerClickPlayerTD] in /gamemodes/sss/core/char/inventory.pwn");
 
 	if(playertextid == GearSlot_Head[UI_ELEMENT_TILE])
 		_inv_HandleGearSlotClick_Head(playerid);
@@ -793,7 +806,7 @@ _inv_HandleGearSlotClick_Back(playerid)
 
 hook OnPlayerViewCntOpt(playerid, containerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerViewCntOpt] in /gamemodes/sss/core/char/inventory.pwn");
+	dbg("global", CORE, "[OnPlayerViewCntOpt] in /gamemodes/sss/core/char/inventory.pwn");
 
 	if(containerid == GetBagItemContainerID(GetPlayerBagItem(playerid)))
 	{
@@ -815,7 +828,7 @@ hook OnPlayerViewCntOpt(playerid, containerid)
 
 hook OnPlayerSelectCntOpt(playerid, containerid, option)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerSelectCntOpt] in /gamemodes/sss/core/char/inventory.pwn");
+	dbg("global", CORE, "[OnPlayerSelectCntOpt] in /gamemodes/sss/core/char/inventory.pwn");
 
 	if(containerid == GetBagItemContainerID(GetPlayerBagItem(playerid)))
 	{
@@ -855,31 +868,33 @@ hook OnPlayerSelectCntOpt(playerid, containerid, option)
 
 hook OnPlayerClickTextDraw(playerid, Text:clickedid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerClickTextDraw] in /gamemodes/sss/core/char/inventory.pwn");
+	dbg("global", CORE, "[OnPlayerClickTextDraw] in /gamemodes/sss/core/char/inventory.pwn");
 
 	if(clickedid == Text:65535)
 	{
 		if(IsPlayerViewingInventory(playerid))
 		{
-			// HidePlayerGear(playerid);
-			// HidePlayerHealthInfo(playerid);
-			// ClosePlayerInventory(playerid);
-			DisplayPlayerInventory(playerid);
+			HidePlayerGear(playerid);
+			HidePlayerHealthInfo(playerid);
+			ClosePlayerInventory(playerid);
+			inv_EscInventory[playerid] = true;
+			// DisplayPlayerInventory(playerid);
 		}
 
 		if(GetPlayerCurrentContainer(playerid) != INVALID_CONTAINER_ID)
 		{
-			// HidePlayerGear(playerid);
-			// HidePlayerHealthInfo(playerid);
-			// ClosePlayerContainer(playerid);
-			DisplayContainerInventory(playerid, GetPlayerCurrentContainer(playerid));
+			HidePlayerGear(playerid);
+			HidePlayerHealthInfo(playerid);
+			ClosePlayerContainer(playerid);
+			inv_EscContainer[playerid] = true;
+			// DisplayContainerInventory(playerid, GetPlayerCurrentContainer(playerid));
 		}
 	}
 }
 
 hook OnPlayerTakeDamage(playerid, issuerid, Float:amount, weaponid, bodypart)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerTakeDamage] in /gamemodes/sss/core/char/inventory.pwn");
+	dbg("global", CORE, "[OnPlayerTakeDamage] in /gamemodes/sss/core/char/inventory.pwn");
 
 	if(IsPlayerSpawned(playerid))
 	{

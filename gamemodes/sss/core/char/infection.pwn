@@ -39,7 +39,7 @@ static
 
 hook OnPlayerConnect(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/char/infection.pwn");
+	dbg("global", CORE, "[OnPlayerConnect] in /gamemodes/sss/core/char/infection.pwn");
 
 	infect_InfectionIntensity[playerid][0] = 0;
 	infect_InfectionIntensity[playerid][1] = 0;
@@ -50,17 +50,16 @@ hook OnPlayerConnect(playerid)
 
 hook OnPlayerDeath(playerid, killerid, reason)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerDeath] in /gamemodes/sss/core/char/infection.pwn");
+	dbg("global", CORE, "[OnPlayerDeath] in /gamemodes/sss/core/char/infection.pwn");
 
 	infect_InfectionIntensity[playerid][0] = 0;
 	infect_InfectionIntensity[playerid][1] = 0;
 	infect_LastShake[playerid] = 0;
 }
 
-//ptask PlayerInfectionUpdate[1000](playerid)
-stock PlayerInfectionUpdate(playerid)
+hook OnPlayerScriptUpdate(playerid)
 {
-	if(infect_InfectionIntensity[playerid][INFECT_TYPE_FOOD] == 0 || infect_InfectionIntensity[playerid][INFECT_TYPE_WOUND] == 0)
+	if(infect_InfectionIntensity[playerid][INFECT_TYPE_FOOD] == 0 && infect_InfectionIntensity[playerid][INFECT_TYPE_WOUND] == 0)
 		return;
 
 	if(IsPlayerUnderDrugEffect(playerid, drug_Morphine))
@@ -112,14 +111,14 @@ stock SetPlayerInfectionIntensity(playerid, type, amount)
 
 hook OnPlayerSave(playerid, filename[])
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerSave] in /gamemodes/sss/core/char/infection.pwn");
+	dbg("global", CORE, "[OnPlayerSave] in /gamemodes/sss/core/char/infection.pwn");
 
 	modio_push(filename, _T<I,N,F,C>, 2, infect_InfectionIntensity[playerid]);
 }
 
 hook OnPlayerLoad(playerid, filename[])
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerLoad] in /gamemodes/sss/core/char/infection.pwn");
+	dbg("global", CORE, "[OnPlayerLoad] in /gamemodes/sss/core/char/infection.pwn");
 
 	modio_read(filename, _T<I,N,F,C>, 2, infect_InfectionIntensity[playerid]);
 }

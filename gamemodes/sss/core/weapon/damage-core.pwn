@@ -71,7 +71,7 @@ forward Float:GetPlayerKnockoutChance(playerid, Float:knockmult);
 
 hook OnPlayerConnect(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/weapon/damage-core.pwn");
+	dbg("global", CORE, "[OnPlayerConnect] in /gamemodes/sss/core/weapon/damage-core.pwn");
 
 	dmg_LastHit[playerid][0] = EOS;
 	dmg_LastHitId[playerid] = INVALID_PLAYER_ID;
@@ -88,14 +88,9 @@ hook OnPlayerConnect(playerid)
 }
 
 
-new FIREARM_DEBUG = -1;
-
 hook OnScriptInit()
 {
-	print("\n[OnScriptInit] Initialising 'damage.core'...");
-
 	Iter_Init(wnd_Index);
-	FIREARM_DEBUG = debug_register_handler("weapon/damage");
 }
 
 
@@ -106,7 +101,7 @@ stock PlayerInflictWound(playerid, targetid, E_WND_TYPE:type, Float:bleedrate, F
 
 	if(IsPlayerKnockedOut(playerid))
 	{
-		printf("[WARNING] Knocked out player %p tried to wound player %p", playerid, targetid);
+		log("[WARNING] Knocked out player %p tried to wound player %p", playerid, targetid);
 		return 0;
 	}
 
@@ -133,7 +128,7 @@ stock PlayerInflictWound(playerid, targetid, E_WND_TYPE:type, Float:bleedrate, F
 	strcpy(wnd_Data[targetid][woundid][wnd_source], source, MAX_WOUND_SRCLEN);
 
 	totalbleedrate += bleedrate;
-	d:2:FIREARM_DEBUG("[PlayerInflictWound] inflicted bleedrate: %f, total bleedrate = %f", bleedrate, totalbleedrate);
+	dbg("gamemodes/sss/core/weapon/damage-core.pwn", 2, "[PlayerInflictWound] inflicted bleedrate: %f, total bleedrate = %f", bleedrate, totalbleedrate);
 
 	// Truncate result to 1.0
 	totalbleedrate = totalbleedrate > 1.0 ? 1.0 : totalbleedrate;
@@ -163,7 +158,7 @@ stock PlayerInflictWound(playerid, targetid, E_WND_TYPE:type, Float:bleedrate, F
 
 		if(knockouttime > 1500)
 		{
-			d:2:FIREARM_DEBUG("[PlayerInflictWound] Knocking out %p for %dms - %d wounds, %f health %f bleedrate", targetid, knockouttime, woundcount, hp, totalbleedrate);
+			dbg("gamemodes/sss/core/weapon/damage-core.pwn", 2, "[PlayerInflictWound] Knocking out %p for %dms - %d wounds, %f health %f bleedrate", targetid, knockouttime, woundcount, hp, totalbleedrate);
 			KnockOutPlayer(targetid, knockouttime);
 		}
 	}
@@ -182,11 +177,11 @@ stock PlayerInflictWound(playerid, targetid, E_WND_TYPE:type, Float:bleedrate, F
 		dmg_LastHitById[targetid] = playerid;
 		dmg_LastHitByItem[targetid] = GetPlayerItem(targetid);
 
-		logf("[WOUND] %p wounds %p. bleedrate %f knockmult %f bodypart %d source '%s'", playerid, targetid, bleedrate, knockmult, bodypart, source);
+		log("[WOUND] %p wounds %p. bleedrate %f knockmult %f bodypart %d source '%s'", playerid, targetid, bleedrate, knockmult, bodypart, source);
 	}
 	else
 	{
-		logf("[WOUND] %p wounded. bleedrate %f knockmult %f bodypart %d source '%s'", targetid, bleedrate, knockmult, bodypart, source);
+		log("[WOUND] %p wounded. bleedrate %f knockmult %f bodypart %d source '%s'", targetid, bleedrate, knockmult, bodypart, source);
 	}
 
 	ShowActionText(targetid, sprintf(ls(targetid, "WOUNDEDMSSG", true), source, (knockmult * (((woundcount + 1) * 0.2) * ((totalbleedrate * 50) + 1)) < 50.0 ? ("Minor") : ("Severe"))), 5000);
@@ -196,7 +191,7 @@ stock PlayerInflictWound(playerid, targetid, E_WND_TYPE:type, Float:bleedrate, F
 
 hook OnDeath(playerid, killerid, reason)
 {
-	d:3:GLOBAL_DEBUG("[OnDeath] in /gamemodes/sss/core/weapon/damage-core.pwn");
+	dbg("global", CORE, "[OnDeath] in /gamemodes/sss/core/weapon/damage-core.pwn");
 
 	Iter_Clear(wnd_Index[playerid]);
 
@@ -373,12 +368,12 @@ stock GetPlayerWoundDataAsArray(playerid, output[])
 
 		if(sourcelen > MAX_WOUND_SRCLEN)
 		{
-			printf("[GetPlayerWoundDataAsArray] ERROR: wound %d sourcelen:%d > %d dump: t:%d b:%f c:%d d:%d p:%d", i, sourcelen, MAX_WOUND_SRCLEN, _:wnd_Data[playerid][i][wnd_type], _:wnd_Data[playerid][i][wnd_bleedrate], wnd_Data[playerid][i][wnd_calibre], wnd_Data[playerid][i][wnd_timestamp], wnd_Data[playerid][i][wnd_bodypart]);
+			err("Wound %d sourcelen:%d > %d dump: t:%d b:%f c:%d d:%d p:%d", i, sourcelen, MAX_WOUND_SRCLEN, _:wnd_Data[playerid][i][wnd_type], _:wnd_Data[playerid][i][wnd_bleedrate], wnd_Data[playerid][i][wnd_calibre], wnd_Data[playerid][i][wnd_timestamp], wnd_Data[playerid][i][wnd_bodypart]);
 			sourcelen = MAX_WOUND_SRCLEN;
 		}
 		else if(sourcelen == 0)
 		{
-			printf("[GetPlayerWoundDataAsArray] ERROR: wound %d sourcelen:%d <= 0 dump: t:%d b:%f c:%d d:%d p:%d", i, sourcelen, _:wnd_Data[playerid][i][wnd_type], _:wnd_Data[playerid][i][wnd_bleedrate], wnd_Data[playerid][i][wnd_calibre], wnd_Data[playerid][i][wnd_timestamp], wnd_Data[playerid][i][wnd_bodypart]);
+			err("Wound %d sourcelen:%d <= 0 dump: t:%d b:%f c:%d d:%d p:%d", i, sourcelen, _:wnd_Data[playerid][i][wnd_type], _:wnd_Data[playerid][i][wnd_bleedrate], wnd_Data[playerid][i][wnd_calibre], wnd_Data[playerid][i][wnd_timestamp], wnd_Data[playerid][i][wnd_bodypart]);
 		}
 
 		//memcpy(output[idx++], wnd_Data[playerid][i][wnd_source], 0, 32 * 4, 32);
@@ -400,7 +395,7 @@ stock SetPlayerWoundDataFromArray(playerid, input[])
 
 	if(!(0 < input[0] < MAX_WOUNDS))
 	{
-		printf("[SetPlayerWoundDataFromArray] ERROR: Wound count (%d) is invalid.", input[0]);
+		err("Wound count (%d) is invalid.", input[0]);
 		return 0;
 	}
 
@@ -415,7 +410,7 @@ stock SetPlayerWoundDataFromArray(playerid, input[])
 
 		if(woundid == ITER_NONE)
 		{
-			printf("[SetPlayerWoundDataFromArray] ERROR: Ran out of wound slots on wound %d cell: %d", (idx - 1) / _:E_WOUND_DATA, idx);
+			err("Ran out of wound slots on wound %d cell: %d", (idx - 1) / _:E_WOUND_DATA, idx);
 			break;
 		}
 
@@ -428,12 +423,12 @@ stock SetPlayerWoundDataFromArray(playerid, input[])
 
 		if(sourcelen > MAX_WOUND_SRCLEN)
 		{
-			printf("[SetPlayerWoundDataFromArray] ERROR: sourcelen:%d > %d, truncating.", sourcelen, MAX_WOUND_SRCLEN);
+			err("sourcelen:%d > %d, truncating.", sourcelen, MAX_WOUND_SRCLEN);
 			sourcelen = MAX_WOUND_SRCLEN;
 		}
 		else if(sourcelen == 0)
 		{
-			printf("[SetPlayerWoundDataFromArray] ERROR: sourcelen:%d <= 0, truncating.", sourcelen);
+			err("sourcelen:%d <= 0, truncating.", sourcelen);
 		}
 
 		// memcpy(wnd_Data[playerid][woundid][wnd_source], input[idx], 0, 32 * 4); // no idx++
@@ -450,7 +445,7 @@ stock SetPlayerWoundDataFromArray(playerid, input[])
 
 hook OnPlayerSave(playerid, filename[])
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerSave] in /gamemodes/sss/core/weapon/damage-core.pwn");
+	dbg("global", CORE, "[OnPlayerSave] in /gamemodes/sss/core/weapon/damage-core.pwn");
 
 	new
 		length,
@@ -463,7 +458,7 @@ hook OnPlayerSave(playerid, filename[])
 
 hook OnPlayerLoad(playerid, filename[])
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerLoad] in /gamemodes/sss/core/weapon/damage-core.pwn");
+	dbg("global", CORE, "[OnPlayerLoad] in /gamemodes/sss/core/weapon/damage-core.pwn");
 
 	new data[1 + (MAX_WOUNDS * _:E_WOUND_DATA)];
 

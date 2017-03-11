@@ -69,10 +69,8 @@ new
 	};
 // Todo: Add offsets for the remaining house models from LS and LV to this
 
-hook OnGameModeInit()
+Load_HouseLoot()
 {
-	print("\n[OnGameModeInit] Initialising 'HouseLoot'...");
-
 	new
 		Float:x,
 		Float:y,
@@ -112,7 +110,7 @@ hook OnGameModeInit()
 							LootOffsets[j][k][0], LootOffsets[j][k][1], LootOffsets[j][k][2],
 							x, y, z);
 
-						CreateStaticLootSpawn(x, y, z, 3, 30, loot_Civilian);
+						CreateStaticLootSpawn(x, y, z, 3, 30, GetLootIndexFromName("world_civilian"));
 					}
 				}
 			}

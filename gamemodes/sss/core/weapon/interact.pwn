@@ -24,7 +24,7 @@
 
 hook OnPlayerGetItem(playerid, itemid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerGetItem] in /gamemodes/sss/core/weapon/interact.pwn");
+	dbg("global", CORE, "[OnPlayerGetItem] in /gamemodes/sss/core/weapon/interact.pwn");
 
 	UpdatePlayerWeaponItem(playerid);
 
@@ -33,7 +33,7 @@ hook OnPlayerGetItem(playerid, itemid)
 
 hook OnPlayerGivenItem(playerid, targetid, itemid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerGivenItem] in /gamemodes/sss/core/weapon/interact.pwn");
+	dbg("global", CORE, "[OnPlayerGivenItem] in /gamemodes/sss/core/weapon/interact.pwn");
 
 	if(GetItemTypeWeapon(GetItemType(itemid)) != -1)
 	{
@@ -46,7 +46,7 @@ hook OnPlayerGivenItem(playerid, targetid, itemid)
 
 hook OnPlayerDroppedItem(playerid, itemid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerDroppedItem] in /gamemodes/sss/core/weapon/interact.pwn");
+	dbg("global", CORE, "[OnPlayerDroppedItem] in /gamemodes/sss/core/weapon/interact.pwn");
 
 	if(GetItemTypeWeapon(GetItemType(itemid)) != -1)
 	{
@@ -58,7 +58,7 @@ hook OnPlayerDroppedItem(playerid, itemid)
 
 hook OnPlayerUseItemWithItem(playerid, itemid, withitemid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerUseItemWithItem] in /gamemodes/sss/core/weapon/interact.pwn");
+	dbg("global", CORE, "[OnPlayerUseItemWithItem] in /gamemodes/sss/core/weapon/interact.pwn");
 
 	if(GetPlayerSpecialAction(playerid) == SPECIAL_ACTION_CUFFED || IsPlayerOnAdminDuty(playerid) || IsPlayerKnockedOut(playerid) || GetPlayerAnimationIndex(playerid) == 1381)
 		return 1;
@@ -332,4 +332,170 @@ timer _TransferTinToTin[400](playerid, srcitem, tgtitem)
 	ShowActionText(playerid, sprintf(ls(playerid, "AMTRANSTTOT", true), amount), 3000);
 
 	ApplyAnimation(playerid, "BOMBER", "BOM_PLANT_2IDLE", 4.0, 0, 0, 0, 0, 0);
+}
+
+
+/*==============================================================================
+
+	Transfer ammo in inventories
+
+==============================================================================*/
+
+
+static
+	trans_ContainerOptionID[MAX_PLAYERS] = {-1, ...},
+	trans_SelectedItem[MAX_PLAYERS] = {INVALID_ITEM_ID, ...};
+
+
+hook OnPlayerViewCntOpt(playerid, containerid)
+{
+	new
+		itemid,
+		ItemType:itemtype;
+
+	itemid = GetContainerSlotItem(containerid, GetPlayerContainerSlot(playerid));
+	itemtype = GetItemType(itemid);
+
+	if((GetItemTypeWeapon(itemtype) != -1 && GetItemTypeWeaponCalibre(itemtype) != -1) || GetItemTypeAmmoType(itemtype) != -1)
+	{
+		if(IsValidItem(trans_SelectedItem[playerid]) && trans_SelectedItem[playerid] != itemid)
+		{
+			trans_ContainerOptionID[playerid] = AddContainerOption(playerid, "Transfer Ammo Here");
+		}
+		else
+		{
+			trans_ContainerOptionID[playerid] = AddContainerOption(playerid, "Transfer Ammo...");
+		}
+	}
+
+	return Y_HOOKS_CONTINUE_RETURN_0;
+}
+
+hook OnPlayerSelectCntOpt(playerid, containerid, option)
+{
+	if(option == trans_ContainerOptionID[playerid])
+	{
+		if(IsValidItem(trans_SelectedItem[playerid]) && trans_SelectedItem[playerid] != GetContainerSlotItem(containerid, GetPlayerContainerSlot(playerid)))
+		{
+			DisplayTransferAmmoDialog(playerid, containerid);
+		}
+		else
+		{
+			trans_SelectedItem[playerid] = GetContainerSlotItem(containerid, GetPlayerContainerSlot(playerid));
+			DisplayContainerInventory(playerid, containerid);
+		}
+	}
+
+	return Y_HOOKS_CONTINUE_RETURN_0;
+}
+
+DisplayTransferAmmoDialog(playerid, containerid, msg[] = "")
+{
+	new
+		sourceitemid,
+		ItemType:sourceitemtype,
+		sourceitemname[ITM_MAX_NAME],
+		targetitemid,
+		ItemType:targetitemtype,
+		targetitemname[ITM_MAX_NAME];
+
+	sourceitemid = trans_SelectedItem[playerid];
+	sourceitemtype = GetItemType(sourceitemid);
+	GetItemTypeName(sourceitemtype, sourceitemname);
+	targetitemid = GetContainerSlotItem(containerid, GetPlayerContainerSlot(playerid));
+	targetitemtype = GetItemType(targetitemid);
+	GetItemTypeName(targetitemtype, targetitemname);
+
+	inline Response(pid, dialogid, response, listitem, string:inputtext[])
+	{
+		#pragma unused pid, dialogid, listitem
+
+		if(response)
+		{
+			new amount = strval(inputtext);
+
+			if(GetItemTypeWeapon(sourceitemtype) != -1)
+			{
+				if(GetItemTypeWeapon(targetitemtype) != -1)
+				{
+					// weapon to weapon
+					new
+						sourceitemammo = GetItemWeaponItemReserve(sourceitemid),
+						targetitemammo = GetItemWeaponItemReserve(targetitemid);
+
+					if(0 < amount <= sourceitemammo)
+					{
+						SetItemWeaponItemReserve(sourceitemid, sourceitemammo - amount);
+						SetItemWeaponItemReserve(targetitemid, targetitemammo + amount);
+						SetItemWeaponItemAmmoItem(targetitemid, sourceitemtype);
+					}
+					else
+					{
+						DisplayTransferAmmoDialog(playerid, containerid, sprintf("%s only contains %d ammo", sourceitemname, sourceitemammo));
+					}
+
+				}
+				else if(GetItemTypeAmmoType(targetitemtype) != -1)
+				{
+					// weapon to ammo
+					new
+						sourceitemammo = GetItemWeaponItemReserve(sourceitemid),
+						targetitemammo = GetItemArrayDataAtCell(targetitemid, 0);
+
+					if(0 < amount <= sourceitemammo)
+					{
+						SetItemWeaponItemReserve(sourceitemid, sourceitemammo - amount);
+						SetItemArrayDataAtCell(targetitemid, targetitemammo + amount, 0);
+					}
+					else
+					{
+						DisplayTransferAmmoDialog(playerid, containerid, sprintf("%s only contains %d ammo", sourceitemname, sourceitemammo));
+					}
+				}
+			}
+			else if(GetItemTypeAmmoType(sourceitemtype) != -1)
+			{
+				if(GetItemTypeWeapon(targetitemtype) != -1)
+				{
+					// ammo to weapon
+					new
+						sourceitemammo = GetItemArrayDataAtCell(sourceitemid, 0),
+						targetitemammo = GetItemWeaponItemReserve(targetitemid);
+
+					if(0 < amount <= sourceitemammo)
+					{
+						SetItemArrayDataAtCell(sourceitemid, sourceitemammo - amount, 0);
+						SetItemWeaponItemReserve(targetitemid, targetitemammo + amount);
+						SetItemWeaponItemAmmoItem(targetitemid, sourceitemtype);
+					}
+					else
+					{
+						DisplayTransferAmmoDialog(playerid, containerid, sprintf("%s only contains %d ammo", sourceitemname, sourceitemammo));
+					}
+				}
+				else if(GetItemTypeAmmoType(targetitemtype) != -1)
+				{
+					// ammo to ammo
+					new
+						sourceitemammo = GetItemArrayDataAtCell(sourceitemid, 0),
+						targetitemammo = GetItemArrayDataAtCell(targetitemid, 0);
+
+					if(0 < amount <= sourceitemammo)
+					{
+						SetItemArrayDataAtCell(sourceitemid, sourceitemammo - amount, 0);
+						SetItemArrayDataAtCell(targetitemid, targetitemammo + amount, 0);
+					}
+					else
+					{
+						DisplayTransferAmmoDialog(playerid, containerid, sprintf("%s only contains %d ammo", sourceitemname, sourceitemammo));
+					}
+				}
+			}
+		}
+
+		trans_ContainerOptionID[playerid] = -1;
+		trans_SelectedItem[playerid] = INVALID_ITEM_ID;
+		DisplayContainerInventory(playerid, containerid);
+	}
+	Dialog_ShowCallback(playerid, using inline Response, DIALOG_STYLE_INPUT, "Transfer Ammo", sprintf("Enter amount of ammo to transfer from %s to %s\n\n%s", sourceitemname, targetitemname, msg), "Accept", "Cancel");
 }

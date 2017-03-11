@@ -22,23 +22,14 @@
 ==============================================================================*/
 
 
+#include <YSI\y_hooks>
+
+
 static
 Float:	bld_BleedRate[MAX_PLAYERS];
 
 
-static
-		HANDLER = -1;
-
-
-hook OnScriptInit()
-{
-	print("\n[OnScriptInit] Initialising 'Bleed'...");
-
-	HANDLER = debug_register_handler("bleed");
-}
-
-
-ptask BleedUpdate[1000](playerid)
+hook OnPlayerScriptUpdate(playerid)
 {
 	if(!IsPlayerSpawned(playerid))
 	{
@@ -80,7 +71,7 @@ ptask BleedUpdate[1000](playerid)
 		if(random(100) < 50)
 			bld_BleedRate[playerid] -= slowrate;
 
-		if(debug_conditional(HANDLER, 1))
+		if(debug_conditional(\"gamemodes/sss/core/char/bleed.pwn\", 1))
 			ShowActionText(playerid, sprintf("HP: %f Bleed-rate: %f~n~Wounds %d Bleed slow-rate: %f", hp, bld_BleedRate[playerid], GetPlayerWounds(playerid)));
 
 		if(!IsPlayerInAnyVehicle(playerid))

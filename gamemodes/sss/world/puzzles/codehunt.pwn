@@ -64,8 +64,6 @@ new
 
 hook OnGameModeInit()
 {
-	print("\n[OnGameModeInit] Initialising 'CodeHunt'...");
-
 	LoadLockup_SF();
 	SetItemTypeMaxArrayData(item_CodePart, 1);
 }
@@ -119,7 +117,7 @@ CreateLockup(keypadbutton, extButton, intButton)
 
 hook OnButtonPress(playerid, buttonid)
 {
-	d:3:GLOBAL_DEBUG("[OnButtonPress] in /gamemodes/sss/world/puzzles/codehunt.pwn");
+	dbg("global", CORE, "[OnButtonPress] in /gamemodes/sss/world/puzzles/codehunt.pwn");
 
 	for(new i; i < lck_Total; i++)
 	{
@@ -145,7 +143,7 @@ hook OnButtonPress(playerid, buttonid)
 
 hook OnPlayerKeypadEnter(playerid, keypadid, code, match)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerKeypadEnter] in /gamemodes/sss/world/puzzles/codehunt.pwn");
+	dbg("global", CORE, "[OnPlayerKeypadEnter] in /gamemodes/sss/world/puzzles/codehunt.pwn");
 
 	if(keypadid == k_Lockup)
 	{
@@ -179,10 +177,10 @@ LoadLockup_SF()
 
 	CreateCodeParts(coords, 8, keycode);
 
-	CreateStaticLootSpawn(-2493.80151, 311.45721, 1035.89465, loot_Survivor, 25, 4);
-	CreateStaticLootSpawn(-2493.62427, 314.89218, 1035.89514, loot_Survivor, 25, 4);
-	CreateStaticLootSpawn(-2501.56641, 310.20535, 1035.89514, loot_Survivor, 25, 4);
-	CreateStaticLootSpawn(-2497.18896, 310.38626, 1035.89502, loot_Survivor, 25, 4);
+	CreateStaticLootSpawn(-2493.80151, 311.45721, 1035.89465, GetLootIndexFromName("world_survivor"), 25, 4);
+	CreateStaticLootSpawn(-2493.62427, 314.89218, 1035.89514, GetLootIndexFromName("world_survivor"), 25, 4);
+	CreateStaticLootSpawn(-2501.56641, 310.20535, 1035.89514, GetLootIndexFromName("world_survivor"), 25, 4);
+	CreateStaticLootSpawn(-2497.18896, 310.38626, 1035.89502, GetLootIndexFromName("world_survivor"), 25, 4);
 
 	CreateDynamicObject(19273, -2493.90112, 313.94443, 29.72062,   0.00000, 0.00000, -110.21997);
 	CreateDynamicObject(8948, -2499.05518, 319.42581, 1037.67224,   0.00000, 0.00000, 90.00000);

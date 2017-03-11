@@ -66,7 +66,7 @@ stock CreateTracer(Float:originx, Float:originy, Float:originz, Float:targetx, F
 
 	MoveDynamicObject(tracer_ObjectID[id], targetx, targety, targetz, 800.0);
 /*
-	printf("Created tracer: %f, %f, %f > %f, %f, %f",
+	log("Created tracer: %f, %f, %f > %f, %f, %f",
 		originx + (2.0 * floatsin(rotation, degrees) * floatcos(elevation, degrees)),
 		originy + (2.0 * floatcos(rotation, degrees) * floatcos(elevation, degrees)),
 		originz + (2.0 * floatsin(elevation, degrees)),
@@ -90,7 +90,7 @@ stock DestroyTracer(id)
 
 hook OnDynamicObjectMoved(objectid)
 {
-	d:3:GLOBAL_DEBUG("[OnDynamicObjectMoved] in /gamemodes/sss/core/weapon/tracer.pwn");
+	dbg("global", CORE, "[OnDynamicObjectMoved] in /gamemodes/sss/core/weapon/tracer.pwn");
 
 	tracer_HandleObjectMoved(objectid);
 
@@ -116,7 +116,7 @@ tracer_HandleObjectMoved(objectid)
 
 hook OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, Float:fZ)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerWeaponShot] in /gamemodes/sss/core/weapon/tracer.pwn");
+	dbg("global", CORE, "[OnPlayerWeaponShot] in /gamemodes/sss/core/weapon/tracer.pwn");
 
 	if(IsBaseWeaponClipBased(weaponid))
 	{

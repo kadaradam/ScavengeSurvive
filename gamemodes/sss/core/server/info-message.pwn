@@ -38,8 +38,6 @@ static
 
 hook OnScriptInit()
 {
-	print("\n[OnScriptInit] Initialising 'InfoMessage'...");
-
 	GetSettingStringArray(
 		"infomessage/messages",
 		"Please update the 'server/infomsgs' array in '"SETTINGS_FILE"'.",

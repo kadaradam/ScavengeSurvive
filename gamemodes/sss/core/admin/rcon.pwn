@@ -34,10 +34,10 @@ public OnRconCommand(cmd[])
 	{
 		if(params[0] == EOS)
 		{
-			print("\n\tUsage: 'restart <seconds>' enter '0' to restart instantly.");
-			print("\tIt is not advised to restart instantly.");
-			print("\tEntering a time will display a countdown to all players");
-			print("\tallowing them to prepare for the restart.\n");
+			log("\tUsage: 'restart <seconds>' enter '0' to restart instantly.");
+			log("\tIt is not advised to restart instantly.");
+			log("\tEntering a time will display a countdown to all players");
+			log("\tallowing them to prepare for the restart.\n");
 		}
 		else
 		{
@@ -51,7 +51,7 @@ public OnRconCommand(cmd[])
 	{
 		if(params[0] == EOS)
 		{
-			print("\n\tUsage: 'whitelist (<add/remove> <name>) / (on/off/?)'.");
+			log("\tUsage: 'whitelist (<add/remove> <name>) / (on/off/?)'.");
 		}
 		else
 		{
@@ -66,13 +66,13 @@ public OnRconCommand(cmd[])
 					new ret = AddNameToWhitelist(name);
 
 					if(ret == 0)
-						printf("The name '%s' is already in the whitelist.", name);
+						log("The name '%s' is already in the whitelist.", name);
 
 					if(ret == 1)
-						printf("Added '%s' to whitelist.", name);
+						log("Added '%s' to whitelist.", name);
 
 					if(ret == -1)
-						print("A database query error occurred.");
+						log("A database query error occurred.");
 				}
 
 				if(!strcmp(action, "remove") && action[0] != EOS && name[0] != EOS)
@@ -80,13 +80,13 @@ public OnRconCommand(cmd[])
 					new ret = RemoveNameFromWhitelist(name);
 
 					if(ret == 0)
-						printf("The name '%s' is not in the whitelist.", name);
+						log("The name '%s' is not in the whitelist.", name);
 
 					if(ret == 1)
-						printf("Removed '%s' from whitelist.", name);
+						log("Removed '%s' from whitelist.", name);
 
 					if(ret == -1)
-						print("A database query error occurred.");
+						log("A database query error occurred.");
 				}
 
 				if(!strcmp(action, "?") && action[0] != EOS && name[0] != EOS)
@@ -94,38 +94,38 @@ public OnRconCommand(cmd[])
 					new ret = IsNameInWhitelist(name);
 
 					if(ret == 1)
-						print("That name is in the whitelist.");
+						log("That name is in the whitelist.");
 
 					if(ret == 0)
-						print("That name is not in the whitelist.");
+						log("That name is not in the whitelist.");
 
 					if(ret == -1)
-						print("A database query error occurred.");
+						log("A database query error occurred.");
 				}
 			}
 
 			if(!strcmp(action, "on") && action[0] != EOS)
 			{
 				ToggleWhitelist(true);
-				print("Whitelist turned on.");
+				log("Whitelist turned on.");
 			}
 
 			if(!strcmp(action, "off") && action[0] != EOS)
 			{
 				ToggleWhitelist(false);
-				print("Whitelist turned off.");
+				log("Whitelist turned off.");
 			}
 
 			if(!strcmp(action, "auto on") && action[0] != EOS)
 			{
 				ToggleAutoWhitelist(false);
-				print("Automatic whitelist turned off.");
+				log("Automatic whitelist turned off.");
 			}
 
 			if(!strcmp(action, "auto off") && action[0] != EOS)
 			{
 				ToggleAutoWhitelist(false);
-				print("Automatic whitelist turned off.");
+				log("Automatic whitelist turned off.");
 			}
 		}
 

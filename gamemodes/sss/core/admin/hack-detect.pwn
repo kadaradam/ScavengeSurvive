@@ -164,7 +164,7 @@ ptask AntiCheatUpdate[1000](playerid)
 
 hook OnPlayerSpawn(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerSpawn] in /gamemodes/sss/core/admin/hack-detect.pwn");
+	dbg("global", CORE, "[OnPlayerSpawn] in /gamemodes/sss/core/admin/hack-detect.pwn");
 
 	tp_SetPosTick[playerid] = GetTickCount();
 	tp_DetectDelay[playerid] = GetTickCount();
@@ -305,6 +305,24 @@ PositionCheck(playerid)
 				}
 			}
 		}
+	}
+
+	if(distance > 1.0 && IsPlayerFrozen(playerid))
+	{
+		new
+			name[MAX_PLAYER_NAME],
+			reason[128],
+			info[128];
+
+		GetPlayerName(playerid, name, MAX_PLAYER_NAME);
+
+		format(reason, sizeof(reason), "Moved %.0fm while frozen @%.0f (%.0f, %.0f, %.0f > %.0f, %.0f, %.0f)", distance, velocity, tp_CurPos[playerid][0], tp_CurPos[playerid][1], tp_CurPos[playerid][2], x, y, z);
+		format(info, sizeof(info), "%.1f, %.1f, %.1f", x, y, z);
+		ReportPlayer(name, reason, -1, REPORT_TYPE_TELEPORT, tp_CurPos[playerid][0], tp_CurPos[playerid][1], tp_CurPos[playerid][2], GetPlayerVirtualWorld(playerid), GetPlayerInterior(playerid), info);
+
+		SetPlayerPos(playerid, tp_CurPos[playerid][0], tp_CurPos[playerid][1], tp_CurPos[playerid][2]);
+
+		tp_PosReportTick[playerid] = GetTickCount();
 	}
 
 	tp_CurPos[playerid][0] = x;
@@ -864,13 +882,18 @@ VehicleModCheck(playerid)
 
 hook OnPlayerStateChange(playerid, newstate, oldstate)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerStateChange] in /gamemodes/sss/core/admin/hack-detect.pwn");
+	dbg("global", CORE, "[OnPlayerStateChange] in /gamemodes/sss/core/admin/hack-detect.pwn");
 
 	if(newstate == PLAYER_STATE_DRIVER)
 	{
-		new vehicleid = GetPlayerVehicleID(playerid);
+		new
+			vehicleid,
+			E_LOCK_STATE:lockstate;
 
-		if(IsVehicleLocked(vehicleid) && GetTickCountDifference(GetTickCount(), GetVehicleLockTick(vehicleid)) > 3500)
+		vehicleid = GetPlayerVehicleID(playerid);
+		lockstate = GetVehicleLockState(vehicleid);
+
+		if(lockstate != E_LOCK_STATE_OPEN && GetTickCountDifference(GetTickCount(), GetVehicleLockTick(vehicleid)) > 3500)
 		{
 			new
 				name[MAX_PLAYER_NAME],
@@ -886,7 +909,7 @@ hook OnPlayerStateChange(playerid, newstate, oldstate)
 			RemovePlayerFromVehicle(playerid);
 			SetPlayerPos(playerid, px, py, pz);
 
-			defer CheckIsPlayerStillInVehicle(playerid, vehicleid);
+			defer StillInVeh(playerid, vehicleid, _:lockstate);
 
 			return -1;
 		}
@@ -894,9 +917,14 @@ hook OnPlayerStateChange(playerid, newstate, oldstate)
 
 	if(newstate == PLAYER_STATE_PASSENGER)
 	{
-		new vehicleid = GetPlayerVehicleID(playerid);
+		new
+			vehicleid,
+			E_LOCK_STATE:lockstate;
 
-		if(IsVehicleLocked(vehicleid) && GetTickCountDifference(GetTickCount(), GetVehicleLockTick(vehicleid)) > 3500)
+		vehicleid = GetPlayerVehicleID(playerid);
+		lockstate = GetVehicleLockState(vehicleid);
+
+		if(lockstate != E_LOCK_STATE_OPEN && GetTickCountDifference(GetTickCount(), GetVehicleLockTick(vehicleid)) > 3500)
 		{
 			new
 				name[MAX_PLAYER_NAME],
@@ -912,7 +940,7 @@ hook OnPlayerStateChange(playerid, newstate, oldstate)
 			RemovePlayerFromVehicle(playerid);
 			SetPlayerPos(playerid, x, y, z);
 
-			defer CheckIsPlayerStillInVehicle(playerid, vehicleid);
+			defer StillInVeh(playerid, vehicleid, _:lockstate);
 
 			return -1;
 		}
@@ -921,7 +949,7 @@ hook OnPlayerStateChange(playerid, newstate, oldstate)
 	return 1;
 }
 
-timer CheckIsPlayerStillInVehicle[1000](playerid, vehicleid)
+timer StillInVeh[1000](playerid, vehicleid, ls)
 {
 	if(!IsPlayerConnected(playerid))
 		return;
@@ -929,7 +957,7 @@ timer CheckIsPlayerStillInVehicle[1000](playerid, vehicleid)
 	if(IsPlayerInVehicle(playerid, vehicleid))
 		TimeoutPlayer(playerid, "Staying in a locked vehicle");
 
-	SetVehicleExternalLock(vehicleid, 1);
+	SetVehicleExternalLock(vehicleid, E_LOCK_STATE:ls);
 }
 
 
@@ -946,7 +974,7 @@ static
 
 hook OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, Float:fZ)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerWeaponShot] in /gamemodes/sss/core/admin/hack-detect.pwn");
+	dbg("global", CORE, "[OnPlayerWeaponShot] in /gamemodes/sss/core/admin/hack-detect.pwn");
 
 	if(GetTickCountDifference(GetTickCount(), ammo_LastShot[playerid]) < GetWeaponShotInterval(weaponid) + 10)
 	{

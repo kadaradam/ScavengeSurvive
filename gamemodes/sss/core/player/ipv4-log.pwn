@@ -49,8 +49,6 @@ DBStatement:	stmt_Ipv4GetRecordsFromName;
 
 hook OnGameModeInit()
 {
-	print("\n[OnGameModeInit] Initialising 'ipv4-log'...");
-
 	db_query(gAccounts, "CREATE TABLE IF NOT EXISTS "ACCOUNTS_TABLE_IPV4" (\
 		"FIELD_IPV4_NAME" TEXT,\
 		"FIELD_IPV4_IPV4" INTEGER,\
@@ -66,7 +64,7 @@ hook OnGameModeInit()
 
 hook OnPlayerConnect(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/player/ipv4-log.pwn");
+	dbg("global", CORE, "[OnPlayerConnect] in /gamemodes/sss/core/player/ipv4-log.pwn");
 
 	new
 		name[MAX_PLAYER_NAME],
@@ -96,7 +94,7 @@ hook OnPlayerConnect(playerid)
 		stmt_bind_value(stmt_Ipv4Insert, 2, DB::TYPE_INTEGER, gettime());
 
 		if(!stmt_execute(stmt_Ipv4Insert))
-			print("ERROR: Failed to execute statement 'stmt_Ipv4Insert'.");
+			err("Failed to execute statement 'stmt_Ipv4Insert'.");
 	}
 
 	return 1;

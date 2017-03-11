@@ -68,11 +68,28 @@ filterscripts object-loader rcon
 plugins crashdetect streamer sscanf CTime Whirlpool FileManager irc MapAndreas
 ```
 
-### 5. Set up gamemode settings in your `scriptfiles/SSS/settings.ini` file
+### 5. Set up gamemode settings in your `scriptfiles/data/settings.ini` file
 
 This is an INI file with game settings that will self-create if absent.
 
 Most of the settings should be self-explanitory. If the purpose isn't clear, look up the setting in the source code for more information.
+
+### 6. (Optional) Set up "missing features"
+
+Scavenge and Survive is now provided as a baseline to build from and many older features have been stripped out and are being developed privately. This is partly to deter inexperienced users from attempting to run a SS server/community. I hate to do this and it goes against everything I believe in when it comes to open source but it's something I had to do to prevent problems between communities and people using my work without giving proper credit.
+
+Missing features:
+
+#### Entity Storage (items, safeboxes, tents, defences, signs)
+
+You will need to devise your own system for storing safeboxes, tents, defences and signs.
+
+This does not affect players and vehicles, these systems are still public so you can still run a basic server.
+
+#### Tree generator bitmap
+
+This is simply a 6000 x 6000 bitmap that determines tree placement.
+See generate_trees.py for information.
 
 
 ## LICENSE

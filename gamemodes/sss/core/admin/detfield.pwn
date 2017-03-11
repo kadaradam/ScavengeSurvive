@@ -125,8 +125,6 @@ DBStatement:det_Stmt_DetfieldGetNameLogs;
 
 hook OnScriptInit()
 {
-	print("\n[OnScriptInit] Initialising 'detfield'...");
-
 	det_Database = db_open_persistent(DETFIELD_DATABASE);
 
 	db_free_result(db_query(det_Database, "CREATE TABLE IF NOT EXISTS "DETFIELD_TABLE_MAIN" (\
@@ -213,7 +211,7 @@ hook OnScriptInit()
 		CreateDetectionField(name, points, minz, maxz, exceptionlist);
 	}
 
-	printf("Loaded %d Detection Fields", Iter_Count(det_Index));
+	log("Loaded %d Detection Fields", Iter_Count(det_Index));
 
 	return 1;
 }
@@ -232,7 +230,7 @@ stock CreateDetectionField(name[MAX_DETFIELD_NAME], Float:points[10], Float:minz
 
 	if(id == ITER_NONE)
 	{
-		print("ERROR: MAX_DETFIELD limit reached.");
+		err("MAX_DETFIELD limit reached.");
 		return -1;
 	}
 
@@ -725,7 +723,7 @@ stock DeleteDetectionFieldLogsOfName(detfieldid, name[])
 
 hook OnPlayerEnterDynArea(playerid, areaid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerEnterDynArea] in /gamemodes/sss/core/admin/detfield.pwn");
+	dbg("global", CORE, "[OnPlayerEnterDynArea] in /gamemodes/sss/core/admin/detfield.pwn");
 
 	foreach(new i : det_Index)
 	{
@@ -778,7 +776,7 @@ DetectionFieldLogPlayer(playerid, detfieldid)
 
 	format(line, sizeof(line), "%p, %s\r\n", playerid, TimestampToDateTime(gettime()));
 
-	logf("[DET] %p entered %s at %s", playerid, det_Name[detfieldid], TimestampToDateTime(gettime()));
+	log("[DET] %p entered %s at %s", playerid, det_Name[detfieldid], TimestampToDateTime(gettime()));
 
 	return 1;
 }

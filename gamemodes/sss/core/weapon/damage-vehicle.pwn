@@ -38,15 +38,13 @@ forward OnPlayerVehicleCollide(playerid, targetid, Float:bleedrate, Float:knockm
 
 hook OnScriptInit()
 {
-	print("\n[OnScriptInit] Initialising 'damage.vehicle'...");
-
 	GetSettingFloat("vehicle.damage/knock-mult", 1.0, dmg_VehicleVelocityKnockMult);
 	GetSettingFloat("vehicle.damage/bleed-mult", 1.0, dmg_VehicleVelocityBleedMult);
 }
 
 hook OnPlayerTakeDamage(playerid, issuerid, Float:amount, weaponid, bodypart)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerTakeDamage] in /gamemodes/sss/core/weapon/damage-vehicle.pwn");
+	dbg("global", CORE, "[OnPlayerTakeDamage] in /gamemodes/sss/core/weapon/damage-vehicle.pwn");
 
 	if(weaponid == 49)
 	{

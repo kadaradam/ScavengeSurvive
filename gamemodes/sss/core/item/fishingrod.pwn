@@ -31,7 +31,7 @@
 #define MAX_FISHING_DISTANCE	(10000)
 #define MIN_FISHING_TIME		(30000)
 #define MAX_FISHING_TIME		(120000)
-#define FISHING_CHANCE			(30) // value in percentage
+#define FISHING_CHANCE			(300) // value in percentage
 
 
 enum
@@ -48,7 +48,7 @@ Timer:	fish_Timer[MAX_PLAYERS];
 
 hook OnPlayerConnect(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/item/fishingrod.pwn");
+	dbg("global", CORE, "[OnPlayerConnect] in /gamemodes/sss/core/item/fishingrod.pwn");
 
 	fish_Status[playerid] = FISH_STATUS_NONE;
 	stop fish_Timer[playerid];
@@ -56,7 +56,7 @@ hook OnPlayerConnect(playerid)
 
 hook OnPlayerUseItem(playerid, itemid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerUseItem] in /gamemodes/sss/core/item/fishingrod.pwn");
+	dbg("global", CORE, "[OnPlayerUseItem] in /gamemodes/sss/core/item/fishingrod.pwn");
 
 	if(GetItemType(itemid) == item_FishRod)
 	{
@@ -70,7 +70,7 @@ hook OnPlayerUseItem(playerid, itemid)
 
 hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerKeyStateChange] in /gamemodes/sss/core/item/fishingrod.pwn");
+	dbg("global", CORE, "[OnPlayerKeyStateChange] in /gamemodes/sss/core/item/fishingrod.pwn");
 
 	if(GetItemType(GetPlayerItem(playerid)) == item_FishRod)
 	{
@@ -128,7 +128,7 @@ _CatchFish(playerid, Float:distance)
 
 	if(IsPosInWater(x, y, z) && -0.01 < z < 0.01)
 	{
-		fish_Timer[playerid] = defer _TryCatch(playerid);
+		fish_Timer[playerid] = defer _TryCatch(playerid, GetPlayerSkillTimeModifier(playerid, MIN_FISHING_TIME + random(MAX_FISHING_TIME - MIN_FISHING_TIME), "Fishing"));
 		ShowActionText(playerid, ls(playerid, "FISHFISHING", true));
 	}
 	else
@@ -141,14 +141,17 @@ _CatchFish(playerid, Float:distance)
 	// CreateDynamicObject(18728, x, y, z, 0, 0, 0, -1, -1);
 }
 
-timer _TryCatch[MIN_FISHING_TIME + random(MAX_FISHING_TIME - MIN_FISHING_TIME)](playerid)
+timer _TryCatch[catchtime](playerid, catchtime)
 {
-	if(random(100) < FISHING_CHANCE)
+	#pragma unused catchtime
+
+	if(random(1000) < 1000 - GetPlayerSkillTimeModifier(playerid, 1000 - FISHING_CHANCE, "Fishing"))
 	{
 		ApplyAnimation(playerid, "SWORD", "sword_block", 50.0, 1, 0, 0, 0, 0);
-		
+
 		fish_Timer[playerid] = defer _CatchDelay(playerid);
 		ShowActionText(playerid, ls(playerid, "FISHLINETUG", true), floatround(fish_Distance[playerid], floatround_round) * 100);
+		PlayerGainSkillExperience(playerid, "Fishing");
 	}
 	else
 	{
@@ -167,13 +170,13 @@ timer _CatchDelay[floatround(fish_Distance[playerid], floatround_round) * 100](p
 	GetPlayerPos(playerid, x, y, z);
 	CreateItem(item_RawFish, x, y, z - FLOOR_OFFSET, 90.0);
 	// todo: multiple fish types
-	
+
 	_PlayerStopFishing(playerid);
 }
 
 hook OnHoldActionUpdate(playerid, progress)
 {
-	d:3:GLOBAL_DEBUG("[OnHoldActionUpdate] in /gamemodes/sss/core/item/fishingrod.pwn");
+	dbg("global", CORE, "[OnHoldActionUpdate] in /gamemodes/sss/core/item/fishingrod.pwn");
 
 	if(fish_Status[playerid] == FISH_STATUS_CASTING)
 		fish_Distance[playerid] = progress / 100;

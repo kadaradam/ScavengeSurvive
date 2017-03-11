@@ -32,19 +32,22 @@ static
 
 hook OnPlayerConnect(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/vehicle/lock-break.pwn");
+	dbg("global", CORE, "[OnPlayerConnect] in /gamemodes/sss/core/vehicle/lock-break.pwn");
 
 	cro_TargetVehicle[playerid] = INVALID_VEHICLE_ID;
 }
 
 hook OnPlayerInteractVehicle(playerid, vehicleid, Float:angle)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerInteractVehicle] in /gamemodes/sss/core/vehicle/lock-break.pwn");
+	dbg("global", CORE, "[OnPlayerInteractVehicle] in /gamemodes/sss/core/vehicle/lock-break.pwn");
 
 	if(GetItemType(GetPlayerItem(playerid)) == item_Crowbar)
 	{
-		if(IsVehicleLocked(vehicleid))
+		if(GetVehicleLockState(vehicleid) == E_LOCK_STATE_EXTERNAL)
+		{
+			ShowActionText(playerid, ls(playerid, "LOCKBREAKNO"), 8000);
 			return Y_HOOKS_CONTINUE_RETURN_0;
+		}
 
 		if(225.0 < angle < 315.0)
 		{
@@ -64,7 +67,7 @@ hook OnPlayerInteractVehicle(playerid, vehicleid, Float:angle)
 
 hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerKeyStateChange] in /gamemodes/sss/core/vehicle/lock-break.pwn");
+	dbg("global", CORE, "[OnPlayerKeyStateChange] in /gamemodes/sss/core/vehicle/lock-break.pwn");
 
 	if(oldkeys & 16)
 	{
@@ -74,35 +77,26 @@ hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 
 StartBreakingVehicleLock(playerid, vehicleid, type)
 {
-	new
-		engine,
-		lights,
-		alarm,
-		doors,
-		bonnet,
-		boot,
-		objective;
-
-	GetVehicleParamsEx(vehicleid, engine, lights, alarm, doors, bonnet, boot, objective);
-
 	if(type == 0)
 	{
-		if(doors == 0)
+		if(GetVehicleLockState(vehicleid) == E_LOCK_STATE_OPEN)
 			return 0;
 
 		cro_OpenType[playerid] = 0;
+		ShowActionText(playerid, ls(playerid, "LOCKBREAKDR"), 6000);
 	}
+
 	if(type == 1)
 	{
 		if(!IsVehicleTrunkLocked(vehicleid))
 			return 0;
 
 		cro_OpenType[playerid] = 1;
+		ShowActionText(playerid, ls(playerid, "LOCKBREAKTR"), 6000);
 	}
 
 	cro_TargetVehicle[playerid] = vehicleid;
 	ApplyAnimation(playerid, "POLICE", "DOOR_KICK", 3.0, 1, 1, 1, 0, 0);
-
 	StartHoldAction(playerid, 3000);
 
 	return 1;
@@ -125,7 +119,7 @@ public OnHoldActionUpdate(playerid, progress)
 {
 	if(cro_TargetVehicle[playerid] != INVALID_VEHICLE_ID)
 	{
-		if(!IsValidVehicle(cro_TargetVehicle[playerid]) || GetItemType(GetPlayerItem(playerid)) != item_Crowbar || !IsPlayerInVehicleArea(playerid, cro_TargetVehicle[playerid]))
+		if(!IsValidVehicle(cro_TargetVehicle[playerid]) || !IsPlayerInVehicleArea(playerid, cro_TargetVehicle[playerid]))
 		{
 			StopBreakingVehicleLock(playerid);
 			return Y_HOOKS_BREAK_RETURN_1;
@@ -141,13 +135,13 @@ public OnHoldActionUpdate(playerid, progress)
 
 hook OnHoldActionFinish(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnHoldActionFinish] in /gamemodes/sss/core/vehicle/lock-break.pwn");
+	dbg("global", CORE, "[OnHoldActionFinish] in /gamemodes/sss/core/vehicle/lock-break.pwn");
 
 	if(cro_TargetVehicle[playerid] != INVALID_VEHICLE_ID)
 	{
 		if(cro_OpenType[playerid] == 0)
 		{
-			VehicleDoorsState(cro_TargetVehicle[playerid], 0);
+			SetVehicleExternalLock(cro_TargetVehicle[playerid], E_LOCK_STATE_OPEN);
 		}
 		if(cro_OpenType[playerid] == 1)
 		{

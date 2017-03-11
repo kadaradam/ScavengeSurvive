@@ -36,7 +36,7 @@ forward OnPlayerFocusChange(playerid, status);
 
 hook OnPlayerUpdate(playerid)
 {
-	d:4:GLOBAL_DEBUG("[OnPlayerUpdate] in /gamemodes/sss/core/player/alt-tab-check.pwn");
+	dbg("global", CORE, "[OnPlayerUpdate] in /gamemodes/sss/core/player/alt-tab-check.pwn");
 
 	tab_Check[playerid] = 0;
 	return 1;
@@ -85,7 +85,7 @@ ptask AfkCheckUpdate[100](playerid)
 		{
 			CallLocalFunction("OnPlayerFocusChange", "dd", playerid, 0);
 
-			logf("[FOCUS] %p unfocused game", playerid);
+			log("[FOCUS] %p unfocused game", playerid);
 
 			if(gMaxTaboutTime == 0)
 			{
@@ -113,7 +113,7 @@ ptask AfkCheckUpdate[100](playerid)
 		{
 			CallLocalFunction("OnPlayerFocusChange", "dd", playerid, 1);
 
-			logf("[FOCUS] %p focused back to game", playerid);
+			log("[FOCUS] %p focused back to game", playerid);
 
 			tab_IsTabbed[playerid] = false;
 		}

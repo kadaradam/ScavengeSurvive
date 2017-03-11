@@ -88,8 +88,6 @@ static
 
 hook OnScriptInit()
 {
-	print("\n[OnScriptInit] Initialising 'Admin/Core'...");
-
 	db_free_result(db_query(gAccounts, "CREATE TABLE IF NOT EXISTS "ACCOUNTS_TABLE_ADMINS" (\
 		"FIELD_ADMINS_NAME" TEXT,\
 		"FIELD_ADMINS_LEVEL" INTEGER)"));
@@ -108,7 +106,7 @@ hook OnScriptInit()
 
 hook OnPlayerConnect(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerConnect] in /gamemodes/sss/core/admin/core.pwn");
+	dbg("global", CORE, "[OnPlayerConnect] in /gamemodes/sss/core/admin/core.pwn");
 
 	admin_Level[playerid] = 0;
 	admin_OnDuty[playerid] = 0;
@@ -119,7 +117,7 @@ hook OnPlayerConnect(playerid)
 
 hook OnPlayerDisconnected(playerid)
 {
-	d:3:GLOBAL_DEBUG("[OnPlayerDisconnected] in /gamemodes/sss/core/admin/core.pwn");
+	dbg("global", CORE, "[OnPlayerDisconnected] in /gamemodes/sss/core/admin/core.pwn");
 
 	admin_Level[playerid] = 0;
 	admin_OnDuty[playerid] = 0;
@@ -277,7 +275,7 @@ TimeoutPlayer(playerid, reason[])
 	BlockIpAddress(ip, 11500);
 	admin_PlayerKicked[playerid] = true;
 
-	logf("[PART] %p (timeout: %s)", playerid, reason);
+	log("[PART] %p (timeout: %s)", playerid, reason);
 
 	ChatMsgAdmins(1, GREY, " >  %P"C_GREY" timed out, reason: "C_BLUE"%s", playerid, reason);
 
@@ -295,7 +293,7 @@ KickPlayer(playerid, reason[], bool:tellplayer = true)
 	defer KickPlayerDelay(playerid);
 	admin_PlayerKicked[playerid] = true;
 
-	logf("[PART] %p (kick: %s)", playerid, reason);
+	log("[PART] %p (kick: %s)", playerid, reason);
 
 	ChatMsgAdmins(1, GREY, " >  %P"C_GREY" kicked, reason: "C_BLUE"%s", playerid, reason);
 
@@ -315,7 +313,7 @@ ChatMsgAdminsFlat(level, colour, string[])
 {
 	if(level == 0)
 	{
-		print("ERROR: MsgAdmins parameter 'level' cannot be 0");
+		err("MsgAdmins parameter 'level' cannot be 0");
 		return 0;
 	}
 
@@ -507,7 +505,7 @@ stock RegisterAdminCommand(level, string[])
 {
 	if(!(STAFF_LEVEL_GAME_MASTER <= level <= STAFF_LEVEL_LEAD))
 	{
-		printf("ERROR: Cannot register admin command for level %d", level);
+		err("Cannot register admin command for level %d", level);
 		return 0;
 	}
 
